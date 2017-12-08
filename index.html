@@ -11,6 +11,7 @@
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="../slides.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -25,54 +26,11 @@
 		<div class="reveal">
 			<div class="slides">
 
-<section data-markdown>
 
-## Conversion de String en int/Integer
-
-Exemple de conversion de String en int et Integer :
-```java
-String str = "123";
-int x = Integer.parseInt(str);
-Integer y = Integer.valueOf(str);
-```
-Les String `null` ne sont pas acceptés
+<section data-markdown="conversionStringToNumber.md"
+	 data-separator="^\r?\n----  ----\r?\n$" data-separator-vertical="^\r?\n----\r?\n$">
 </section>
 
-
-<section data-markdown="test.md" data-separator="^\r?\n----  ----\r?\n$" data-separator-vertical="^\r?\n----\r?\n$">
-</section>
-
-
-<section data-markdown>
-### Exemple de méthode pour convertir un String en Integer
- * accepte `null` en argument
-
-```java
-public static Integer convertStringToInteger(String nbAConvertir){
-	Integer integer = null;
-	if(nbAConvertir!=null){
-		integer = Integer.valueOf(nbAConvertir);			
-	}
-	return integer;
-}
-```
-</section>
-
-<section data-markdown>
-### Exemple de méthode pour convertir un String en Double
- * accepte `null` en argument
- * convertit les virgules dans les nombres en points
-
-```java
-public static Double convertStringToDouble(String nbAConvertir){
-	Double nombre = null;
-	if(nbAConvertir!=null){
-		nombre = Double.valueOf(nbAConvertir.replace(",", "."));
-	}
-	return nombre;
-}
-```
-</section>
 			
 			</div>
 		</div>
