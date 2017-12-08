@@ -4,10 +4,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Tutoriel Java</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/beige.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -24,8 +24,56 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+
+<section data-markdown>
+
+## Conversion de String en int/Integer
+
+Exemple de conversion de String en int et Integer :
+```java
+String str = "123";
+int x = Integer.parseInt(str);
+Integer y = Integer.valueOf(str);
+```
+Les String `null` ne sont pas acceptés
+</section>
+
+<!--
+<section data-markdown="test.md" data-separator="^\r?\n----  ----\r?\n$" data-separator-vertical="^\r?\n----\r?\n$">
+</section>
+-->
+
+<section data-markdown>
+### Exemple de méthode pour convertir un String en Integer
+ * accepte `null` en argument
+
+```java
+public static Integer convertStringToInteger(String nbAConvertir){
+	Integer integer = null;
+	if(nbAConvertir!=null){
+		integer = Integer.valueOf(nbAConvertir);			
+	}
+	return integer;
+}
+```
+</section>
+
+<section data-markdown>
+### Exemple de méthode pour convertir un String en Double
+ * accepte `null` en argument
+ * convertit les virgules dans les nombres en points
+
+```java
+public static Double convertStringToDouble(String nbAConvertir){
+	Double nombre = null;
+	if(nbAConvertir!=null){
+		nombre = Double.valueOf(nbAConvertir.replace(",", "."));
+	}
+	return nombre;
+}
+```
+</section>
+			
 			</div>
 		</div>
 
@@ -38,12 +86,21 @@
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
 				dependencies: [
+					{ src: 'plugin/menu/menu.js' },
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
+				],
+				controls: true,
+				slideNumber: 'c/t',
+				center: true,
+				progress: true,
+				history: true
+				
+				
 			});
+
 		</script>
 	</body>
 </html>
