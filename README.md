@@ -1,3 +1,3 @@
 # Tutoriel Java
 
-[Diaporama](https://gaetan-varlet.github.io/tutoriel-java/)
+:arrow_forward: [Diaporama](https://gaetan-varlet.github.io/tutoriel-java/)
