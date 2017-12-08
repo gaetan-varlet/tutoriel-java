@@ -1,4 +1,4 @@
-## Toto
+## Copie diapo dans un fichier externe
 
 Exemple de conversion de String en int et Integer :
 ```java
