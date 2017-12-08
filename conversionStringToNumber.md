@@ -2,7 +2,7 @@
 
 ----
 
-## Conversion de String en int et Integer
+## Conversion d'un String en int et Integer
 
 Exemple de conversion de String en int et Integer :
 ```java
