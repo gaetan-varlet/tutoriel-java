@@ -1,6 +1,6 @@
-# Conversion d'un String en nombre
+## Conversion d'un String en nombre
 
-## Conversion d'un String en int et Integer
+### Conversion d'un String en int et Integer
 
 Exemple de conversion de String en int et Integer :
 ```java
@@ -40,3 +40,24 @@ public static Double convertStringToDouble(String nbAConvertir){
 	return nombre;
 }
 ```
+
+----
+
+## Conversion d'un nombre en String
+
+### Conversion d'un int et d'un Integer en String
+
+Exemple de conversion de String en int et Integer :
+```java
+int x = 12;
+String str = String.valueOf(x);
+Integer y = 15;
+String str2 = String.valueOf(y);
+```
+Autre possibilité :
+```java
+String str3 = Integer.toString(145);
+String str4 = y.toString;
+```
+Ces deux dernières possibilités n’acceptent pas un Integer null.
+
