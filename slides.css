@@ -67,10 +67,6 @@
     line-height: 22px;
 }
 
-.reveal pre code {
-    max-height: none;
-}
-
 .reveal ul {
     list-style-type: none;
 }
