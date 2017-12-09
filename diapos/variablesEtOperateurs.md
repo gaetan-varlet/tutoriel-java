@@ -3,17 +3,15 @@
 ----
 
 ## Les variables
-
 * numériques :
-	* byte : 1 octet, de -128 à 127, `byte temperature = 64;`
+	* byte : 1 octet, de -128 à 127 : `byte temperature = 64;`
 	* short : 2 octets, de -32768 à 32767
 	* int : 4 octets, de -2x10^9 à 2x10^9
 	* long : 8 octets, de -9x10^18 à 9x10^18, il faut mettre un “L” à la fin du nombre
-	* float : 4 octets, pour les nombres à virgule, mettre “f” à la fin , `float pi = 3.14159f`
+	* float : 4 octets, pour les nombres à virgule, mettre “f” à la fin  : `float pi = 3.14159f`
 	* double : 8 octets, même chose avec un “d” à la fin
-
-* char : permet de stocker un caractère entre guillemets simples, `char caractere=’A’;`
-* boolean : permet de stocker true ou false, `boolean question = true;`
+* char : permet de stocker un caractère entre guillemets simples : `char caractere=’A’;`
+* boolean : permet de stocker true ou false : `boolean question = true;`
 * String : permet de stocker des chaînes de caractères entre guillemets doubles.
 	* `String phrase = “Salut !”;`
 	* `String phrase = new String(“Salut !”);`
@@ -33,19 +31,19 @@
 
 - \+ pour l’addition, - pour la soustraction, * pour la multiplication, / pour la division, % pour le modulo (renvoie le reste de la division entière de 2 nombres)
 - incrémentation :
-```
-nbre1 = nbre1 + 1;'
+```java
+nbre1 = nbre1 + 1;
 nbre1 += 1;'
 nbre1++;
 ++nbr1;
 ```
-- décrémentation : même chose ue l'incrémentation, avec des - à la place des +
+- décrémentation : même chose que l'incrémentation, avec des - à la place des +
 - multiplication :
 ```
 nbre1 = nbre1 * 2;
 nbre1 *= 2;
 ```
-- division : même chose que multiplication avec des /
+- division : même chose que la multiplication avec des / à la place des *
 
 ----
 
@@ -84,7 +82,7 @@ String str = "123";
 int x = Integer.parseInt(str);
 Integer y = Integer.valueOf(str);
 ```
-une NumberFormatException est levé si :
+une NumberFormatException est levée si :
 * si la chaîne de caractère est `null`
 * si elle ne contient pas de chiffres
 * si elle contient autre chose qu'un chiffre (lettre, espace...)
