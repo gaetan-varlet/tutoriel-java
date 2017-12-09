@@ -23,27 +23,6 @@ public static Integer convertStringToInteger(String nbAConvertir){
 	}
 	return integer;
 }
-public static Integer convertStringToInteger(String nbAConvertir){
-	Integer integer = null;
-	if(nbAConvertir!=null){
-		integer = Integer.valueOf(nbAConvertir);			
-	}
-	return integer;
-}
-public static Integer convertStringToInteger(String nbAConvertir){
-	Integer integer = null;
-	if(nbAConvertir!=null){
-		integer = Integer.valueOf(nbAConvertir);			
-	}
-	return integer;
-}
-public static Integer convertStringToInteger(String nbAConvertir){
-	Integer integer = null;
-	if(nbAConvertir!=null){
-		integer = Integer.valueOf(nbAConvertir);			
-	}
-	return integer;
-}
 ```
 
 ----
