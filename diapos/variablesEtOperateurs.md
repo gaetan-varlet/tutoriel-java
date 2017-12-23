@@ -47,13 +47,13 @@ String phrase = new String(“Salut !”);
 - incrémentation :
 ```java
 nbre1 = nbre1 + 1;
-nbre1 += 1;'
+nbre1 += 1;
 nbre1++;
 ++nbr1;
 ```
 - décrémentation : même chose que l'incrémentation, avec des - à la place des +
 - multiplication :
-```
+```java
 nbre1 = nbre1 * 2;
 nbre1 *= 2;
 ```
@@ -69,8 +69,7 @@ int i = 100;
 float j = (float)i;
 System.out.println(j); // affiche 100.0
 ```
-Attention aux priorités lors des conversions, sinon le résultat peut être faux.  
-Dans le deuxième exemple, la JVM fait le calcul, puis la conversion, puis l'affectation à la variable.
+Attention aux priorités lors des conversions, sinon le résultat peut être faux. Dans le deuxième exemple, la JVM fait le calcul, puis la conversion, puis l'affectation à la variable.
 ```java
 int nbre1 = 3, nbre2 = 2;
 double resultat = nbre1 / nbre2;
