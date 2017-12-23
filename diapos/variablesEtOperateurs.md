@@ -16,10 +16,10 @@
 ```java
 byte temperature = 64;
 float pi = 3.14159f;
-char caractere=’A’;
+char caractere='A';
 boolean question = true;
-String phrase = “Salut !”;
-String phrase = new String(“Salut !”);
+String phrase = "Salut !";
+String phrase = new String("Salut !");
 ```
 
 ----
