@@ -13,8 +13,10 @@
 * char : permet de stocker un caractère entre guillemets simples : `char caractere=’A’;`
 * boolean : permet de stocker true ou false : `boolean question = true;`
 * String : permet de stocker des chaînes de caractères entre guillemets doubles.
-	* `String phrase = “Salut !”;`
-	* `String phrase = new String(“Salut !”);`
+```java
+String phrase = “Salut !”;
+String phrase = new String(“Salut !”);
+```
 
 ----
 
@@ -49,14 +51,14 @@ nbre1 *= 2;
 
 ## Les conversions
 
-Exemple : 
+Exemple :
 ```java
 int i = 100;
 float j = (float)i;
 System.out.println(j); // affiche 100.0
 ```
 Attention aux priorités lors des conversions, sinon le résultat peut être faux.  
-La JVM fait le calcul, puis la conversion, puis l'affectation à la variable
+Dans le deuxième exemple, la JVM fait le calcul, puis la conversion, puis l'affectation à la variable.
 ```java
 int nbre1 = 3, nbre2 = 2;
 double resultat = nbre1 / nbre2;
@@ -137,4 +139,3 @@ String str3 = Integer.toString(145);
 String str4 = y.toString;
 ```
 Ces deux dernières possibilités n’acceptent pas un Integer null.
-
