@@ -55,18 +55,27 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
-				dependencies: [
-					{ src: 'revealjs/plugin/menu/menu.js' },
-					{ src: 'revealjs/plugin/markdown/marked.js' },
-					{ src: 'revealjs/plugin/markdown/markdown.js' },
-					{ src: 'revealjs/plugin/notes/notes.js', async: true },
-					{ src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				],
 				controls: true,
-				slideNumber: 'c/t',
-				center: true,
 				progress: true,
-				history: true
+				history: true,
+				center: true,
+
+				slideNumber: 'c/t',
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				dependencies: [
+					{ src: 'revealjs/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'revealjs/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'revealjs/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'revealjs/plugin/search/search.js', async: true },
+					{ src: 'revealjs/plugin/zoom-js/zoom.js', async: true },
+					{ src: 'revealjs/plugin/notes/notes.js', async: true },
+
+					{ src: 'revealjs/plugin/menu/menu.js' }
+
+				]
 
 			});
 
