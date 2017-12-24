@@ -200,7 +200,6 @@ function Hilitor(id, tag)
 			toggleSearch();
 		}
 	}, false );
-	if( window.Reveal ) Reveal.registerKeyboardShortcut( 'Ctrl-Shift-F', 'Search' );
 	closeSearch();
 	return { open: openSearch };
 })();

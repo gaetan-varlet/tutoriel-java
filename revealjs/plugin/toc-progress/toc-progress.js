@@ -392,3 +392,4 @@ toc_progress.initialize=function(reducescroll,background)
 
 	Reveal.addEventListener('slidechanged',function(event){toc_progress.reduceorscrollifnecessary(this.reduceorscroll)});
 };
+
