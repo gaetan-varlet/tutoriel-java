@@ -1,3 +1,3 @@
-# Tutoriel Java 1
+# Tutoriel Java 2
 
 [Gaëtan Varlet](https://github.com/gaetan-varlet)
