@@ -30,17 +30,17 @@ var RevealMenu = window.RevealMenu || (function(){
 			var themes = options.themes;
 			if (typeof themes === "undefined") {
 				themes = [
-					{ name: 'Black', theme: '../css/theme/black.css' },
-					{ name: 'White', theme: '../css/theme/white.css' },
-					{ name: 'League', theme: '../css/theme/league.css' },
-					{ name: 'Sky', theme: '../css/theme/sky.css' },
-					{ name: 'Beige', theme: '../css/theme/beige.css' },
-					{ name: 'Simple', theme: '../css/theme/simple.css' },
-					{ name: 'Serif', theme: '../css/theme/serif.css' },
-					{ name: 'Blood', theme: '../css/theme/blood.css' },
-					{ name: 'Night', theme: '../css/theme/night.css' },
-					{ name: 'Moon', theme: '../css/theme/moon.css' },
-					{ name: 'Solarized', theme: '../css/theme/solarized.css' }
+					{ name: 'Black', theme: '../../css/theme/black.css' },
+					{ name: 'White', theme: '../../css/theme/white.css' },
+					{ name: 'League', theme: '../../css/theme/league.css' },
+					{ name: 'Sky', theme: '../../css/theme/sky.css' },
+					{ name: 'Beige', theme: '../../css/theme/beige.css' },
+					{ name: 'Simple', theme: '../../css/theme/simple.css' },
+					{ name: 'Serif', theme: '../../../css/theme/serif.css' },
+					{ name: 'Blood', theme: '../../css/theme/blood.css' },
+					{ name: 'Night', theme: '../../css/theme/night.css' },
+					{ name: 'Moon', theme: '../../css/theme/moon.css' },
+					{ name: 'Solarized', theme: '../../css/theme/solarized.css' }
 				];
 			}
 			var transitions = options.transitions;
