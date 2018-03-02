@@ -1,6 +1,6 @@
 # Les streams et les lambdas
 
----
+----
 
 - on l'appelle généralement sur une collection
 - 2 types d'opérations
@@ -13,7 +13,7 @@
       - réductions mutables
     - `Stream.collect` permet de récupérer notre résultat dans une collection
 
----
+----
 
 ## Filtrer, mapper, trier et afficher
 ```java
@@ -39,7 +39,7 @@ List<Client> mesClients = mesCommandes.stream()
      .collect( Collectors.toList() );
 ```
 
----
+----
 
 ## Trier sur un ordre non naturel
 ```java
@@ -58,7 +58,7 @@ List lListeCommandeMai = listeCommandes.stream()
  .collect(Collectors.toList());
  ```
 
- ---
+ ----
 
 ## Récupérer le max ou le min (utilisation de GET)
 ```java
@@ -77,7 +77,7 @@ Comparator<Employee> comparator = Comparator.comparing(Employee::getAge);
 Employee minObject = listeEmployee.stream().min(comparator).get();
 ```
 
----
+----
 
 ## Calculer des statistiques sur une list de nombres
 ```java
