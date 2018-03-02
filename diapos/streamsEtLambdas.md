@@ -59,8 +59,7 @@ List lListeCommandeMai = listeCommandes.stream()
  .collect(Collectors.toList());
  ```
 
- ----
-
+----
 
 ### Récupérer le max ou le min (utilisation de GET)
 ```java
