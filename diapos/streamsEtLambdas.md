@@ -15,7 +15,7 @@
 
 ----
 
-## Filtrer, mapper, trier et afficher
+### Filtrer, mapper, trier et afficher
 ```java
 List<String> strings;
 strings.stream()
@@ -29,7 +29,7 @@ strings.stream()
       .forEach( System.out::println );
 ```
 
-## Mapper, supprimer les doublons, puis collecter dans une liste
+### Mapper, supprimer les doublons, puis collecter dans une liste
 ```java
 List<Commande> mesCommandes = … ;
 
@@ -41,7 +41,7 @@ List<Client> mesClients = mesCommandes.stream()
 
 ----
 
-## Trier sur un ordre non naturel
+### Trier sur un ordre non naturel
 ```java
 List listeCommandeMai= listeCommandes.stream()
 .filter(x -> x.numero.startsWith("201405"))
@@ -49,7 +49,7 @@ List listeCommandeMai= listeCommandes.stream()
 .collect(Collectors.toList());
 ```
 
-## Limiter le nombre de résultat
+### Limiter le nombre de résultat
 ```java
 List lListeCommandeMai = listeCommandes.stream()
  .filter(x -> x.numero.startsWith("201405"))
@@ -60,7 +60,7 @@ List lListeCommandeMai = listeCommandes.stream()
 
  ----
 
-## Récupérer le max ou le min (utilisation de GET)
+### Récupérer le max ou le min (utilisation de GET)
 ```java
 Commande commande = listeCommandes.stream()
  .filter(x -> x.numero.startsWith("201405"))
@@ -79,7 +79,7 @@ Employee minObject = listeEmployee.stream().min(comparator).get();
 
 ----
 
-## Calculer des statistiques sur une list de nombres
+### Calculer des statistiques sur une list de nombres
 ```java
 List<Integer> liste = Arrays.asList(1,2,3);
 IntSummaryStatistics stats = liste.stream().mapToInt(i->i).summaryStatistics();
@@ -90,7 +90,7 @@ int max = stats.getMax();
 long somme = stats.getSum();
 ```
 
-## Compter le nombre d'éléments filtrés
+### Compter le nombre d'éléments filtrés
 ```java
 long nombreElement = listeCommandes.stream()
  .filter(x -> x.numero.startsWith("201405"))
