@@ -2,6 +2,7 @@
 
 ----
 
+### Concepts
 - on l'appelle généralement sur une collection
 - 2 types d'opérations
   - opérations intermédiaires : succession de stream (stream pipelines)
@@ -59,6 +60,7 @@ List lListeCommandeMai = listeCommandes.stream()
  ```
 
  ----
+
 
 ### Récupérer le max ou le min (utilisation de GET)
 ```java
