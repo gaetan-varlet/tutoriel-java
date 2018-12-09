@@ -45,4 +45,6 @@ Depuis l'API Servlet 3.0, il est possible d'utiliser des annotations pour ne plu
 
 ----
 
-## Lancement de Tomcat
+## La Servlet
+
+Le principe de fonctionnement est très simple : ce composant logiciel reçoit une requête, et il envoie une réponse. Cette réponse est transmise au client, qui l’interprète enfin.
