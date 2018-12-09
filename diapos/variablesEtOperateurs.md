@@ -4,15 +4,15 @@
 
 ## Les variables
 * numériques :
-	* byte : 1 octet, de -128 à 127
-	* short : 2 octets, de -32768 à 32767
-	* int : 4 octets, de -2x10^9 à 2x10^9
-	* long : 8 octets, de -9x10^18 à 9x10^18, il faut mettre un “L” à la fin du nombre
-	* float : 4 octets, pour les nombres à virgule, mettre “f” à la fin
-	* double : 8 octets, même chose avec un “d” à la fin
-* char : permet de stocker un caractère entre guillemets simples
-* boolean : permet de stocker true ou false
-* String : permet de stocker des chaînes de caractères entre guillemets doubles
+	* `byte` : 1 octet, de -128 à 127
+	* `short` : 2 octets, de -32768 à 32767
+	* `int` : 4 octets, de -2x10^9 à 2x10^9
+	* `long` : 8 octets, de -9x10^18 à 9x10^18, il faut mettre un “L” à la fin du nombre
+	* `float` : 4 octets, pour les nombres à virgule, mettre “f” à la fin
+	* `double` : 8 octets, même chose avec un “d” à la fin
+* `char` : permet de stocker un caractère entre guillemets simples
+* `boolean` : permet de stocker true ou false
+* `String` : permet de stocker des chaînes de caractères entre guillemets doubles
 ```java
 byte temperature = 64;
 float pi = 3.14159f;
