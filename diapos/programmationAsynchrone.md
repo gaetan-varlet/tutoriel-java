@@ -29,7 +29,7 @@ System.out.println(LocalTime.now()); // 19:58:39.342
 
 ----
 
-Il est possible de lancer le deuxième une fois le premier lancé sans attendre le résultat du premier. Cela prendra donc le temps du plus long appel, ici 2 secondes :
+Il est possible de lancer le deuxième une fois le premier lancé sans attendre le résultat du premier grâce à la méthode `supplyAsync()` d'un **CompletableFuture**. Cette méthode initialise une tâche qui sera mise en file d’attente et exécutée via un pool d’exécution Fork/Join. Cela prendra donc le temps du plus long appel, ici 2 secondes :
 
 ```java
 public static CompletableFuture<String> calculateAsync() throws InterruptedException {
@@ -51,7 +51,7 @@ System.out.println(LocalTime.now()); // 19:53:56.351
 
 ----
 
-On peut combiner des CompletableFuture. La méthode statique allOf prend un ensemble de CompletableFuture pour en faire un nouveau qui rendra la main lorsque tous seront terminés :
+On peut combiner des CompletableFuture. La méthode statique `allOf()` prend un ensemble de CompletableFuture pour en faire un nouveau qui rendra la main lorsque tous seront terminés :
 
 ```java
 System.out.println(LocalTime.now()); // 20:25:17.048
