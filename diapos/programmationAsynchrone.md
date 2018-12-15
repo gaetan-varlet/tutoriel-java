@@ -51,7 +51,7 @@ System.out.println(LocalTime.now()); // 19:53:56.351
 
 ----
 
-On peut combiner des CompletableFuture. La méthode statique `allOf()` prend un ensemble de CompletableFuture pour en faire un nouveau qui rendra la main lorsque tous seront terminés :
+On peut combiner des CompletableFuture. La méthode statique `allOf()` prend un ensemble de CompletableFuture pour en faire un nouveau qui rendra la main lorsque tous seront terminés après l'appel de la méthode `join()` :
 
 ```java
 System.out.println(LocalTime.now()); // 20:25:17.048
