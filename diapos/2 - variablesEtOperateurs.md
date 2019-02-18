@@ -28,7 +28,7 @@ String phrase = new String("Salut !");
 
 - les noms de classe doivent commencer par une majuscule
 - les noms de variables doivent commencer par une minuscule
-- si le nom d’une variable est composé de plusieurs mots, faire commencer le premier par une minuscule et les suivants par des majuscules, le tout sans espaces
+- si le nom d’une variable est composé de plusieurs mots, faire commencer le premier par une minuscule et les suivants par des majuscules, le tout sans espaces (Camel case)
 - pas d’accents
 
 ----
@@ -101,7 +101,7 @@ une NumberFormatException est levée si :
 public static Integer convertStringToInteger(String nbAConvertir){
 	Integer integer = null;
 	if(nbAConvertir!=null){
-		integer = Integer.valueOf(nbAConvertir);			
+		integer = Integer.valueOf(nbAConvertir);
 	}
 	return integer;
 }
@@ -139,6 +139,6 @@ String str2 = String.valueOf(y);
 Autre possibilité :
 ```java
 String str3 = Integer.toString(145);
-String str4 = y.toString;
+String str4 = y.toString();
 ```
 Ces deux dernières possibilités n’acceptent pas un Integer null.

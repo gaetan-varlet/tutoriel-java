@@ -42,6 +42,19 @@ List<Client> mesClients = mesCommandes.stream()
 
 ----
 
+### Modification des données conditionnelles
+
+```java
+List<Personne> liste = liste.stream().map(p -> {
+      if(p.getNom() == null) {
+            p.setNom("Nom par défaut");
+      }
+      return p;
+}).collect(Collectors.toList());
+```
+
+----
+
 ### Trier sur un ordre non naturel
 ```java
 List listeCommandeMai= listeCommandes.stream()
