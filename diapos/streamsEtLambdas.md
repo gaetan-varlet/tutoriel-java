@@ -256,6 +256,7 @@ Stream<Integer> streamIterated = Stream.iterate(40, n -> n + 2).limit(5); // 40,
 IntStream intStream = IntStream.range(1, 4); // 1, 2, 3
 
 // Générer n nombres aléatoires
+Random random = new Random();
 DoubleStream doubleStream = random.doubles(3); // génère 3 nombres aléatoires de type double
 ```
 
@@ -272,3 +273,12 @@ Stream<Integer> streamOfInteger = intStream.boxed();
 int[] tab = IntStream.of(1,2,3,4,5).toArray(); // [1, 2, 3, 4, 5]
 List<Integer> liste = IntStream.of(1,2,3,4,5).boxed().collect(Collectors.toList()); // [1, 2, 3, 4, 5]
 ```
+
+
+----
+
+TODO : 
+- anyMatch, noneMatch, allMatch, findFirst
+- reduce
+- https://www.geeksforgeeks.org/java-8-stream/
+- https://www.baeldung.com/java-8-streams
