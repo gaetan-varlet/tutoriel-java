@@ -156,16 +156,14 @@ long somme = stats.getSum();
 
 ----
 
-## Aplatir une liste de liste en liste
+### Aplatir une liste de liste en liste
 
 ```java
 List<List<String>> listeDeListe = Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C", "D"));
 List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Collectors.toList()); // [A, B, C, D]
 ```
 
-----
-
-## Transformer une liste en chaîne de caractères
+### Transformer une liste en chaîne de caractères
 
 Ecrire les prénoms de la liste dans une chaîne de caractères :
 
@@ -175,7 +173,7 @@ String maChaine = liste.stream()
 	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
 ```
 
-Ajout d'un préfixe et dun suffixe :
+Ajout d'un préfixe et d'un suffixe :
 
 ```java
 String maChaine = liste.stream()
@@ -187,7 +185,7 @@ String maChaine = liste.stream()
 
 ----
 
-## Transformer la liste en map selon une clé
+### Transformer la liste en map selon une clé
 
 Création d'une `Map<Boolean, List<Person>>` avec le booléen estUnHomme en clé et une liste de personnes en valeur :
 
