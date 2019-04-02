@@ -153,3 +153,54 @@ int min = stats.getMin();
 int max = stats.getMax();
 long somme = stats.getSum();
 ```
+
+----
+
+## Aplatir une liste de liste en liste
+
+```java
+List<List<String>> listeDeListe = Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C", "D"));
+List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Collectors.toList()); // [A, B, C, D]
+```
+
+----
+
+## Transformer une liste en chaîne de caractères
+
+Ecrire les prénoms de la liste dans une chaîne de caractères :
+
+```java
+String maChaine = liste.stream()
+	.map(Person::getPrenom)
+	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
+```
+
+Ajout d'un préfixe et dun suffixe :
+
+```java
+String maChaine = liste.stream()
+    .filter(p -> p.getPrenom() != null)
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
+```
+
+----
+
+## Transformer la liste en map selon une clé
+
+Création d'une `Map<Boolean, List<Person>>` avec le booléen estUnHomme en clé et une liste de personnes en valeur :
+
+```java
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.groupingBy(Person::isEstHomme));
+```
+
+Création d'une `Map<Boolean, Set<String>>` avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur :
+
+```java
+Map<Boolean, Set<String>> map = liste.stream()
+	.filter(p -> p.getPrenom() != null)
+	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
+// {false=[Florine], true=[null, Gaëtan, Louis]}
+```
