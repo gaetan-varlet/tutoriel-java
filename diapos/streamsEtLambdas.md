@@ -202,3 +202,32 @@ Map<Boolean, Set<String>> map = liste.stream()
 	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
 // {false=[Florine], true=[null, Gaëtan, Louis]}
 ```
+
+----
+
+### Débugger avec peek()
+
+```java
+liste.stream()
+    .peek(p -> System.out.println("avant filtrage : "+p))
+    .filter(p -> p.getPrenom() != null)
+    .peek(p -> System.out.println("après filtrage : "+p))
+    .map(Person::getPrenom)
+    .peek(p -> System.out.println("avant mapping : "+p))
+    .collect(Collectors.toList());
+
+// console :
+avant filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
+après filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
+avant mapping : Gaëtan
+avant filtrage : Person [prenom=Florine, age=29, estHomme=false]
+après filtrage : Person [prenom=Florine, age=29, estHomme=false]
+avant mapping : Florine
+avant filtrage : Person [prenom=Louis, age=1, estHomme=true]
+après filtrage : Person [prenom=Louis, age=1, estHomme=true]
+avant mapping : Louis
+avant filtrage : Person [prenom=Louis, age=5, estHomme=true]
+après filtrage : Person [prenom=Louis, age=5, estHomme=true]
+avant mapping : Louis
+avant filtrage : Person [prenom=null, age=10, estHomme=true]
+```
