@@ -231,3 +231,44 @@ après filtrage : Person [prenom=Louis, age=5, estHomme=true]
 avant mapping : Louis
 avant filtrage : Person [prenom=null, age=10, estHomme=true]
 ```
+
+----
+
+### Création d'un Stream
+
+```java
+// Création d'un stream avec données et d'un stream vide
+Stream<String> stream = Stream.of("a","b");
+Stream<String> streamEmpty = Stream.empty();
+// Conversion du stream en tableau
+System.out.println(Arrays.toString(stream.toArray())); // [a, b]
+System.out.println(Arrays.toString(streamEmpty.toArray())); // []
+
+// Création d'un stream à partir d'un tableau
+String[] arr = new String[]{"a", "b", "c"};
+Stream<String> streamOfArrayFull = Arrays.stream(arr);
+
+// Généréer un stream avec n élément
+Stream<String> streamGenerated = Stream.generate(() -> "element").limit(3); // element, element, element
+Stream<Integer> streamIterated = Stream.iterate(40, n -> n + 2).limit(5); // 40, 42, 44, 46, 48
+
+// Générer des streams de primitifs
+IntStream intStream = IntStream.range(1, 4); // 1, 2, 3
+
+// Générer n nombres aléatoires
+DoubleStream doubleStream = random.doubles(3); // génère 3 nombres aléatoires de type double
+```
+
+----
+
+## Le boxing
+
+Lorsqu'on travaille avec des streams de primitifs, on peut les collecter dans des tableaux, mais pas dans des collections. Il faut d'abord "boxer" les éléments du stream
+
+```java
+IntStream intStream = IntStream.of(1,2,3,4,5);
+Stream<Integer> streamOfInteger = intStream.boxed();
+
+int[] tab = IntStream.of(1,2,3,4,5).toArray(); // [1, 2, 3, 4, 5]
+List<Integer> liste = IntStream.of(1,2,3,4,5).boxed().collect(Collectors.toList()); // [1, 2, 3, 4, 5]
+```
