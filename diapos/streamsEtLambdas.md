@@ -24,7 +24,6 @@ Person p2 = new Person("Florine", 29, false);
 Person p3 = new Person("Louis", 1, true);
 Person p4 = new Person("Louis", 5, true);
 Person p5 = new Person(null, 10, true);
-
 List<Person> liste = Arrays.asList(p1, p2, p3, p4, p5);
 ```
 
@@ -35,8 +34,7 @@ liste.stream()
     .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
     .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
     //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
-    .forEach(System.out::println); // impression des prénoms dans la console
-    // FLORINE GAËTAN LOUIS LOUIS
+    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
 ```
 
 ### Mapper, supprimer les doublons, puis collecter dans une liste
@@ -71,17 +69,14 @@ List<Person> listePrenom = liste.stream()
     .collect(Collectors.toList());
 ```
 
-----
-
 ### Compter le nombre d'éléments filtrés
-
 ```java
 long a = liste.stream()
 .filter(p -> p.getPrenom() != null)
 .count(); // 4 personnes ont un prénom non null
  ```
 
- ----
+----
 
 ### Trier sur un ordre non naturel
 ```java
