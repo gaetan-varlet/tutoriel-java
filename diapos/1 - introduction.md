@@ -2,12 +2,12 @@
 
 ----
 
-## JRE / JDK
+## JVM / JRE / JDK
 
-- précompilation du code source (`.java`) en **byte code** (`), .class`) par la **machine virtuelle Java**, appelé aussi JRE (Java Runtine Environnement)
-- le byte code est un code intermédiaire entre celui du programme et celui que que la machine peut comprendre. La machine ne peut pas comprendre le byte code, elle a besoin de la JVM pour le traduire en code machine
+- précompilation du code source (`.java`) en **byte code** (`), .class`) par le JDK
+- le byte code est un code intermédiaire entre celui du programme et celui que que la machine peut comprendre. La machine ne peut pas comprendre le byte code, elle a besoin de la JVM (machine virtuelle Java) pour le traduire en code machine
 - programmes utilisables avec tous les OS
-- JRE : exécution des programmes Java, précompilé en byte code
+- JRE (Java Runtime Environnement): exécution des programmes Java, précompilé en byte code, contient la JVM
 - JDK : JRE + nécessaire pour compiler le code Java en byte code
 
 ----
