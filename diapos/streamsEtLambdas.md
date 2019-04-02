@@ -16,84 +16,139 @@
 
 ----
 
+### Création d'une liste d'objets
+
+```java
+Person p1 = new Person("Gaëtan", 30, true);
+Person p2 = new Person("Florine", 29, false);		
+Person p3 = new Person("Louis", 1, true);
+Person p4 = new Person("Louis", 5, true);
+Person p5 = new Person(null, 10, true);
+
+List<Person> liste = Arrays.asList(p1, p2, p3, p4, p5);
+```
+
 ### Filtrer, mapper, trier et afficher
 ```java
-List<String> strings;
-strings.stream()
-      // filtrage
-      .filter(x -> x.contains("cha"))
-      // mapping : reformatage des chaînes de caractères
-      .map(x -> x.substring(0, 1).toUpperCase() + x.substring(1))
-      // tri par ordre alphabétique
-      .sorted()
-      // Outputs:
-      .forEach( System.out::println );
+liste.stream()
+    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
+    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
+    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
+    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
+    .forEach(System.out::println); // impression des prénoms dans la console
+    // FLORINE GAËTAN LOUIS LOUIS
 ```
 
 ### Mapper, supprimer les doublons, puis collecter dans une liste
 ```java
-List<Commande> mesCommandes = … ;
-
-List<Client> mesClients = mesCommandes.stream()
-     .map( c -> c.getClient() )
-     .distinct()
-     .collect( Collectors.toList() );
+List<String> listePrenom = liste.stream()
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
 ```
 
 ----
 
-### Modification des données conditionnelles
+### Enchaînement d'instructions dans le map : utilisation des accolades, du point-virgule et du return
 
 ```java
-List<Personne> liste = liste.stream().map(p -> {
-      if(p.getNom() == null) {
-            p.setNom("Nom par défaut");
-      }
-      return p;
-}).collect(Collectors.toList());
+List<String> listePrenom = liste.stream()
+    .map(p -> {
+	    return p.getPrenom();
+	    })
+	.distinct()
+	.collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
+```
+
+```java
+List<Person> listePrenom = liste.stream()
+    .map(p -> {
+        if(p.getPrenom() == null) {
+            p.setPrenom("Prénom par défaut");
+        }
+        return p;
+    })
+    .collect(Collectors.toList());
 ```
 
 ----
+
+### Compter le nombre d'éléments filtrés
+
+```java
+long a = liste.stream()
+.filter(p -> p.getPrenom() != null)
+.count(); // 4 personnes ont un prénom non null
+ ```
+
+ ----
 
 ### Trier sur un ordre non naturel
 ```java
-List listeCommandeMai= listeCommandes.stream()
-.filter(x -> x.numero.startsWith("201405"))
-.sorted((x1, x2) -> (int)(x1.montant - x2.montant))
+List<Person> listeTrie = liste.stream()
+// tri des personnes dans l'ordre croissant de l'âge
+.sorted(Comparator.comparing(Person::getAge))
+//.sorted((p1, p2) -> (p1.getAge() - p2.getAge())) // équivalent à la ligne précédente
 .collect(Collectors.toList());
 ```
 
-### Limiter le nombre de résultat
 ```java
-List lListeCommandeMai = listeCommandes.stream()
- .filter(x -> x.numero.startsWith("201405"))
- .sorted((x1, x2) -> (int)(x1.montant - x2.montant))
- .limit(2)
- .collect(Collectors.toList());
+List<Person> listeTrie = liste.stream()
+// tri sur le prénom par ordre alphabétique en mettant les prénoms null à la fin
+.sorted(Comparator.comparing(Person::getPrenom, Comparator.nullsLast(Comparator.naturalOrder())))
+.collect(Collectors.toList());
+```
+
+```java
+List<Person> listeTrie = liste.stream()
+// tri sur le prénom par ordre alphabétique puis sur l'âge par ordre décroissant
+.sorted(Comparator.comparing(Person::getPrenom).thenComparing((Comparator.comparing(Person::getAge).reversed())))
+.collect(Collectors.toList());
+```
+
+----
+
+### Limiter le nombre de résultat aux n premiers
+
+```java
+// récupère les 2 persones les plus âgées
+List<Person> listeTrie = liste.stream()
+	.sorted(Comparator.comparing(Person::getAge).reversed())
+	.limit(2)
+	.collect(Collectors.toList());
+ ```
+
+ ### Ne pas garder les n premiers
+
+```java
+List<Person> listeTrie = liste.stream()
+	.sorted(Comparator.comparing(Person::getAge).reversed())
+	.skip(3) // ne garde pas les 3 premiers
+	.collect(Collectors.toList());
  ```
 
 ----
 
 ### Récupérer le max ou le min (utilisation de GET)
 ```java
-Commande commande = listeCommandes.stream()
- .filter(x -> x.numero.startsWith("201405"))
- .max((x1, x2) -> (int) (x1.montant - x2.montant)).get();
+// création d'un comparateur de personne selon l'âge
+//Comparator<Person> comparator = Comparator.comparing(Person::getAge);
+
+// personne la plus âgée
+Person personnePlusAgee = liste.stream()
+	.max(Comparator.comparing(Person::getAge))
+	.get();
 
 Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
- .max(Comparator.comparing(Integer::valueOf)).get();
+    .max(Comparator.comparing(Integer::valueOf)).get();
 
 String maxChar = Stream.of("H", "T", "D", "I", "J")
- .max(Comparator.comparing(String::valueOf)).get();
-
-// Création d'un comparateur pour avoir le plus jeune employé
-Comparator<Employee> comparator = Comparator.comparing(Employee::getAge);
-Employee minObject = listeEmployee.stream().min(comparator).get();
+    .max(Comparator.comparing(String::valueOf)).get();
 ```
 
 ----
 
-### Calculer des statistiques sur une list de nombres
+### Calculer des statistiques sur une liste de nombres
 ```java
 List<Integer> liste = Arrays.asList(1,2,3);
 IntSummaryStatistics stats = liste.stream().mapToInt(i->i).summaryStatistics();
@@ -103,10 +158,3 @@ int min = stats.getMin();
 int max = stats.getMax();
 long somme = stats.getSum();
 ```
-
-### Compter le nombre d'éléments filtrés
-```java
-long nombreElement = listeCommandes.stream()
- .filter(x -> x.numero.startsWith("201405"))
- .count();
- ```
