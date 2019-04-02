@@ -267,18 +267,96 @@ DoubleStream doubleStream = random.doubles(3); // génère 3 nombres aléatoires
 Lorsqu'on travaille avec des streams de primitifs, on peut les collecter dans des tableaux, mais pas dans des collections. Il faut d'abord "boxer" les éléments du stream
 
 ```java
+// Création d'un IntStream (primitif) et d'un stream d'Integer
 IntStream intStream = IntStream.of(1,2,3,4,5);
 Stream<Integer> streamOfInteger = intStream.boxed();
+Stream<Integer> streamOfInteger = Stream.of(1, 2, 3, 4);
 
-int[] tab = IntStream.of(1,2,3,4,5).toArray(); // [1, 2, 3, 4, 5]
-List<Integer> liste = IntStream.of(1,2,3,4,5).boxed().collect(Collectors.toList()); // [1, 2, 3, 4, 5]
+// Collecte d'un IntStream dans un tableau et dans une liste
+int[] tabInt = IntStream.of(1, 2, 3).toArray();
+List<Integer> listeInteger = IntStream.of(1, 2, 3).boxed().collect(Collectors.toList());
+
+// Collecte d'un Stream d'Integer dans un tableau et dans une liste
+Integer[] tabInteger = Stream.of(1, 2, 3, 4).toArray(Integer[]::new);
+int[] tabInt = Stream.of(1, 2, 3, 4, 5).mapToInt(i -> i).toArray(); // conversion en int des Integer pour les stocker dans un tableau de int
+List<Integer> listeInteger = Stream.of(1, 2, 3, 4, 5).collect(Collectors.toList());
+
+// Création d'un tableau de String à partir d'un stream de String
+String[] tabString = Stream.of("a", "b").toArray(String[]::new);
 ```
-
 
 ----
 
-TODO : 
-- anyMatch, noneMatch, allMatch, findFirst
+### Collecter dans une map
+
+```java
+// Création d'un map à partir d'une liste où on met le hashCode en clé et l'objet en valeur
+// ATTENTION : si la clé de la map n'est pas unique, il y aura une erreur
+Map<Integer, Person> map = liste.stream()
+    .collect(Collectors.toMap(Person::hashCode, Function.identity()));
+    //.collect(Collectors.toMap(p -> p.hashCode(), p -> p));
+
+// si la clé est en double, il faut dire si on souhaite garder l'ancienne ou la nouvelle valeur
+// sinon faire un groupingBy pour avoir une Map<String, List<Person>>
+Map<String, Person> map2 = liste.stream()
+    .sorted(Comparator.comparing(Person::getAge).reversed())
+    .collect(Collectors.toMap(Person::getPrenom, Function.identity(), (oldValue, newValue) -> oldValue));
+
+// parcours d'une map avec entrySet()
+map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
+```
+
+----
+
+### Utilisation de l'index courant
+
+```java
+String[] names = { "Gaëtan", "Florine", "Louis", "Kévin", "Thibaut" };
+
+// récupération de l'indice à partir dun IntStream qui va de 0 à length-1
+// et utilisation d'un mapToObj pour récupérer l'élément courant
+List<String> l1 = IntStream.range(0, names.length)
+    .filter(i -> names[i].length() <= 5)
+    .mapToObj(i -> names[i])
+    .collect(Collectors.toList()); // [Louis, Kévin]
+
+// équivalent à :
+List<String> l2 = Arrays.stream(names)
+    .filter(name -> name.length() <= 5)
+    .collect(Collectors.toList()); // [Louis, Kévin]
+```
+
+----
+
+### Stream d'un fichier
+
+```java
+// lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
+Path path = Paths.get("C:\\file.txt");
+Stream<String> streamOfFile = Files.lines(path);
+```
+
+----
+
+### findFirst, findAny, anyMatch, allMatch, noneMatch
+
+```java
+Optional<Person> person1 = liste.stream().filter(p -> p.getAge() >= 18).findAny();
+Optional<Person> person2 = liste.stream().filter(p -> p.getAge() >= 18).findFirst();
+
+// true si tous les éléments du flux correspondent au prédicat ou si le flux est vide
+boolean test1 = liste.stream().allMatch(p -> p.getAge() >= 18); // false
+// true si n'importe quel élément du flux correspond
+boolean test2 = liste.stream().anyMatch(p -> p.getAge() >= 18); // true
+// true si aucun élément du flux ne correspond ou si le flux est vide
+boolean test3 = liste.stream().noneMatch(p -> p.getAge() >= 18); // false
+boolean test4 = liste.stream().noneMatch(p -> p.getAge() >= 31); // true
+```
+
+----
+
+TODO :
 - reduce
+- parallel stream
 - https://www.geeksforgeeks.org/java-8-stream/
 - https://www.baeldung.com/java-8-streams
