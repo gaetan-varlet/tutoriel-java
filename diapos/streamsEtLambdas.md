@@ -343,10 +343,22 @@ List<String> l2 = Arrays.stream(names)
 
 ### Stream d'un fichier
 
+Lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
+
 ```java
-// lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
-Path path = Paths.get("C:\\file.txt");
-Stream<String> streamOfFile = Files.lines(path);
+/*
+aze
+qsd
+wxc
+*/
+Path path = Paths.get("src/main/resources/test.txt");
+try(Stream<String> streamOfFile = Files.lines(path)){
+    System.out.println(streamOfFile.count()); // 3
+    streamOfFile.forEach(System.out::println); // impression de chaque ligne dans la console
+}
+
+// il est possible de spécifier l'encodage du fichier (par défaut UTF_8)
+Stream<String> streamOfFile = Files.lines(path, StandardCharsets.ISO_8859_1);
 ```
 
 ----
@@ -354,8 +366,10 @@ Stream<String> streamOfFile = Files.lines(path);
 ### findFirst, findAny, anyMatch, allMatch, noneMatch
 
 ```java
-Optional<Person> person1 = liste.stream().filter(p -> p.getAge() >= 18).findAny();
+// renvoie le premier élément du stream, que l'on soit en parallel stream ou non
 Optional<Person> person2 = liste.stream().filter(p -> p.getAge() >= 18).findFirst();
+// renvoie n'importe quel élément du stream. Sans parallel stream, c'est généralement le premier élément mais ce n'est pas garanti
+Optional<Person> person1 = liste.stream().filter(p -> p.getAge() >= 18).findAny();
 
 // true si tous les éléments du flux correspondent au prédicat ou si le flux est vide
 boolean test1 = liste.stream().allMatch(p -> p.getAge() >= 18); // false
@@ -370,6 +384,6 @@ boolean test4 = liste.stream().noneMatch(p -> p.getAge() >= 31); // true
 
 TODO :
 - reduce
-- parallel stream
+- parallelStream
 - https://www.geeksforgeeks.org/java-8-stream/
 - https://www.baeldung.com/java-8-streams
