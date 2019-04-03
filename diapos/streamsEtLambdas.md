@@ -239,6 +239,21 @@ Map<Boolean, List<Person>> map = liste.stream()
 
 ----
 
+### Savoir l'attribut le plus représenté
+
+```java
+String prenomLePlusFrequent = liste.stream()
+    .filter(p -> p.getPrenom() != null)
+    .collect(Collectors.groupingBy(Person::getPrenom, Collectors.counting()))
+    .entrySet()
+    .stream()
+    .max(Comparator.comparingLong(Entry::getValue))
+    .map(Entry::getKey)
+    .get(); // Louis
+```
+
+----
+
 ### Débugger avec peek()
 
 ```java
