@@ -72,7 +72,7 @@ List<Person> listePrenom = liste.stream()
 ### Compter le nombre d'éléments filtrés
 ```java
 long a = liste.stream()
-.filter(p -> p.getPrenom() != null)
+.filter(p -> p.getPrenom() != null) // équivalent à .filter(p -> !(p.getPrenom() == null))
 .count(); // 4 personnes ont un prénom non null
  ```
 
@@ -124,21 +124,27 @@ List<Person> listeTrie = liste.stream()
 
 ----
 
-### Récupérer le max ou le min (utilisation de GET)
+### Récupérer le max ou le min
 ```java
 // création d'un comparateur de personne selon l'âge
 //Comparator<Person> comparator = Comparator.comparing(Person::getAge);
 
 // personne la plus âgée
 Person personnePlusAgee = liste.stream()
-	.max(Comparator.comparing(Person::getAge))
-	.get();
+	.max(Comparator.comparing(Person::getAge)).get();
+
+String maxChar = Stream.of("H", "T", "D", "I", "J")
+    .max(Comparator.comparing(String::valueOf)).get();
 
 Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
     .max(Comparator.comparing(Integer::valueOf)).get();
 
-String maxChar = Stream.of("H", "T", "D", "I", "J")
-    .max(Comparator.comparing(String::valueOf)).get();
+// transformer le stream en IntStream permet évite d'avoir à définir le comparateur
+Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+	.mapToInt(i -> i).max().getAsInt();
+
+Integer sum =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).sum();
+Double mean =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).average().getAsDouble();
 ```
 
 ----
