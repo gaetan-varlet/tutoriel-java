@@ -185,22 +185,50 @@ String maChaine = liste.stream()
 
 ----
 
-### Transformer la liste en map selon une clé
-
-Création d'une `Map<Boolean, List<Person>>` avec le booléen estUnHomme en clé et une liste de personnes en valeur :
+### Collecter dans une map
 
 ```java
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.groupingBy(Person::isEstHomme));
+// Création d'un map à partir d'une liste où on met l'id en clé et l'objet en valeur
+// ATTENTION : si la clé de la map n'est pas unique, il y aura une erreur
+Map<Integer, Person> map = liste.stream()
+	.collect(Collectors.toMap(Person::getId, Function.identity()));
+	//.collect(Collectors.toMap(p -> p.getId(), p -> p));
+
+// si la clé est en double, il faut dire si on souhaite garder l'ancienne ou la nouvelle valeur
+// sinon faire un groupingBy pour avoir une Map<String, List<Person>>
+Map<String, Person> map2 = liste.stream()
+    .sorted(Comparator.comparing(Person::getAge).reversed())
+    .collect(Collectors.toMap(Person::getPrenom, Function.identity(), (oldValue, newValue) -> oldValue));
+
+// parcours d'une map avec entrySet()
+map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
 ```
 
-Création d'une `Map<Boolean, Set<String>>` avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur :
+----
+
+### Transformer une liste en map avec groupingBy et partitioningBy
+
+`groupingBy` permet de créer N groupes de différents types, alors que `partitioningBy` permet de créer 2 groupes (true et false) à partir d'un booléen ou d'un précidat
 
 ```java
+// Création d'une Map<Boolean, List<Person>> avec le booléen estUnHomme en clé et une liste de personnes en valeur
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.groupingBy(Person::isEstHomme));
+
+// Création d'une Map<Boolean, Set<String>> avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur
 Map<Boolean, Set<String>> map = liste.stream()
 	.filter(p -> p.getPrenom() != null)
 	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
 // {false=[Florine], true=[null, Gaëtan, Louis]}
+```
+
+```java
+// Création d'une map avec 2 clés : true et false selon un prédicat
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.partitioningBy(p -> p.getAge()>18));
+
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.partitioningBy(Person::isEstHomme));
 ```
 
 ----
@@ -283,27 +311,6 @@ List<Integer> listeInteger = Stream.of(1, 2, 3, 4, 5).collect(Collectors.toList(
 
 // Création d'un tableau de String à partir d'un stream de String
 String[] tabString = Stream.of("a", "b").toArray(String[]::new);
-```
-
-----
-
-### Collecter dans une map
-
-```java
-// Création d'un map à partir d'une liste où on met le hashCode en clé et l'objet en valeur
-// ATTENTION : si la clé de la map n'est pas unique, il y aura une erreur
-Map<Integer, Person> map = liste.stream()
-    .collect(Collectors.toMap(Person::hashCode, Function.identity()));
-    //.collect(Collectors.toMap(p -> p.hashCode(), p -> p));
-
-// si la clé est en double, il faut dire si on souhaite garder l'ancienne ou la nouvelle valeur
-// sinon faire un groupingBy pour avoir une Map<String, List<Person>>
-Map<String, Person> map2 = liste.stream()
-    .sorted(Comparator.comparing(Person::getAge).reversed())
-    .collect(Collectors.toMap(Person::getPrenom, Function.identity(), (oldValue, newValue) -> oldValue));
-
-// parcours d'une map avec entrySet()
-map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
 ```
 
 ----
