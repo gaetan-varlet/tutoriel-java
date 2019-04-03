@@ -149,6 +149,15 @@ Double mean =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).average().g
 
 ----
 
+### Faire la moyenne et la somme
+
+```java
+// ces méthodes fonctionnent sur les types primitifs et sur les classes wrappers
+// il n'y a pas besoin de faire une opération map avant l'opération de collecte
+Double ageMoyen = liste.stream().collect(Collectors.averagingInt(Person::getAge));
+Integer sommeAge = liste.stream().collect(Collectors.summingInt(Person::getAge));
+```
+
 ### Calculer des statistiques sur une liste de nombres
 ```java
 List<Integer> liste = Arrays.asList(1,2,3);
@@ -397,8 +406,50 @@ boolean test4 = liste.stream().noneMatch(p -> p.getAge() >= 31); // true
 
 ----
 
-TODO :
-- reduce
-- parallelStream
-- https://www.geeksforgeeks.org/java-8-stream/
-- https://www.baeldung.com/java-8-streams
+### La méthode reduce
+
+```java
+// on précise l'accumulateur dans reduce qui est une fonction qui spécifie la logique d'agrégation 
+OptionalInt reduced = IntStream.range(1, 4).reduce((a, b) -> a + b); // 6 = 1 + 2 + 3
+// équivalent
+OptionalInt reduced1 = IntStream.range(1, 4).reduce(Integer::sum); // 6 = 1 + 2 + 3
+// ajout de l'identity qui est une valeur initiale ou par défaut ajouté à l'opération
+// on récupère donc un int au lieu d'un optional car on est sûr qu'il y a une valeur
+int reduced2 =IntStream.range(1, 4).reduce(10, (a, b) -> a + b); // 16 = 10 + 1 + 2 + 3
+```
+
+----
+
+### Obtenir une collection non modifiable
+
+```java
+Set<Person> unmodifiableSet = liste.stream()
+	.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+```
+
+### Choisir l'implémentation de notre collection
+
+```java
+// exemple où l'on force à utiliser une LinkedHashSet
+Set<Person> unmodifiableSet = liste.stream()
+	.collect(Collectors.toCollection(LinkedHashSet::new));
+```
+
+----
+
+### Streams vs Parallel Streams
+
+- les opérations peuvent être **stateless** (traitements sur les éléments un à un sans prendre en compte les autres éléments) ou **stateful**
+- les opérations **stateful** ont besoin de connaître l'ensemble du stream (par exemple, *distinct* ou *sorted*), il ne faut donc pas paralléliser ses streams
+
+```java
+// création d'un parallel stream à partir d'une liste
+liste.parallelStream() // au lieu de liste.stream()
+
+// si on part directement d'un stream, il faut utiliser la méthode parallel()
+Stream<Person> stream = Stream.of(p1, p2);
+stream.parallel()...
+
+// pour savoir si le stream est parallel (true, false)
+stream.isParallel()
+```
