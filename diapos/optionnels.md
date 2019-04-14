@@ -45,7 +45,8 @@ Optional<String> opt = Optional.ofNullable(null); // Optional.empty
 
 ## Vérifier la présence d'une valeur
 
-- méthode `isPresent()` retourne un `boolean`
+- méthode `isPresent()` retourne un `boolean` :
+
 ```java
 Optional.ofNullable("Louis").isPresent() // true
 Optional.ofNullable("").isPresent() // true
@@ -87,6 +88,7 @@ optional.ifPresentOrElse(
 ## Valeurs par défaut
 
 - la méthode `orElse(T t)` retourne la valeur de l'optionnel s'il est présent, la valeur spécifiée dans le orElse sinon :
+
 ```java
 String res = Optional.ofNullable("Louis").orElse("nom par défaut"); // Louis
 Optional<String> optional = Optional.ofNullable(null);
@@ -94,6 +96,7 @@ res = optional.orElse("nom par défaut"); // nom par défaut
 ```
 
 - la méthode `orElseGet(Supplier<T>)` (fonction qui ne prend pas d'argument et retourne un T) fonctionne de la même manière que `orElse` mais de manière **lazy**, c'est-à-dire que la méthode par défaut n'est pas invoquée tant que la valeur est présente, alors qu'avec `orElse`, la méthode par défaut est crée et ne sert à rien :
+
 ```java
 Optional<String> optional = Optional.ofNullable(null);
 String res = optional.orElseGet(() -> "nom par défaut"); // nom par défaut
