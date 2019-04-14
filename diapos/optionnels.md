@@ -4,6 +4,7 @@
 
 ## Définition et intérêt
 
+- existe depuis Java 8
 - c'est un conteneur d'objet T : `Optional<T>`
 - utilisation de valeurs optionnelles au lieu de valeurs `null`
 - contient soit une instance de T, soit un optionnel vide
