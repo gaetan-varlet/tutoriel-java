@@ -7,7 +7,7 @@
 - c'est un conteneur d'objet T : `Optional<T>`
 - utilisation de valeurs optionnelles au lieu de valeurs `null`
 - contient soit une instance de T, soit un optionnel vide
-- l'idée est de protéger son code contre les `NullPointerException` lorsqu'une valeur peut être optionnelle
+- l'idée est de protéger son code contre les `NullPointerException` lorsqu'une valeur peut être optionnelle sans avoir à vérifier si la variable est `null`
 
 ----
 
