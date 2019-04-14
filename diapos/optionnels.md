@@ -14,24 +14,28 @@
 ## Création d'un optionnel
 
 - Optionnel null :
+
 ```java
 Optional<String> optional = null; // NE DEVRAIT PAS ARRIVER
 optional.isPresent(); // NullPointerException
 ```
 
 - Optionnel vide :
+
 ```java
 Optional<String> optional = Optional.empty(); // Optional.empty
 ```
 
-- Optionnel non vide (`NullPointerException` si la valeur est null)
+- Optionnel non vide (`NullPointerException` si la valeur est null) :
+
 ```java
 Optional<String> opt = Optional.of("Louis"); // Optional[Louis]
 opt = Optional.of(""); // Optional[]
 opt = Optional.of(null); // NullPointerException
 ```
 
-- Optionnel vide ou contenant une valeur
+- Optionnel vide ou contenant une valeur :
+
 ```java
 Optional<String> opt = Optional.ofNullable("Louis"); // Optional[Louis]
 Optional<String> opt = Optional.ofNullable(null); // Optional.empty
