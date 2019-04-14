@@ -75,6 +75,7 @@ optional.ifPresent(name -> System.out.println(name.length()));
 ```
 
 - à partir de Java 9, il existe une méthode `ifPresentOrElse()` qui correspond au if, else :
+
 ```java
 Optional<String> optional = Optional.ofNullable("Louis");
 optional.ifPresentOrElse(
@@ -106,12 +107,9 @@ public String getDefaultValue(){
     return "Default Value";
 }
 System.out.println("orElse :");
-Optional.ofNullable("Louis").orElse(getDefaultValue());
+Optional.ofNullable("Louis").orElse(getDefaultValue()); // "orElse :" et "passage dans la méthode par défaut"
 System.out.println("orElseGet :");
-Optional.ofNullable("Louis").orElseGet(() -> getDefaultValue());
-// orElse :
-// passage dans la méthode par défaut
-// orElseGet :
+Optional.ofNullable("Louis").orElseGet(() -> getDefaultValue()); // uniquement "orElseGet :"
 ```
 
 ----
@@ -133,14 +131,17 @@ public Optional<Customer> findCustomer(String customerId) {
 ## Lever une exception si l'optionnel est vide
 
 - avec la méthode `orElseThrow(Supplier<Exception>)` :
+
 ```java
 String res = Optional.ofNullable(null).orElseThrow(IllegalArgumentException::new);
 ```
 
 - avec la méthode `get()`, qui retourne la valeur si l'optionnel s'il est présent, une `NoSuchElementException` sinon (RuntimeException) :
+
 ```java
 String res = Optional.ofNullable(null).get(); // va lever une NoSuchElementException
 ```
+
 Privilégier l'utilisation des exceptions personnalisées avec `orElseThrow()` car l'objectif des optionnels est de gérer proprement le cas des valeurs null ce que ne fait pas `get()` qui sera probablement *deprecated* dans une future version
 
 ----
@@ -168,13 +169,21 @@ La méthode `map()` a simplement permis de transformer l'objet personne en entie
 ## Transfomer une valeur avec map()
 
 ```java
+// avant Java 8
 public static Integer sizeOfList(List<Person> liste){
-if(liste==null) return null;
+    if(liste==null) return null;
     return liste.size();
 }
 
+// à l'identique avec les optionnels
 public static Integer sizeOfList2(List<Person> liste){
     return Optional.ofNullable(liste).map(List::size).orElse(null);
+}
+
+// dans la philosophie des optionnels
+// retourne un optionnel d'integer qui correspond à la taille de liste, un optionnel vide si la liste est null
+public static Optional<Integer> sizeOfList3(List<Person> liste){
+    return Optional.ofNullable(liste).map(List::size);
 }
 ```
 
@@ -183,6 +192,7 @@ public static Integer sizeOfList2(List<Person> liste){
 ## Transformer une valeur avec flatMap()
 
 - lorsque l'on mappe un attribut d'un objet qui est un optionnel tout comme l'objet, on se retrouve avec un optionnel d'optionnel. Pour éviter cela, on peut utiliser `flatMap()` :
+
 ```java
 public class Person{
     private String prenom;
@@ -201,6 +211,7 @@ Optional<String> optionalOfPrenom = optionalPerson.flatMap(Person::getPrenom);
 ## Utiliser les stream sur les optionnels
 
 - depuis Java 9, il est possible de transformer un optionnel en stream :
+
 ```java
 // exemple avec une liste d'identifiants de personnes pour lesquels on souhaite récupérer un stream de Person
 
