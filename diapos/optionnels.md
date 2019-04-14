@@ -11,6 +11,30 @@
 
 ----
 
+## Quand utiliser les optionnels ?
+
+Attention à ne pas abuser des optionnels ! D’après Brian Goetz, créateur de cette classe, les optionnels sont à utiliser avec les **retours de méthodes** [(source)](http://stackoverflow.com/questions/26327957/should-java-8-getters-return-optional-type/26328555#26328555) :
+
+- si la méthode retourne un container (liste, tableau, map...), alors il ne faut pas utiliser un optionel mais un container vide
+- ne pas utiliser les optionnels pour les attributs de classe
+- ne pas utiliser les optionnels pour les paramètres de méthode
+
+```java
+public class Person{
+    private String prenom;
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public Optional<String> getPrenom() {
+        return Optional.ofNullable(this.prenom);
+    }
+}
+```
+
+----
+
 ## Création d'un optionnel
 
 - Optionnel null :
@@ -232,29 +256,5 @@ public Stream<Person> findPersons(Collection<String> personIds) {
 		.map(this::findPerson)
         .flatMap(Optional::stream)
         // ou encore : personIds.stream().flatMap(id -> findPerson(id).stream());
-}
-```
-
-----
-
-## Quand utiliser les optionnels ?
-
-Attention à ne pas abuser des optionnels ! D’après Brian Goetz, créateur de cette classe [source](http://stackoverflow.com/questions/26327957/should-java-8-getters-return-optional-type/26328555#26328555), les optionnels sont à utiliser avec les **retours de méthodes**
-
-- si la méthode retourne un container (liste, tableau, map...), alors il ne faut pas utiliser un optionel mais un container vide
-- ne pas utiliser les optionnels pour les attributs de classe
-- ne pas utiliser les optionnels pour les paramètres de méthode
-
-```java
-public class Person{
-    private String prenom;
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    public Optional<String> getPrenom() {
-        return Optional.ofNullable(this.prenom);
-    }
 }
 ```
