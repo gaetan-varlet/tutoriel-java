@@ -120,7 +120,7 @@ Optional<String> optional = Optional.ofNullable(null);
 res = optional.orElse("nom par défaut"); // nom par défaut
 ```
 
-- la méthode `orElseGet(Supplier<T>)` (fonction qui ne prend pas d'argument et retourne un T) fonctionne de la même manière que `orElse` mais de manière **lazy**, c'est-à-dire que la méthode par défaut n'est pas invoquée tant que la valeur est présente, alors qu'avec `orElse`, la méthode par défaut est crée et ne sert à rien :
+- la méthode `orElseGet(Supplier<T>)` (fonction qui ne prend pas d'argument et retourne un T) fonctionne de la même manière que `orElse` mais de manière **lazy**, c'est-à-dire que la méthode par défaut n'est pas invoquée tant que la valeur est présente, alors qu'avec `orElse`, la méthode par défaut est créée et ne sert à rien :
 
 ```java
 Optional<String> optional = Optional.ofNullable(null);
@@ -160,7 +160,7 @@ public Optional<Customer> findCustomer(String customerId) {
 String res = Optional.ofNullable(null).orElseThrow(IllegalArgumentException::new);
 ```
 
-- avec la méthode `get()`, qui retourne la valeur si l'optionnel s'il est présent, une `NoSuchElementException` sinon (RuntimeException) :
+- avec la méthode `get()`, qui retourne la valeur de l'optionnel s'il est présent, une `NoSuchElementException` sinon (RuntimeException) :
 
 ```java
 String res = Optional.ofNullable(null).get(); // va lever une NoSuchElementException
@@ -186,11 +186,13 @@ public static boolean isTeenager2(Person person){
 }
 ```
 
-La méthode `map()` a simplement permis de transformer l'objet personne en entier en ne concervant que l'attribut âge de la personne.
+La méthode `map()` a simplement permis de transformer l'objet personne en entier en ne conservant que l'attribut âge de la personne.
 
 ----
 
 ## Transfomer une valeur avec map()
+
+- création d'une méthode qui retourne la taille d'une liste, où null si la liste est null :
 
 ```java
 // avant Java 8
@@ -208,6 +210,11 @@ public static Integer sizeOfList2(List<Person> liste){
 // retourne un optionnel d'integer qui correspond à la taille de liste, un optionnel vide si la liste est null
 public static Optional<Integer> sizeOfList3(List<Person> liste){
     return Optional.ofNullable(liste).map(List::size);
+}
+
+// alternative si on considère qu'une liste ne devrait pas être nulle
+public static Integer sizeOfList4(List<Person> liste){
+    return Optional.ofNullable(liste).map(List::size).orElseThrow(IllegalArgumentException::new);
 }
 ```
 
