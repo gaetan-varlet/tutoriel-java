@@ -191,7 +191,7 @@ La méthode `map()` a simplement permis de transformer l'objet personne en entie
 
 ----
 
-## Transfomer une valeur avec map()
+## Transformer une valeur avec map()
 
 - création d'une méthode qui retourne la taille d'une liste, où null si la liste est null :
 
