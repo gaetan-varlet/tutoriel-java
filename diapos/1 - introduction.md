@@ -13,17 +13,19 @@
 ----
 
 ## Compilation et exécution en ligne de commande
+
 - avant Java 11 :
     - `javac <nomDeFichier.java>` compile le code source et crée le fichier **nomDeFichier.class**
-     - `java <nomFichierClassSansExtension>` exécute le byte code et affiche le résultat du programme
+    - `java <nomFichierClassSansExtension>` exécute le byte code et affiche le résultat du programme
 - à partir de Java 11 :
     - compilation à la volée dans la mémoire et exécution dans une seule commande
     - `java <nomDeFichier.java>`
-- il est possible de créer un jar avec la commande `jar ...` puis de l'exécuter avec la commande `java -jar monApp.jar`
+- il est possible de créer un jar avec la commande `jar...` puis de l'exécuter avec la commande `java -jar monApp.jar`
 
 ----
 
 ## Le classpath
+
 - à l'exécution, la JVM recherche les classes dans :
     - les classes de la plate-forme Java (stockées dans le fichier rt.jar)
     - les classes d'extension de la plate-forme Java
