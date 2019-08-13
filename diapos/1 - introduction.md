@@ -33,7 +33,7 @@
     - les classes d'extension de la plate-forme Java
     - le classpath : c'est un ensemble de chemins (absolus ou relatifs) vers des répertoires ou des fichiers `.jar`
         - le répertoire qui contient les packages (pour les ficiers `.class`)
-        - le chemin vers kes fichiers `.zip` ou `.jar`
+        - le chemin vers les fichiers `.zip` ou `.jar`
 
 - chaque élément est séparé par un caractère (`;` sous Windows, `:` sous Unix). Exemple de classpath avec 3 éléments : `.;C:\java\tests\bin;C:\java\lib\log4j-1.2.11.jar`
     - par défaut, si le classpath n'est pas défini, il est composé uniquement du répertoire courant `.`
