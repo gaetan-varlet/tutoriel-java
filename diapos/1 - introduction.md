@@ -14,27 +14,27 @@
 
 ## Compilation et exécution en ligne de commande
 
-avant Java 11 :
-- `javac <nomDeFichier.java>` compile le code source et crée le fichier **nomDeFichier.class**
-- `java <nomFichierClassSansExtension>` exécute le byte code et affiche le résultat du programme
+- avant Java 11 :
+    - `javac <nomDeFichier.java>` compile le code source et crée le fichier **nomDeFichier.class**
+    - `java <nomFichierClassSansExtension>` exécute le byte code et affiche le résultat du programme
 
-à partir de Java 11 :
-- compilation à la volée dans la mémoire et exécution dans une seule commande
-- `java <nomDeFichier.java>`
+- à partir de Java 11 :
+    - compilation à la volée dans la mémoire et exécution dans une seule commande
+    - `java <nomDeFichier.java>`
 
-Il est possible de créer un jar avec la commande `jar ...` puis de l'exécuter avec la commande `java -jar monApp.jar`
+- il est possible de créer un jar avec la commande `jar ...` puis de l'exécuter avec la commande `java -jar monApp.jar`
 
 ----
 
 ## Le classpath
 
-A l'exécution, la JVM recherche les classes dans :
-- les classes de la plate-forme Java (stockées dans le fichier rt.jar)
-- les classes d'extension de la plate-forme Java
-- le classpath : c'est un ensemble de chemins (absolus ou relatifs) vers des répertoires ou des fichiers `.jar`
-    - le répertoire qui contient les packages (pour les ficiers `.class`)
-    - le chemin vers kes fichiers `.zip` ou `.jar`
+- à l'exécution, la JVM recherche les classes dans :
+    - les classes de la plate-forme Java (stockées dans le fichier rt.jar)
+    - les classes d'extension de la plate-forme Java
+    - le classpath : c'est un ensemble de chemins (absolus ou relatifs) vers des répertoires ou des fichiers `.jar`
+        - le répertoire qui contient les packages (pour les ficiers `.class`)
+        - le chemin vers kes fichiers `.zip` ou `.jar`
 
-Chaque élément est séparé par un caractère (`;` sous Windows, `:` sous Unix). Exemple de classpath avec 3 éléments : `.;C:\java\tests\bin;C:\java\lib\log4j-1.2.11.jar`
-- par défaut, si le classpath n'est pas défini, il est composé uniquement du répertoire courant `.`
-- on peut le rédéfinir avec l'option `-classpath` ou `-cp` ou la variable d'environnement `CLASSPATH`. Exemple : `java -cp . MaClasse.java`
+- chaque élément est séparé par un caractère (`;` sous Windows, `:` sous Unix). Exemple de classpath avec 3 éléments : `.;C:\java\tests\bin;C:\java\lib\log4j-1.2.11.jar`
+    - par défaut, si le classpath n'est pas défini, il est composé uniquement du répertoire courant `.`
+    - on peut le rédéfinir avec l'option `-classpath` ou `-cp` ou la variable d'environnement `CLASSPATH`. Exemple : `java -cp . MaClasse.java`
