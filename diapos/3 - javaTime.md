@@ -1,6 +1,17 @@
-Création d'une nouvelle API `java.time` avec 2 conceptions du temps :
+# L'API Java Time
+
+----
+
+## Principes
+
+Création d'une nouvelle API `java.time` en remplacement des classes historiques `java.util.Date` et `java.util.Calendar`.  
+Cette nouvelle API a 2 conceptions du temps :
 - temps machine (nombre de seconde depuis le 1er janvier 1970) ou timestamp
 - temps humain (jour, mois, année...)
+
+----
+
+## Le temps machine
 
 ```java
 // Exemple de temps machine avec la classe Instant
@@ -13,6 +24,10 @@ System.out.println(debut.isAfter(now)); // false
 System.out.println(debut.getEpochSecond()); // 0
 System.out.println(now.getEpochSecond()); // 1 576 157 585 (nombre de secondes depuis le 1er janvier 1970)
 ```
+
+----
+
+## Le temps humain (1)
 
 ```java
 // Exemple de temps humain avec LocalDate, LocalDateTime et LocalTime
@@ -38,7 +53,13 @@ Period period = Period.between(dateNaissanceGaetan, dateNaissanceFlorine); // re
 long nbJours = ChronoUnit.DAYS.between(dateNaissanceGaetan, dateNaissanceFlorine); // retourne en jours
 System.out.println(period); // P1Y11M7D
 System.out.println(String.valueOf(nbJours)); // 706
+```
 
+----
+
+## Le temps humain (2)
+
+```java
 // Conversions
 // Convertir une java.util.Date en java.time.LocaDate
 java.text.DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -61,7 +82,13 @@ LocalDate premierJourMoisSuivant = maNaissance.with(TemporalAdjusters.firstDayOf
 System.out.println(premierJourMoisSuivant); // 1988-05-01
 LocalDate premierMardiDuMoisSuivant = premierJourMoisSuivant.with(TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY));
 System.out.println(premierMardiDuMoisSuivant);
+```
 
+----
+
+## Le temps humain (3)
+
+```java
 // Fuseaux horaires
 System.out.println(ZoneId.systemDefault()); // Europe/Paris
 System.out.println(ZoneId.of("Europe/Paris").getRules()); // ZoneRules[currentStandardOffset=+01:00]
