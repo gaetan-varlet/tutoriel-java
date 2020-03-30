@@ -1,8 +1,13 @@
 # L'API Collection
 
-permet de stocker des données en mémoire
-
 ----
+
+## Intérêt des tableaux
+
+Les collections, comme les tableaux, permettent de stocker des données en mémoire. Les 3 grandes sources de récupération de données sont :
+- des bases de données (en utilisant l'API JDBC du JDK)
+- des services Web (en utilisant le client HTTP du JDK)
+- des fichiers sur le disque (en utilisant Java I/O)
 
 ## Limitation des tableaux
 
