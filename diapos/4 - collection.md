@@ -122,7 +122,7 @@ Iterator<T> it2 = ll.iteror();
 - possibilité également d'utiliser une `ListIterator` avec la méthode `listIterator()`. Cet objet a des méthodes en plus qu'`Iterator` :
     - `hasPrevious()` et `previous()` ce qui permet d'itérer dans le sens inverse.
     - et 2 autres méthodes qui permettent d'obtenir les index suivant et précédent : `nextIndex()` et `previousIndex`
-- avec l'ArrayList, l'accès à un élément via son index est très rapide, en revanche ajouter un élément au mileu de la liste est lourd car il faut décaler tous les éléments.
+- avec l'ArrayList, l'accès à un élément via son index est très rapide, en revanche ajouter un élément au mileu de la liste est lourd car il faut décaler tous les éléments
 - avec la LinkedList, l'accès à un élément est long, en revanche l'ajout d'un élément au milieu de la liste est rapide car il s'agit d'un décalage de pointeur
 
 ----
@@ -177,7 +177,7 @@ List<String> list2 = new ArrayList(list1);
 
 ----
 
-## Les tables de hachage
+## Les tables de hachage (1)
 
 - c'est une table à deux colonnes avec une clé et une valeur
 - les clés doivent être uniques, les valeurs peuvent être présentes plusieurs fois
@@ -199,6 +199,12 @@ List<String> list2 = new ArrayList(list1);
     - retirer
         - `map.remove(K)` supprime la paire clé-valeur correspondant à la clé K
         - `map.remove(K, V)` supprime la paire clé-valeur correspondant à la clé K uniquement si la valeur associée vaut V
+
+----
+
+## Les tables de hachage (2)
+
+- les principales méthodes (suite) :
     - tester
         - `map.containsKey(K)` retourne un booléen si la clé K est présente dans la map
         - `map.containsValue(V)` retourne un booléen si la valeur V est présente dans la map
