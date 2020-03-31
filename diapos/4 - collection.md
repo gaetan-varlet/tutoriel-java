@@ -211,8 +211,8 @@ List<String> list2 = new ArrayList(list1);
     - cardinal : `map.size()`
     - effacer le contenu de la map : `map.clear()`
     - itérer :
-        - itération sur les clés : `Set<V> set = map.keySet()`
-        - itération sur les valeurs : `Set<V> set = map.values()`
+        - itération sur les clés : `Set<V> keys = map.keySet()`
+        - itération sur les valeurs : `Collection<V> values = map.values()`
         - itération sur les paires clé-valeur : `Set<Map.Entry<K,V>> entries = map.entrySet()`, qui est une vue qui permet de mettre à jour la map (mais pas possibilité d'ajout via la vue). L'objet `Map.Entry` a plusieurs méthodes :
             - `entry.getKey() -> K`
             - `entry.getValue() -> V`
