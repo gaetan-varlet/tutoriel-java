@@ -21,7 +21,7 @@ Les collections vont gérer ces problèmes pour nous
 
 ## Collection
 
-une `Collection` est une interface `Collection<T>`. C'est un ensemble dans lequel on peut :
+Les *Collection* Java sont des implémentations de l'interface `Collection<T>`. C'est un ensemble dans lequel on peut :
 - `add(T)` ajouter un élément, `addAll(Collection<T>)` fait l'union des 2 collections, `retainAll(Collection<T>)` fait l'intersection entre les 2 collections
 - `remove(T)` retirer un élément, `removeAll(Collection<T>)`
 - `contains(T)` tester si un élément est présent, `containsAll(Collection<T>)` tester si tous les les éléments de la collection en paramètre sont présents
@@ -110,7 +110,7 @@ Iterator<T> it2 = ll.iteror();
 ## L'interface List
 
 - l'interface `List` étend l'interface `Collection`
-- exemple : `List<T> list = new ArrayList<>();`
+- exemple : `List<T> list = new ArrayList<>();` et `List<T> list = new LinkedList<>();`
 - les éléments d'une liste sont ordonnées, avec un index (entre 0 et n-1)
 - nouvelles méthodes par rapport à `Collection` :
     - `get(i)` renvoie l'élément à l'index i
@@ -122,6 +122,8 @@ Iterator<T> it2 = ll.iteror();
 - possibilité également d'utiliser une `ListIterator` avec la méthode `listIterator()`. Cet objet a des méthodes en plus qu'`Iterator` :
     - `hasPrevious()` et `previous()` ce qui permet d'itérer dans le sens inverse.
     - et 2 autres méthodes qui permettent d'obtenir les index suivant et précédent : `nextIndex()` et `previousIndex`
+- avec l'ArrayList, l'accès à un élément via son index est très rapide, en revanche ajouter un élément au mileu de la liste est lourd car il faut décaler tous les éléments.
+- avec la LinkedList, l'accès à un élément est long, en revanche l'ajout d'un élément au milieu de la liste est rapide car il s'agit d'un décalage de pointeur
 
 ----
 
@@ -178,12 +180,84 @@ List<String> list2 = new ArrayList(list1);
 ## Les tables de hachage
 
 - c'est une table à deux colonnes avec une clé et une valeur
-- les clés doivent être unique, les valeurs peuvent être présentes plusieurs fois
+- les clés doivent être uniques, les valeurs peuvent être présentes plusieurs fois
+- création d'une Map avec l'implémentation de référence : `Map<T,V> map = new HashMap<>();`
 - les principales méthodes :
-    - ajouter
-    - retirer
+    - récupérer une valeur en précisant la clé :
+        - `map.get(T) -> V`,
+        - retourne `null` si la clé est absente
+        - il est possible de stocker une valeur nulle pour une clé, ce qui fait qu'on ne sait pas lorsqu'on récupère null si la clé est absente de la map ou si la valeur associée à cette clé est nulle
+        - `ma.getOrDefault(T, "valeur par défaut")` retourne V si la clé T est présente, la valeur par défaut sinon
+    - ajouter une paire clé-valeur :
+        - `map.put(K, V)` ajoute la clé K et la valeur V à la map
+        - si la clé est déjà présente, la valeur V va remplacer l'ancienne valeur
+        -  `map.putIfAbsent(K, V);` teste si la clé est déjà présente et ajoute la paire clé-valeur seulement si la clé n'est pas présente ou si la valeur associée est `null`
+        - `map.putAll(otherMap)` ajoute le contenu d'une autre map dans map
     - remplacer
-    - cardinal
-    - effacer
-    - itérer
+        - `map.replace(K, V)` associe la valeur V à la clé K uniquement si la clé est déjà présente dans la map
+        - `map.replace(K, V1, V2)` associe la valeur V2 à la clé K uniquement si la clé est déjà présente dans la map associée à la valeur V1
+    - retirer
+        - `map.remove(K)` supprime la paire clé-valeur correspondant à la clé K
+        - `map.remove(K, V)` supprime la paire clé-valeur correspondant à la clé K uniquement si la valeur associée vaut V
     - tester
+        - `map.containsKey(K)` retourne un booléen si la clé K est présente dans la map
+        - `map.containsValue(V)` retourne un booléen si la valeur V est présente dans la map
+    - cardinal : `map.size()`
+    - effacer le contenu de la map : `map.clear()`
+    - itérer :
+        - itération sur les clés : `Set<V> set = map.keySet()`
+        - itération sur les valeurs : `Set<V> set = map.values()`
+        - itération sur les paires clé-valeur : `Set<Map.Entry<K,V>> entries = map.entrySet()`, qui est une vue qui permet de mettre à jour la map (mais pas possibilité d'ajout via la vue). L'objet `Map.Entry` a plusieurs méthodes :
+            - `entry.getKey() -> K`
+            - `entry.getValue() -> V`
+            - `entry.setValue(V)` permet de mettre à jour la valeur associée à la clé K
+
+----
+
+## SortedMap et NavigableMap
+
+- l'interface `NavigableMap` étend l'interface `SortedMap` qui elle-même étend l'interface `Map`
+- l'implémentation par défaut de ces 2 interface est une TreeMap : `NavigableMap<T,V> map = new TreeMap<>();`
+- basé sur l'algorithme `Red–black tree`
+- les clés sont triées : même principe que pour les *SortedSet* avec *Comparable* et *Comparator*
+- les principales méthodes :
+    - `map.firstKey()`
+    - `map.lastKey()`
+    - `map.subMap(fromKey, toKey)` qui permet d'extraire une sous-map de la map principale
+
+----
+
+## Les buckets dans une HashMap
+
+- mécanisme optimisé qui fait qu'aller chercher une paire clé-valeur prend toujours le même temps quelque soit la taille de la map
+
+----
+
+## Créer des map pré-remplies
+
+```java
+Map<K,V> copyOfMap = new HashMap<>(otherMap);
+// création de Map immutables
+Map<K,V> map1 = Map.of(K1,V1, K2,V2, K3,V3);
+Map<K,V> map2 = Map.ofEntries(Map.entry(K1,V1), Map.entry(K2,V2), Map.entry(K3,V3));
+```
+
+----
+
+## Classes obsolètes de l'API
+
+Il ne faut plus utiliser les classes `Vector` et `Stack`, et les classes `Hashtable` et `Dictionnary`.  
+Tout ce qu'elles font est fait de façon plus performante avec `ArrayList` et `HashMap`.
+
+----
+
+## Arrays et Collections
+
+classes *Factory* avec plein de méthodes statiques qui permettent de faire plein de traitements comme du tri.
+
+----
+
+## Complexité algorithmique des collections
+
+- https://www.baeldung.com/java-collections-complexity
+- https://gist.github.com/psayre23/c30a821239f4818b0709
