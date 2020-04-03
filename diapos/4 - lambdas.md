@@ -248,3 +248,19 @@ public static void main(String[] args) {
     executeConsumer(c1);
 }
 ```
+
+----
+
+## Réaliser le ET logique de deux prédicats
+
+possibilité de combiner des précidats avec les méthodes `and(Predicate<T>)`,  `or(Predicate<T>)`, `negate()`...
+
+```java
+Predicate<String> isNotNull = s -> s != null;
+Predicate<String> isNotEmpty = s -> !s.isEmpty();
+Predicate<String> etLogique = isNotNull.and(isNotEmpty);
+
+System.out.println(etLogique.test(null)); // false
+System.out.println(etLogique.test("")); // false
+System.out.println(etLogique.test("toto")); // true
+```
