@@ -312,7 +312,6 @@ Consumer<String> c2 = System.out::println;
 
 il existe 4 types de références de méthodes :
 - **BoundInstance** : invocation d'uné méthode sur une instance d'un objet (exemple ci-dessus)
-- **Static** : appel statique. Exemple : `d -> Math.sqrt(d);` => `Math::sqrt`
-- **UnboundInstance** : invocation de la méthode sur le premier paramètre, le reste des paramètres est passé en paramètre de la méthode.
-    - `(s1, s2) -> s1.indexOf(s2);` => `String::indexOf;`
+- **Static** : appel statique. Exemple : `d -> Math.sqrt(d);` devient `Math::sqrt`
+- **UnboundInstance** : invocation de la méthode sur le premier paramètre, le reste des paramètres est passé en paramètre de la méthode. Exemple : `(s1, s2) -> s1.indexOf(s2);` devient `String::indexOf;`
 - **Constructor** : `name -> new User(name);`, `() -> new User();` et `(name, age) -> new User(name, age);` peuvent toutes être écrit avec la référence de méthode `User::new;`
