@@ -298,3 +298,21 @@ System.out.println("Louis et Louis Petit : " + compCombine2.compare(louis, louis
 ----
 
 ## Les références de méthodes
+
+C'est une autre façon d'écrire une lamba expression
+- meilleure lisibilité
+- très léger gain de performance
+
+```java
+// lambda expression
+Consumer<String> c1 = s -> System.out.println("hello " + s);
+// référence de méthode
+Consumer<String> c2 = System.out::println;
+```
+
+il existe 4 types de références de méthodes :
+- **BoundInstance** : invocation d'uné méthode sur une instance d'un objet (exemple ci-dessus)
+- **Static** : appel statique. Exemple : `d -> Math.sqrt(d);` => `Math::sqrt`
+- **UnboundInstance** : invocation de la méthode sur le premier paramètre, le reste des paramètres est passé en paramètre de la méthode.
+    - `(s1, s2) -> s1.indexOf(s2);` => `String::indexOf;`
+- **Constructor** : `name -> new User(name);`, `() -> new User();` et `(name, age) -> new User(name, age);` peuvent toutes être écrit avec la référence de méthode `User::new;`
