@@ -5,7 +5,8 @@
 ## Interface fonctionnelle
 
 - interface qui ne possède qu'une seule méthode abstraite
-- il peut donc y avoir d'autres méthodes qui ne sont pas abstraites, qui ont donc une implémentation par défaut
+- elle est annotée `@FunctionalInterface` (pas obligatoire, pour la rétrocompatibilité). Si l'interface n'est pas fonctionnelle, cela crée une erreur de compilation
+- il peut donc y avoir d'autres méthodes qui ne sont pas abstraites, qui ont donc une implémentation par défaut. Autant de méthodes par défaut et de méthodes statiques que l'on veut
 
 ## Lambda expressions
 
@@ -264,3 +265,36 @@ System.out.println(etLogique.test(null)); // false
 System.out.println(etLogique.test("")); // false
 System.out.println(etLogique.test("toto")); // true
 ```
+
+----
+
+## Création de comparateurs
+
+```java
+User gaetan = new User("Gaëtan", 32);
+User florine = new User("Florine", 30);
+User louis = new User("Louis", 2);
+User louisPetit = new User("Louis", 1);
+
+
+// création d'un comparateur de User basé sur le nom
+Comparator<User> comp = (u1, u2) -> u1.getName().compareTo(u2.getName());
+// création du même comparateur en utilisant la méthode statique comparing qui prend une function en paramètre
+Comparator<User> comp2 = Comparator.comparing(u -> u.getName());
+// création d'un comparateur de User basé sur l'âge
+Comparator<User> comp3 = Comparator.comparing(u -> u.getAge());
+// création d'un comparateur de User sur le nom puis sur l'âge en les combinant
+Comparator<User> compCombine = comp2.thenComparing(comp3);
+// création d'un comparateur de User sur le nom puis sur l'âge décroissant en les combinant
+Comparator<User> compCombine2 = comp2.thenComparing(comp3.reversed());
+
+System.out.println("Gaëtan et Florine : " + comp.compare(gaetan, florine)); // 1
+System.out.println("Gaëtan et Louis : " + comp.compare(gaetan, louis)); // -5
+System.out.println("Louis et Florine : " + comp.compare(louis, florine)); // 6
+System.out.println("Louis et Louis Petit : " + compCombine.compare(louis, louisPetit)); // 1
+System.out.println("Louis et Louis Petit : " + compCombine2.compare(louis, louisPetit)); // -1
+```
+
+----
+
+## Les références de méthodes
