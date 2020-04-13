@@ -9,19 +9,23 @@ Les données sont généralement stockées dans une **Collection**
 - depuis Java 8, on peut y accéder de manière beaucoup plus appronfondie avec l'API **Stream**
 - on peut stocker dans une nouvelle collection le résultat du traitement réalisé avec un Stream grâce à l'API **Collector**
 
-Les streams sont basés sur le pattern `Map / Filter / Reduce`. Il existe 2 types d'opérations :
+----
+
+### Map / Filter / Reduce
+
+Les streams sont basés sur le pattern `Map / Filter / Reduce`. Un stream est un objet vide, qui ne porte pas les données comme une colletion, c'est donc un objet très léger. Il existe 2 types d'opérations :
 - opérations intermédiaires : succession de stream (stream pipelines)
-    - `Stream.filter` permet de filtrer les éléments d'une collection
-    - `Stream.map` permet de choisir quel élément on veut récupérer dans notre stream. On peut aussi directement modifier ce qu'on va récupérer
+    - `Stream.filter` permet de filtrer les éléments d'une collection avec des `Predicate<T>`
+    - `Stream.map` permet de choisir quel élément on veut récupérer dans notre stream avec une `Function<T, R>`. On peut aussi directement modifier ce qu'on va récupérer. Conserve le nombre d'objets ainsi que leur ordre.
 - opérations terminales
-    - `Stream.reduce`
+    - `Stream.reduce` qui correspond souvent à une `BiFunction<T, U, R>` qui doit être associative
         - réductions simples : `Stream.sum`, `Stream.max`, `Stream.count`
         - réductions mutables
     - `Stream.collect` permet de récupérer notre résultat dans une collection
 
 ----
 
-### Création d'une liste d'objets
+### Construction d'un stream
 
 ```java
 Person p1 = new Person("Gaëtan", 30, true);
@@ -30,7 +34,47 @@ Person p3 = new Person("Louis", 1, true);
 Person p4 = new Person("Louis", 5, true);
 Person p5 = new Person(null, 10, true);
 List<Person> liste = Arrays.asList(p1, p2, p3, p4, p5);
+Person[] tableau = {p1, p2, p3, p4, p5};
+
+// construction d'un stream à partir d'une collection
+Stream<Person> streamListe = liste.stream();
+// construction d'un stream à partir d'un tableau
+Stream<Person> streamTableau = Arrays.stream(tableau);
+// construction d'un stream vide
+Stream<Object> streamVide = Stream.empty();
+// construction d'un stream en spécifiant des valeurs
+Stream<String> streamValeurs = Stream.of("a", "b", "c");
+// génération d'un stream avec n élément
+Stream<String> streamGenerated = Stream.generate(() -> "element").limit(3); // element, element, element
+Stream<Integer> streamIterated = Stream.iterate(40, n -> n + 2).limit(5); // 40, 42, 44, 46, 48
 ```
+
+----
+
+## Les streams de primitifs
+
+ils sont plus performants que leurs homologues avec la classe wrapper
+
+```java
+Random random = new Random();
+// création d'un IntStream avec les méthodes of et range
+IntStream intStream = IntStream.of(1,2,3,4,5);
+IntStream intStream1 = IntStream.range(1, 4); // 1 2 3
+// création d'un IntStream avec 5 entiers aléatoires puis une deuxième avec 5 entiers aléatoires compris entre 1 (inclus) et 4 (exclus)
+IntStream intStream2 = random.ints(5);
+IntStream intStream3 = random.ints(5, 1, 4); // par exemple : 1 3 2 3 3
+
+LongStream longStream = LongStream.range(1, 5); // 1 2 3 4
+LongStream longStream2 = random.longs(2, 10, 15); // par exemple : 14 11
+
+DoubleStream doubleStream = random.doubles(3); // génère 3 nombres aléatoires de type double
+DoubleStream doubleStream2 = random.doubles(3, 0, 10); // génère 3 nombres aléatoires de type double entre 0 et 10
+```
+
+- passage des streams d'objets à des streams de nombres avec **mapToInt(i -> i)**, **mapToLong** et **mapToDouble**
+- passage des streams de nombre à des streams d'objets avec **mapToObj(i -> i)** ou **boxed()**
+
+----
 
 ### Filtrer, mapper, trier et afficher
 ```java
@@ -42,7 +86,35 @@ liste.stream()
     .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
 ```
 
+----
+
+## Le boxing
+
+Lorsqu'on travaille avec des streams de primitifs, on peut les collecter dans des tableaux, mais pas dans des collections. Il faut d'abord "boxer" les éléments du stream
+
+```java
+// Création d'un IntStream (primitif) et d'un stream d'Integer
+IntStream intStream = IntStream.of(1,2,3,4,5);
+Stream<Integer> streamOfInteger = intStream.boxed();
+Stream<Integer> streamOfInteger = Stream.of(1, 2, 3, 4);
+
+// Collecte d'un IntStream dans un tableau et dans une liste
+int[] tabInt = IntStream.of(1, 2, 3).toArray();
+List<Integer> listeInteger = IntStream.of(1, 2, 3).boxed().collect(Collectors.toList());
+
+// Collecte d'un Stream d'Integer dans un tableau et dans une liste
+Integer[] tabInteger = Stream.of(1, 2, 3, 4).toArray(Integer[]::new);
+int[] tabInt = Stream.of(1, 2, 3, 4, 5).mapToInt(i -> i).toArray(); // conversion en int des Integer pour les stocker dans un tableau de int
+List<Integer> listeInteger = Stream.of(1, 2, 3, 4, 5).collect(Collectors.toList());
+
+// Création d'un tableau de String à partir d'un stream de String
+String[] tabString = Stream.of("a", "b").toArray(String[]::new);
+```
+
+----
+
 ### Mapper, supprimer les doublons, puis collecter dans une liste
+
 ```java
 List<String> listePrenom = liste.stream()
     .map(Person::getPrenom)
@@ -293,59 +365,6 @@ avant filtrage : Person [prenom=Louis, age=5, estHomme=true]
 après filtrage : Person [prenom=Louis, age=5, estHomme=true]
 avant mapping : Louis
 avant filtrage : Person [prenom=null, age=10, estHomme=true]
-```
-
-----
-
-### Création d'un Stream
-
-```java
-// Création d'un stream avec données et d'un stream vide
-Stream<String> stream = Stream.of("a","b");
-Stream<String> streamEmpty = Stream.empty();
-// Conversion du stream en tableau
-System.out.println(Arrays.toString(stream.toArray())); // [a, b]
-System.out.println(Arrays.toString(streamEmpty.toArray())); // []
-
-// Création d'un stream à partir d'un tableau
-String[] arr = new String[]{"a", "b", "c"};
-Stream<String> streamOfArrayFull = Arrays.stream(arr);
-
-// Généréer un stream avec n élément
-Stream<String> streamGenerated = Stream.generate(() -> "element").limit(3); // element, element, element
-Stream<Integer> streamIterated = Stream.iterate(40, n -> n + 2).limit(5); // 40, 42, 44, 46, 48
-
-// Générer des streams de primitifs
-IntStream intStream = IntStream.range(1, 4); // 1, 2, 3
-
-// Générer n nombres aléatoires
-Random random = new Random();
-DoubleStream doubleStream = random.doubles(3); // génère 3 nombres aléatoires de type double
-```
-
-----
-
-## Le boxing
-
-Lorsqu'on travaille avec des streams de primitifs, on peut les collecter dans des tableaux, mais pas dans des collections. Il faut d'abord "boxer" les éléments du stream
-
-```java
-// Création d'un IntStream (primitif) et d'un stream d'Integer
-IntStream intStream = IntStream.of(1,2,3,4,5);
-Stream<Integer> streamOfInteger = intStream.boxed();
-Stream<Integer> streamOfInteger = Stream.of(1, 2, 3, 4);
-
-// Collecte d'un IntStream dans un tableau et dans une liste
-int[] tabInt = IntStream.of(1, 2, 3).toArray();
-List<Integer> listeInteger = IntStream.of(1, 2, 3).boxed().collect(Collectors.toList());
-
-// Collecte d'un Stream d'Integer dans un tableau et dans une liste
-Integer[] tabInteger = Stream.of(1, 2, 3, 4).toArray(Integer[]::new);
-int[] tabInt = Stream.of(1, 2, 3, 4, 5).mapToInt(i -> i).toArray(); // conversion en int des Integer pour les stocker dans un tableau de int
-List<Integer> listeInteger = Stream.of(1, 2, 3, 4, 5).collect(Collectors.toList());
-
-// Création d'un tableau de String à partir d'un stream de String
-String[] tabString = Stream.of("a", "b").toArray(String[]::new);
 ```
 
 ----
