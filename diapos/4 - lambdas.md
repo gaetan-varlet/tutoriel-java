@@ -313,3 +313,98 @@ Il existe 4 types de références de méthodes :
 - **Static** : appel statique. Exemple : `d -> Math.sqrt(d);` devient `Math::sqrt`
 - **UnboundInstance** : invocation de la méthode sur le premier paramètre, le reste des paramètres est passé en paramètre de la méthode. Exemple : `(s1, s2) -> s1.indexOf(s2);` devient `String::indexOf;`
 - **Constructor** : `name -> new User(name);` `() -> new User();` et `(name, age) -> new User(name, age);` peuvent toutes être écrites avec la référence de méthode `User::new;`
+
+----
+
+## Quelques nouvelles méthodes sur les Collections
+
+```java
+List<String> list = Stream.of("one", "two", "three", "four", "five").collect(Collectors.toList());
+// méthode forEach, définie sur Iterable, qui prend un Consumer en paramètre
+list.forEach(System.out::println);
+// méthode removeIf, définie sur Collection, prend un Predicate en paramètre
+list.removeIf(s -> s.startsWith("f"));
+System.out.println(list); // [one, two, three]
+// méthode replaceAll, définie sur List, prend un UranyOperator en paramètre (Function qui renvoie un objet de même type que celui reçu)
+list.replaceAll(s -> s.replace("o", "O"));
+System.out.println(list); // One, twO, three]
+// méthode sort(), définie sur List, prend un Comparator en paramètre
+list.sort(Comparator.reverseOrder());
+System.out.println(list); // [twO, three, One]
+list.sort(((x, y) -> x.compareTo(y))); // [One, three, twO]
+System.out.println(list);
+```
+
+----
+
+## Quelques nouvelles méthodes sur les Map (1)
+
+```java
+Map<Integer, String> map = new HashMap<>();
+map.put(75, "Paris");
+map.put(59, "Nord");
+map.put(50, "Manche");
+// forEach qui prend un BiConsumer en paramètre
+map.forEach((k, v) -> System.out.println(k + " - " + v));
+
+// replaceAll prend une BiFunction de type clé-valeur et retourne une nouvelle valeur,
+// ici un String associée à la même clé
+map.replaceAll((cp, dep) -> dep.toUpperCase());
+System.out.println(map); // {50=MANCHE, 75=PARIS, 59=NORD}
+
+// compute prend en paramètre une clé et une BiFunction de rampping comme pour replaceAll.
+// Cette méthode permet de mettre à jour la valeur d'une seule clé
+map.compute(75, (cp, dep) -> dep.toLowerCase());
+System.out.println(map); // {50=MANCHE, 75=paris, 59=NORD}
+// si la nouvelle valeur est nulle, la clé est retirée de la map
+map.compute(75, (cp, dep) -> null);
+System.out.println(map); // {50=MANCHE, 59=NORD}
+map.compute(80, (cp, dep) -> "Somme");
+System.out.println(map); // {50=MANCHE, 59=NORD}
+```
+
+----
+
+## Quelques nouvelles méthodes sur les Map (2)
+
+```java
+// computeIfPresent, prend les mêmes paramètres que compute, et va agir si la clé est présente
+// agit si la clé est présente et associée à une valeur non nulle
+// comme pour compute, si la nouvelle valeur est nulle, la clé est retirée de la map
+map.compute(59, (cp, dep) -> null);
+map.compute(80, (cp, dep) -> "SOMME");
+map.computeIfPresent(60, (cp, dep) -> "Oise");
+System.out.println(map); // {80=SOMME, 50=MANCHE}
+
+// computeIfAbsent, prend en paramètre une clé et une fonction de remapping
+// qui ne sera exécuté que si la clé est absente de la map.
+// computeIfAbsent retourne la valeur associée à la clé créé par la fonction pour une nouvelle clé,
+// ou la valeur correspondant à la clé existante
+map.computeIfAbsent(50, cp -> "Toto");
+System.out.println(map); // {80=SOMME, 50=MANCHE}
+map.computeIfAbsent(29, cp -> "Finistère");
+System.out.println(map); // {80=SOMME, 50=MANCHE, 29=Finistère}
+Map<String, List<String>> mapDeListe = new HashMap<>();
+System.out.println(mapDeListe); // {}
+mapDeListe.computeIfAbsent("Picardie", k -> new ArrayList<>()).add("Aisne");
+System.out.println(mapDeListe); // {Picardie=[Aisne]}
+mapDeListe.computeIfAbsent("Picardie", k -> new ArrayList<>()).add("Somme");
+System.out.println(mapDeListe); // {Picardie=[Aisne, Somme]}
+```
+
+----
+
+## Quelques nouvelles méthodes sur les Map (3)
+
+```java
+// merge, prend en paramètre une clé, une valeur
+// et une BiFunction de fusion de la valeur si la clé existe déjà dans la map
+Map<String, String> mapString = new HashMap<>();
+BiFunction<String, String, String> biFunction = (oldValue, newValue) -> oldValue + "/" + newValue;
+System.out.println(mapString); // {}
+mapString.merge("Picardie", "Aisne", biFunction);
+System.out.println(mapString); // {Picardie=Aisne}
+mapString.merge("Picardie", "Somme", biFunction);
+mapString.merge("IDF", "Paris", biFunction);
+System.out.println(mapString); // {IDF=Paris, Picardie=Aisne/Somme}
+```
