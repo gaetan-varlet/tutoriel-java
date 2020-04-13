@@ -1,17 +1,22 @@
-# Les streams et les lambdas
+# Les streams
 
 ----
 
 ### Concepts
-- on l'appelle généralement sur une collection
-- 2 types d'opérations
-  - opérations intermédiaires : succession de stream (stream pipelines)
+
+Les données sont généralement stockées dans une **Collection**
+- pour accéder aux données, on peut utiliser le pattern **Iterator**
+- depuis Java 8, on peut y accéder de manière beaucoup plus appronfondie avec l'API **Stream**
+- on peut stocker dans une nouvelle collection le résultat du traitement réalisé avec un Stream grâce à l'API **Collector**
+
+Les streams sont basés sur le pattern `Map / Filter / Reduce`. Il existe 2 types d'opérations :
+- opérations intermédiaires : succession de stream (stream pipelines)
     - `Stream.filter` permet de filtrer les éléments d'une collection
     - `Stream.map` permet de choisir quel élément on veut récupérer dans notre stream. On peut aussi directement modifier ce qu'on va récupérer
-  - opérations terminales
+- opérations terminales
     - `Stream.reduce`
-      - réductions simples : `Stream.sum`, `Stream.max`, `Stream.count`
-      - réductions mutables
+        - réductions simples : `Stream.sum`, `Stream.max`, `Stream.count`
+        - réductions mutables
     - `Stream.collect` permet de récupérer notre résultat dans une collection
 
 ----
