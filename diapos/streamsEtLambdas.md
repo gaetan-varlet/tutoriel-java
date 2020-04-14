@@ -13,7 +13,12 @@ Les données sont généralement stockées dans une **Collection**
 
 ### Map / Filter / Reduce
 
-Les streams sont basés sur le pattern `Map / Filter / Reduce`. Un stream est un objet vide, qui ne porte pas les données comme une colletion, c'est donc un objet très léger. Il existe 2 types d'opérations :
+- un stream est un objet vide, qui ne porte pas les données comme une collection, c'est donc un objet très léger
+- un stream se connecte à une source de données et il va consommer les éléments de la source (collections, tableaux, chaînes de caractères, ligne d'un fichier...)
+- un stream ne connaît pas le nombre d'éléments de la source, il faut consommer le stream pour compter les éléments
+- un stream ne doit pas modifier la source de ces données
+
+Les streams sont basés sur le pattern `Map / Filter / Reduce`. Il existe 2 types d'opérations :
 - opérations intermédiaires : succession de stream (stream pipelines)
     - `Stream.filter` permet de filtrer les éléments d'une collection avec des `Predicate<T>`
     - `Stream.map` permet de choisir quel élément on veut récupérer dans notre stream avec une `Function<T, R>`. On peut aussi directement modifier ce qu'on va récupérer. Conserve le nombre d'objets ainsi que leur ordre.
@@ -47,6 +52,7 @@ Stream<String> streamValeurs = Stream.of("a", "b", "c");
 // génération d'un stream avec n élément
 Stream<String> streamGenerated = Stream.generate(() -> "element").limit(3); // element, element, element
 Stream<Integer> streamIterated = Stream.iterate(40, n -> n + 2).limit(5); // 40, 42, 44, 46, 48
+Stream<String> streamIterated = Stream.iterate("+", s -> s + "+").limit(5); // +, ++, +++, ++++, +++++
 ```
 
 ----
@@ -76,18 +82,6 @@ DoubleStream doubleStream2 = random.doubles(3, 0, 10); // génère 3 nombres al�
 
 ----
 
-### Filtrer, mapper, trier et afficher
-```java
-liste.stream()
-    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
-    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
-    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
-    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
-    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
-```
-
-----
-
 ## Le boxing
 
 Lorsqu'on travaille avec des streams de primitifs, on peut les collecter dans des tableaux, mais pas dans des collections. Il faut d'abord "boxer" les éléments du stream
@@ -109,6 +103,82 @@ List<Integer> listeInteger = Stream.of(1, 2, 3, 4, 5).collect(Collectors.toList(
 
 // Création d'un tableau de String à partir d'un stream de String
 String[] tabString = Stream.of("a", "b").toArray(String[]::new);
+```
+
+----
+
+## Découpage d'une chaîne de caractère en Stream
+
+```java
+// Découper une chaîne de caractères selon une regex
+String hello = "Bonjour le monde";
+String[] tab = hello.split(" "); // [Bonjour, le, monde]
+Pattern pattern = Pattern.compile(" ");
+// le découpage se fait entièrement pour stocker le résultat dans le tableau
+String[] tab2 = pattern.split(hello); // [Bonjour, le, monde]
+// le découpage se fait au fur et à mesure que le stream en à besoin
+Stream<String> stream = pattern.splitAsStream(hello);
+
+// Découper une chaîne de caractères par lettre
+byte[] b = hello.getBytes(); // 66 111 110 106 111 117 114 32 108 101 32...
+IntStream intStream = hello.chars(); // 66 111 110 106 111 117 114 32 108 101 32...
+Stream<String> streamString = hello.chars().mapToObj(lettre -> Character.toString(lettre)); // B o n j o u r   l e   m o n d e
+```
+
+----
+
+### Transformer une liste en chaîne de caractères
+
+Ecrire les prénoms de la liste dans une chaîne de caractères :
+
+```java
+String maChaine = liste.stream()
+	.map(Person::getPrenom)
+	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
+```
+
+Ajout d'un préfixe et d'un suffixe :
+
+```java
+String maChaine = liste.stream()
+    .filter(p -> p.getPrenom() != null)
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
+```
+
+----
+
+### Stream d'un fichier
+
+Lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
+
+```java
+/*
+aze
+qsd
+wxc
+*/
+Path path = Paths.get("src/main/resources/test.txt");
+try(Stream<String> streamOfFile = Files.lines(path)){
+    streamOfFile.forEach(System.out::println); // impression de chaque ligne dans la console
+}
+
+// il est possible de spécifier l'encodage du fichier (par défaut UTF_8)
+Stream<String> streamOfFile = Files.lines(path, StandardCharsets.ISO_8859_1);
+```
+
+----
+
+### Filtrer, mapper, trier et afficher
+
+```java
+liste.stream()
+    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
+    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
+    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
+    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
+    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
 ```
 
 ----
@@ -255,26 +325,6 @@ List<List<String>> listeDeListe = Arrays.asList(Arrays.asList("A", "B"), Arrays.
 List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Collectors.toList()); // [A, B, C, D]
 ```
 
-### Transformer une liste en chaîne de caractères
-
-Ecrire les prénoms de la liste dans une chaîne de caractères :
-
-```java
-String maChaine = liste.stream()
-	.map(Person::getPrenom)
-	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
-```
-
-Ajout d'un préfixe et d'un suffixe :
-
-```java
-String maChaine = liste.stream()
-    .filter(p -> p.getPrenom() != null)
-    .map(Person::getPrenom)
-    .distinct()
-    .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
-```
-
 ----
 
 ### Collecter dans une map
@@ -385,28 +435,6 @@ List<String> l1 = IntStream.range(0, names.length)
 List<String> l2 = Arrays.stream(names)
     .filter(name -> name.length() <= 5)
     .collect(Collectors.toList()); // [Louis, Kévin]
-```
-
-----
-
-### Stream d'un fichier
-
-Lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
-
-```java
-/*
-aze
-qsd
-wxc
-*/
-Path path = Paths.get("src/main/resources/test.txt");
-try(Stream<String> streamOfFile = Files.lines(path)){
-    System.out.println(streamOfFile.count()); // 3
-    streamOfFile.forEach(System.out::println); // impression de chaque ligne dans la console
-}
-
-// il est possible de spécifier l'encodage du fichier (par défaut UTF_8)
-Stream<String> streamOfFile = Files.lines(path, StandardCharsets.ISO_8859_1);
 ```
 
 ----
