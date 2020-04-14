@@ -170,11 +170,11 @@ Stream<String> streamOfFile = Files.lines(path, StandardCharsets.ISO_8859_1);
 
 ----
 
-## Les opérations intermédiaires
+## Les opérations intermédiaires (1)
 
 On a un `Stream<T>`, on peut lui appliquer les opérations intermédiaires suivantes :
-- **map** : `map(Function<T, R> t)` et retourne `Stream<R>`
-- **filter** : `map(Predicate<T> t)` et retourne `Stream<T>`
+- **map** : `map(Function<T, R> f)` et retourne `Stream<R>`
+- **filter** : `map(Predicate<T> p)` et retourne `Stream<T>`
 - **distinct** : `distinct()` et retourne `Stream<T>`
 - **sorted** :
     - `sorted()` : pour les objets Comparable, tri sur l'ordre naturel
@@ -188,6 +188,137 @@ On peut combiner *skip* et *limit* mais il faut faire attention à l'ordre dans 
 ```java
 Stream.of("a","b","c","d").skip(1).limit(2).forEach(System.out::println); // b c
 Stream.of("a","b","c","d").limit(2).skip(1).forEach(System.out::println); // b (on a gardé a et b puis on enlève le premier élément a)
+```
+
+----
+
+## Les opérations intermédiaires (2)
+
+- **takeWhile** : `takeWhile(Predicate<T> p)` et retourne un `Stream<T>` avec tous les éléments qui respectent le prédicat jusqu'à ce qu'un élément ne le respecte pas, la suite n'est pas renvoyée même si le prédicat est respecté pour certains éléments
+- **dropWhile** : `dropWhile(Predicate<T> p)` et retourne un `Stream<T>` avec tous les éléments à partir du premier qui ne respecte pas le prédicat
+- **flatMap** :  `flatMap(Function<T,Stream<T>> f)` va mettre à plat tous les sous-stream dans un seul stream. Cela peut par exemple servir à aplatir une liste de liste en liste
+
+```java
+// Exemple de takeWhile et dropWhile
+Stream<String> stream = Stream.of("one", "two", "three", "one");
+stream.takeWhile(s -> s.length() == 3).forEach(System.out::println); // one two
+stream.dropWhile(s -> s.startsWith("o")).forEach(System.out::println); // two three one
+
+// Exemple d'utilisation de flatMap
+List<List<String>> listeDeListe = Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C", "D"));
+List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Collectors.toList()); // [A, B, C, D]
+```
+
+----
+
+### Débugger avec peek()
+
+```java
+liste.stream()
+    .peek(p -> System.out.println("avant filtrage : "+p))
+    .filter(p -> p.getPrenom() != null)
+    .peek(p -> System.out.println("après filtrage : "+p))
+    .map(Person::getPrenom)
+    .peek(p -> System.out.println("avant mapping : "+p))
+    .collect(Collectors.toList());
+
+// console :
+avant filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
+après filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
+avant mapping : Gaëtan
+avant filtrage : Person [prenom=Florine, age=29, estHomme=false]
+après filtrage : Person [prenom=Florine, age=29, estHomme=false]
+avant mapping : Florine
+avant filtrage : Person [prenom=Louis, age=1, estHomme=true]
+après filtrage : Person [prenom=Louis, age=1, estHomme=true]
+avant mapping : Louis
+avant filtrage : Person [prenom=Louis, age=5, estHomme=true]
+après filtrage : Person [prenom=Louis, age=5, estHomme=true]
+avant mapping : Louis
+avant filtrage : Person [prenom=null, age=10, estHomme=true]
+```
+
+----
+
+### Utilisation de l'index courant
+
+```java
+String[] names = { "Gaëtan", "Florine", "Louis", "Kévin", "Thibaut" };
+
+// récupération de l'indice à partir dun IntStream qui va de 0 à length-1
+// et utilisation d'un mapToObj pour récupérer l'élément courant
+List<String> l1 = IntStream.range(0, names.length)
+    .filter(i -> names[i].length() <= 5)
+    .mapToObj(i -> names[i])
+    .collect(Collectors.toList()); // [Louis, Kévin]
+
+// équivalent à :
+List<String> l2 = Arrays.stream(names)
+    .filter(name -> name.length() <= 5)
+    .collect(Collectors.toList()); // [Louis, Kévin]
+```
+
+----
+
+## Les opérations terminales (1)
+
+Les opérations qui ont besoin de voir tous les éléments du stream :
+- **forEach** : `forEach(Consumer<T> c)`
+- **count** : `count()` renvoie un long correspondant au nombre d'éléments
+
+Les opérations court-circuit qui n'ont pas besoin de voir tous les éléments du stream pour rendre la main : **findFirst, findAny, anyMatch, allMatch, noneMatch**
+
+```java
+monStream.forEach(System.out::println). // imprime chaque élément du stream dans la console
+Stream.of("one", "two", "three", "one").count(); // 4
+
+// renvoie le premier élément du stream, que l'on soit en parallel stream ou non
+Optional<Person> person2 = liste.stream().filter(p -> p.getAge() >= 18).findFirst();
+// renvoie n'importe quel élément du stream. Sans parallel stream, c'est généralement le premier élément mais ce n'est pas garanti
+Optional<Person> person1 = liste.stream().filter(p -> p.getAge() >= 18).findAny();
+
+// true si tous les éléments du flux correspondent au prédicat ou si le flux est vide
+boolean test1 = liste.stream().allMatch(p -> p.getAge() >= 18); // false
+// true si n'importe quel élément du flux correspond
+boolean test2 = liste.stream().anyMatch(p -> p.getAge() >= 18); // true
+// true si aucun élément du flux ne correspond ou si le flux est vide
+boolean test3 = liste.stream().noneMatch(p -> p.getAge() >= 18); // false
+boolean test4 = liste.stream().noneMatch(p -> p.getAge() >= 31); // true
+```
+
+----
+
+### Les opérations terminales (2)
+
+Certaines opérations terminales retournent un **Optional**, qui est un wrapper de l'objet sur lequel on travaille, pour signaler qu'il se peut qu'on ne puisse pas déterminer de résultat pour cette opération, car le stream est vide ou aucun élément ne correspond au prédicat :
+- stream d'objets : `min(Comparator<T>), max(Comparator<T>) et reduce(BinaryOperator<T> accumulator), findFirst(Predicate<T> p), findAny(Predicate<T> p)`
+- stream de nombres : `min(), max(), average()`
+
+```java
+Optional<String> res1 = Stream.of("one", "two", "three").reduce((i1, i2) -> i1 + i2); // onetwothree
+// version de reduce avec une initialisation du résultat
+// on est donc sûr d'avoir un résultat, le retour n'est donc plus un optional
+String res2 = Stream.of("one", "two", "three").reduce("Résultat : ", (i1, i2) -> i1 + i2); // Résultat : onetwothree
+
+IntStream intStream = IntStream.range(1, 6); // 1 2 3 4 5
+OptionalInt optionalMax = intStream.max();
+int max = optionalMax.getAsInt(); // 5
+OptionalDouble average = IntStream.range(1, 6).average(); // 3.0
+// la somme retourne un entier au lieu d'un optional car elle est initialisée à 0
+int sum = IntStream.range(1, 6).sum(); // 15
+```
+
+----
+
+### Les opérations terminales (3)
+
+Il y a des opérations terminales qui permettent de construire
+- des collections avec à la méthode **collect** : `collect(Collector<T> c)`
+- des tableaux avec la méthode **toArray**
+
+```java
+List<String> list = Stream.of("a", "b").collect(Collectors.toList());
+String[] tabString = Stream.of("a", "b").toArray(String[]::new);
 ```
 
 ----
@@ -319,15 +450,6 @@ long somme = stats.getSum();
 
 ----
 
-### Aplatir une liste de liste en liste
-
-```java
-List<List<String>> listeDeListe = Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C", "D"));
-List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Collectors.toList()); // [A, B, C, D]
-```
-
-----
-
 ### Collecter dans une map
 
 ```java
@@ -387,74 +509,6 @@ String prenomLePlusFrequent = liste.stream()
     .max(Comparator.comparingLong(Entry::getValue))
     .map(Entry::getKey)
     .get(); // Louis
-```
-
-----
-
-### Débugger avec peek()
-
-```java
-liste.stream()
-    .peek(p -> System.out.println("avant filtrage : "+p))
-    .filter(p -> p.getPrenom() != null)
-    .peek(p -> System.out.println("après filtrage : "+p))
-    .map(Person::getPrenom)
-    .peek(p -> System.out.println("avant mapping : "+p))
-    .collect(Collectors.toList());
-
-// console :
-avant filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
-après filtrage : Person [prenom=Gaëtan, age=30, estHomme=true]
-avant mapping : Gaëtan
-avant filtrage : Person [prenom=Florine, age=29, estHomme=false]
-après filtrage : Person [prenom=Florine, age=29, estHomme=false]
-avant mapping : Florine
-avant filtrage : Person [prenom=Louis, age=1, estHomme=true]
-après filtrage : Person [prenom=Louis, age=1, estHomme=true]
-avant mapping : Louis
-avant filtrage : Person [prenom=Louis, age=5, estHomme=true]
-après filtrage : Person [prenom=Louis, age=5, estHomme=true]
-avant mapping : Louis
-avant filtrage : Person [prenom=null, age=10, estHomme=true]
-```
-
-----
-
-### Utilisation de l'index courant
-
-```java
-String[] names = { "Gaëtan", "Florine", "Louis", "Kévin", "Thibaut" };
-
-// récupération de l'indice à partir dun IntStream qui va de 0 à length-1
-// et utilisation d'un mapToObj pour récupérer l'élément courant
-List<String> l1 = IntStream.range(0, names.length)
-    .filter(i -> names[i].length() <= 5)
-    .mapToObj(i -> names[i])
-    .collect(Collectors.toList()); // [Louis, Kévin]
-
-// équivalent à :
-List<String> l2 = Arrays.stream(names)
-    .filter(name -> name.length() <= 5)
-    .collect(Collectors.toList()); // [Louis, Kévin]
-```
-
-----
-
-### findFirst, findAny, anyMatch, allMatch, noneMatch
-
-```java
-// renvoie le premier élément du stream, que l'on soit en parallel stream ou non
-Optional<Person> person2 = liste.stream().filter(p -> p.getAge() >= 18).findFirst();
-// renvoie n'importe quel élément du stream. Sans parallel stream, c'est généralement le premier élément mais ce n'est pas garanti
-Optional<Person> person1 = liste.stream().filter(p -> p.getAge() >= 18).findAny();
-
-// true si tous les éléments du flux correspondent au prédicat ou si le flux est vide
-boolean test1 = liste.stream().allMatch(p -> p.getAge() >= 18); // false
-// true si n'importe quel élément du flux correspond
-boolean test2 = liste.stream().anyMatch(p -> p.getAge() >= 18); // true
-// true si aucun élément du flux ne correspond ou si le flux est vide
-boolean test3 = liste.stream().noneMatch(p -> p.getAge() >= 18); // false
-boolean test4 = liste.stream().noneMatch(p -> p.getAge() >= 31); // true
 ```
 
 ----
