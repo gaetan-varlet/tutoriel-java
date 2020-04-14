@@ -170,6 +170,28 @@ Stream<String> streamOfFile = Files.lines(path, StandardCharsets.ISO_8859_1);
 
 ----
 
+## Les opérations intermédiaires
+
+On a un `Stream<T>`, on peut lui appliquer les opérations intermédiaires suivantes :
+- **map** : `map(Function<T, R> t)` et retourne `Stream<R>`
+- **filter** : `map(Predicate<T> t)` et retourne `Stream<T>`
+- **distinct** : `distinct()` et retourne `Stream<T>`
+- **sorted** :
+    - `sorted()` : pour les objets Comparable, tri sur l'ordre naturel
+    - `sorted(Comparator<T> comp)`
+- **limit** : `limit(long l)` et retourne un `Stream<T>` avec les l premiers éléments
+- **skip** : `skip(long l)` et retourne `Stream<T>` en ne gardant pas les l premiers éléments
+
+
+On peut combiner *skip* et *limit* mais il faut faire attention à l'ordre dans lesquels on les applique :
+
+```java
+Stream.of("a","b","c","d").skip(1).limit(2).forEach(System.out::println); // b c
+Stream.of("a","b","c","d").limit(2).skip(1).forEach(System.out::println); // b (on a gardé a et b puis on enlève le premier élément a)
+```
+
+----
+
 ### Filtrer, mapper, trier et afficher
 
 ```java
@@ -247,27 +269,6 @@ List<Person> listeTrie = liste.stream()
 .sorted(Comparator.comparing(Person::getPrenom).thenComparing((Comparator.comparing(Person::getAge).reversed())))
 .collect(Collectors.toList());
 ```
-
-----
-
-### Limiter le nombre de résultat aux n premiers
-
-```java
-// récupère les 2 persones les plus âgées
-List<Person> listeTrie = liste.stream()
-	.sorted(Comparator.comparing(Person::getAge).reversed())
-	.limit(2)
-	.collect(Collectors.toList());
- ```
-
- ### Ne pas garder les n premiers
-
-```java
-List<Person> listeTrie = liste.stream()
-	.sorted(Comparator.comparing(Person::getAge).reversed())
-	.skip(3) // ne garde pas les 3 premiers
-	.collect(Collectors.toList());
- ```
 
 ----
 
