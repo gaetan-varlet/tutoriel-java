@@ -18,7 +18,7 @@ Les données sont généralement stockées dans une **Collection**
 - un stream ne connaît pas le nombre d'éléments de la source, il faut consommer le stream pour compter les éléments
 - un stream ne doit pas modifier la source de ces données
 
-Les streams sont basés sur le pattern `Map / Filter / Reduce`. Il existe 2 types d'opérations :
+Les streams sont basés sur le pattern `Map/Filter/Reduce`. Il existe 2 types d'opérations :
 - opérations intermédiaires : succession de stream (stream pipelines)
     - `Stream.filter` permet de filtrer les éléments d'une collection avec des `Predicate<T>`
     - `Stream.map` permet de choisir quel élément on veut récupérer dans notre stream avec une `Function<T, R>`. On peut aussi directement modifier ce qu'on va récupérer. Conserve le nombre d'objets ainsi que leur ordre.
@@ -78,7 +78,7 @@ DoubleStream doubleStream2 = random.doubles(3, 0, 10); // génère 3 nombres al�
 ```
 
 - passage des streams d'objets à des streams de nombres avec **mapToInt(i -> i)**, **mapToLong** et **mapToDouble**
-- passage des streams de nombre à des streams d'objets avec **mapToObj(i -> i)** ou **boxed()**
+- passage des streams de nombres à des streams d'objets avec **mapToObj(i -> i)** ou **boxed()**
 
 ----
 
