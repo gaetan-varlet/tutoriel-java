@@ -262,11 +262,10 @@ List<String> l2 = Arrays.stream(names)
 
 ## Les opérations terminales (1)
 
-Les opérations qui ont besoin de voir tous les éléments du stream :
-- **forEach** : `forEach(Consumer<T> c)`
-- **count** : `count()` renvoie un long correspondant au nombre d'éléments
-
-Les opérations court-circuit qui n'ont pas besoin de voir tous les éléments du stream pour rendre la main : **findFirst, findAny, anyMatch, allMatch, noneMatch**
+- Les opérations qui ont besoin de voir tous les éléments du stream :
+    - **forEach** : `forEach(Consumer<T> c)`
+    - **count** : `count()` renvoie un long correspondant au nombre d'éléments
+- Les opérations court-circuit qui n'ont pas besoin de voir tous les éléments du stream pour rendre la main : **findFirst, findAny, anyMatch, allMatch, noneMatch**
 
 ```java
 monStream.forEach(System.out::println). // imprime chaque élément du stream dans la console
