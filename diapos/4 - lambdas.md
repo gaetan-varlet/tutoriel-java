@@ -189,9 +189,39 @@ runnable.run(); // toto
 
 ----
 
-## Ecrire des implémentations de Comparator
+## Les comparaisons : l'interface Comparable
 
-Exemples d'implémentations de Comparator avec des lambdas :
+En Java, pour trier les éléments d'une collection, il faut que le type de l'objet implémente l'interface **Comparable** en redéfinissant la méthode **int compareTo(T other)**. Certaines classes comme *String* ou *Integer* le font déjà :
+
+```java
+// exemple en utilisant le tri naturel sur des chaînes de caractères
+List<String> listeString = Arrays.asList("a", "c", "d", "b");
+System.out.println(listeString); // [a, c, d, b]
+Collections.sort(listeString); System.out.println(listeString); // [a, b, c, d]
+
+// exemple d'implémentation de l'interface Comparable
+public class Person implements Comparable<Person> {
+	private String prenom;
+	private int age;
+    private boolean homme;  
+    @Override
+	public int compareTo(Person o) {
+		return this.age - o.age; // trie des personnes selon leur âge dans l'ordre croissant
+    }
+}
+
+// il est mainteant possible de trier notre liste
+List<Person> list = Arrays.asList(new Person("Gaëtan", 32, true), new Person("Louis", 2, true),
+    new Person("Florine", 30, true), new Person("Louis", 1, true));
+System.out.println(list); // 32 2 30 1
+Collections.sort(list); System.out.println(list); // 1 2 30 32
+```
+
+----
+
+## Les comparaisons : l'interface Comparator (1)
+
+Il est également possible de définir un **Comparator**, qui est une interface fonctionnelle, via une lambda expression. Cela permet de ne pas implémenter l'interface *Comparable* ou de changer l'ordre naturel pour les classes l'implémentant :
 
 ```java
 public interface Comparator<T> {
@@ -206,34 +236,44 @@ System.out.println(comparatorInverse.compare("a", "b")); // 1
 System.out.println(comparatorLength.compare("a", "b")); // 0
 System.out.println(comparatorLength.compare("aa", "b")); // 1
 System.out.println(comparatorLength.compare("a", "bb")); // -1
+
+List<String> listeString = Arrays.asList("a", "c", "d", "b");
+Collections.sort(listeString, comparatorStringParDefaut);
+System.out.println(listeString); // [a, b, c, d]
+Collections.sort(listeString, comparatorInverse);
+System.out.println(listeString); // [d, c, b, a]
+// possibilité d'utiliser la méthode sort de List depuis Java 8 en spécifiant un comparateur
+listeString.sort(comparatorStringParDefaut);
+System.out.println(listeString); // [a, b, c, d]
 ```
 
 ----
 
-## Création de comparateurs
+## Les comparaisons : l'interface Comparator (2)
+
+Avec Java 8, de nouvelles méthodes sont arrivées dans l'interface Comparator qui facilitent la création de Comparator :
 
 ```java
-User gaetan = new User("Gaëtan", 32);
-User florine = new User("Florine", 30);
-User louis = new User("Louis", 2);
-User louisPetit = new User("Louis", 1);
+// Exemple sur des String
+List<String> listeString = Arrays.asList("a", "c", "d", "b");
+Comparator<String> c1 = Comparator.comparing(String::valueOf);
+Comparator<String> c2 = Comparator.naturalOrder();
+Comparator<String> c3 = Comparator.reverseOrder();
+listeString.sort(c1); System.out.println(listeString); // [a, b, c, d]
+listeString.sort(c2); System.out.println(listeString); // [a, b, c, d]
+listeString.sort(c3); System.out.println(listeString); // [d, c, b, a]
 
-// création d'un comparateur de User basé sur le nom
-Comparator<User> comp = (u1, u2) -> u1.getName().compareTo(u2.getName());
-// création du même comparateur en utilisant la méthode statique comparing qui prend une function en paramètre
-Comparator<User> comp2 = Comparator.comparing(u -> u.getName());
-// création d'un comparateur de User basé sur l'âge
-Comparator<User> comp3 = Comparator.comparing(u -> u.getAge());
-// création d'un comparateur de User sur le nom puis sur l'âge en les combinant
-Comparator<User> compCombine = comp2.thenComparing(comp3);
-// création d'un comparateur de User sur le nom puis sur l'âge décroissant en les combinant
-Comparator<User> compCombine2 = comp2.thenComparing(comp3.reversed());
-
-System.out.println("Gaëtan et Florine : " + comp.compare(gaetan, florine)); // 1
-System.out.println("Gaëtan et Louis : " + comp.compare(gaetan, louis)); // -5
-System.out.println("Louis et Florine : " + comp.compare(louis, florine)); // 6
-System.out.println("Louis et Louis Petit : " + compCombine.compare(louis, louisPetit)); // 1
-System.out.println("Louis et Louis Petit : " + compCombine2.compare(louis, louisPetit)); // -1
+// Exemple sur l'objet Person
+// tri sur l'aĝe par ordre croissant (ancienne et nouvelle syntaxe)
+Comparator<Person> compPerson1 = (p1, p2) -> (p1.getAge() - p2.getAge());
+Comparator<Person> compPerson2 = Comparator.comparing(Person::getAge);
+// tri sur le prénom par ordre croissant (ancienne et nouvelle syntaxe)
+Comparator<Person> compPerson3 = (p1, p2) -> (p1.getPrenom().compareTo(p2.getPrenom()));
+Comparator<Person> compPerson4 = Comparator.comparing(Person::getPrenom);
+// tri sur le prénom par ordre alphabétique puis l'âge par ordre décroissant
+Comparator<Person> compPerson5 = Comparator.comparing(Person::getPrenom).thenComparing(Comparator.comparing(Person::getAge).reversed());
+// tri sur le prénom par ordre alphabétique en mettant les prénoms null à la fin
+Comparator<Person> compPerson6 = Comparator.comparing(Person::getPrenom, Comparator.nullsLast(Comparator.naturalOrder()));
 ```
 
 ----

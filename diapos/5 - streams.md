@@ -378,31 +378,6 @@ long a = liste.stream()
 
 ----
 
-### Trier sur un ordre non naturel
-```java
-List<Person> listeTrie = liste.stream()
-// tri des personnes dans l'ordre croissant de l'âge
-.sorted(Comparator.comparing(Person::getAge))
-//.sorted((p1, p2) -> (p1.getAge() - p2.getAge())) // équivalent à la ligne précédente
-.collect(Collectors.toList());
-```
-
-```java
-List<Person> listeTrie = liste.stream()
-// tri sur le prénom par ordre alphabétique en mettant les prénoms null à la fin
-.sorted(Comparator.comparing(Person::getPrenom, Comparator.nullsLast(Comparator.naturalOrder())))
-.collect(Collectors.toList());
-```
-
-```java
-List<Person> listeTrie = liste.stream()
-// tri sur le prénom par ordre alphabétique puis sur l'âge par ordre décroissant
-.sorted(Comparator.comparing(Person::getPrenom).thenComparing((Comparator.comparing(Person::getAge).reversed())))
-.collect(Collectors.toList());
-```
-
-----
-
 ### Récupérer le max ou le min
 ```java
 // création d'un comparateur de personne selon l'âge
