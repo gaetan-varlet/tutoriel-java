@@ -295,7 +295,7 @@ Certaines opérations terminales retournent un **Optional**, qui est un wrapper 
 
 ```java
 Optional<String> res1 = Stream.of("one", "two", "three").reduce((i1, i2) -> i1 + i2); // onetwothree
-// version de reduce avec une initialisation du résultat
+// version de reduce avec l'ajout l'identity qui est une valeur initiale ou par défaut ajouté à l'opération
 // on est donc sûr d'avoir un résultat, le retour n'est donc plus un optional
 String res2 = Stream.of("one", "two", "three").reduce("Résultat : ", (i1, i2) -> i1 + i2); // Résultat : onetwothree
 
@@ -332,8 +332,6 @@ liste.stream()
     //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
     .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
 ```
-
-----
 
 ### Mapper, supprimer les doublons, puis collecter dans une liste
 
@@ -483,20 +481,6 @@ String prenomLePlusFrequent = liste.stream()
     .max(Comparator.comparingLong(Entry::getValue))
     .map(Entry::getKey)
     .get(); // Louis
-```
-
-----
-
-### La méthode reduce
-
-```java
-// on précise l'accumulateur dans reduce qui est une fonction qui spécifie la logique d'agrégation 
-OptionalInt reduced = IntStream.range(1, 4).reduce((a, b) -> a + b); // 6 = 1 + 2 + 3
-// équivalent
-OptionalInt reduced1 = IntStream.range(1, 4).reduce(Integer::sum); // 6 = 1 + 2 + 3
-// ajout de l'identity qui est une valeur initiale ou par défaut ajouté à l'opération
-// on récupère donc un int au lieu d'un optional car on est sûr qu'il y a une valeur
-int reduced2 =IntStream.range(1, 4).reduce(10, (a, b) -> a + b); // 16 = 10 + 1 + 2 + 3
 ```
 
 ----
