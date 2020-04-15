@@ -317,27 +317,31 @@ String maChaine = liste.stream()
 
 ### Transformer une liste en map avec groupingBy et partitioningBy
 
-`groupingBy` permet de créer N groupes de différents types, alors que `partitioningBy` permet de créer 2 groupes (true et false) à partir d'un booléen ou d'un précidat
+- `groupingBy` permet de créer N groupes de différents types
+- `partitioningBy` permet de créer 2 groupes (true et false) à partir d'un booléen ou d'un précidat
 
 ```java
-// Création d'une Map<Boolean, List<Person>> avec le booléen estUnHomme en clé et une liste de personnes en valeur
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.groupingBy(Person::isEstHomme));
-
 // Création d'une Map<Boolean, Set<String>> avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur
-Map<Boolean, Set<String>> map = liste.stream()
-	.filter(p -> p.getPrenom() != null)
-	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
-// {false=[Florine], true=[null, Gaëtan, Louis]}
+Map<Boolean, List<String>> map = liste.stream()
+.collect(Collectors.groupingBy(Person::isHomme, Collectors.mapping(Person::getPrenom, Collectors.toList())));
+System.out.println(map); // {false=[Florine], true=[Gaëtan, Louis, Louis]}
+
+// Comptage du nombre d'objets correspondant à chaque clé du groupingBy
+Map<Boolean, Long> map2 = liste.stream()
+.collect(Collectors.groupingBy(Person::isHomme, Collectors.mapping(Person::getPrenom, Collectors.counting())));
+System.out.println(map2); // {false=1, true=3}
+
+// Récupération de la personne la plus vieille par sexe
+Map<Boolean, Optional<Person>> map3 = liste.stream()
+.collect(Collectors.groupingBy(Person::isHomme, Collectors.mapping(Function.identity(), Collectors.maxBy(Comparator.comparing(Person::getAge)))));
+System.out.println(map3); // {false=Optional[Person [age=30, homme=false, prenom=Florine]], true=Optional[Person [age=32, homme=true, prenom=Gaëtan]]}
 ```
 
 ```java
 // Création d'une map avec 2 clés : true et false selon un prédicat
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.partitioningBy(p -> p.getAge()>18));
+Map<Boolean, List<Person>> map = liste.stream().collect(Collectors.partitioningBy(p -> p.getAge()>18));
 
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.partitioningBy(Person::isEstHomme));
+Map<Boolean, List<Person>> map = liste.stream().collect(Collectors.partitioningBy(Person::isEstHomme));
 ```
 
 ----
