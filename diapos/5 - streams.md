@@ -127,28 +127,6 @@ Stream<String> streamString = hello.chars().mapToObj(lettre -> Character.toStrin
 
 ----
 
-### Transformer une liste en chaîne de caractères
-
-Ecrire les prénoms de la liste dans une chaîne de caractères :
-
-```java
-String maChaine = liste.stream()
-	.map(Person::getPrenom)
-	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
-```
-
-Ajout d'un préfixe et d'un suffixe :
-
-```java
-String maChaine = liste.stream()
-    .filter(p -> p.getPrenom() != null)
-    .map(Person::getPrenom)
-    .distinct()
-    .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
-```
-
-----
-
 ### Stream d'un fichier
 
 Lecture d'un fichier en stream pour ne pas le monter entièrement en mémoire
@@ -312,34 +290,92 @@ int sum = IntStream.range(1, 6).sum(); // 15
 ### Les opérations terminales (3)
 
 Il y a des opérations terminales qui permettent de construire
-- des collections avec à la méthode **collect** : `collect(Collector<T> c)`
+- des collections avec à la méthode **collect** : `collect(Collector<T> c)`. Le type retourné dépendra du collector que l'on a choisi
+    - des listes, des sets...
+    - **joining** permet de concaténer les éléments du stream en une chaîne de caractère unique
 - des tableaux avec la méthode **toArray**
 
 ```java
+// Exemple de collect dans une List, dans un Set et un tableau
 List<String> list = Stream.of("a", "b").collect(Collectors.toList());
-String[] tabString = Stream.of("a", "b").toArray(String[]::new);
+Set<String> set = Stream.of("a", "b").collect(Collectors.toSet());
+String[] tab = Stream.of("a", "b").toArray(String[]::new);
+
+// Exemple de joining
+String maChaine = liste.stream()
+	.map(Person::getPrenom)
+	.collect(Collectors.joining(";")); // Gaëtan;Florine;Louis;Louis;null
+// Exemple de joining avec ajout d'un préfixe et d'un suffixe :
+String maChaine = liste.stream()
+    .filter(p -> p.getPrenom() != null)
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
 ```
 
 ----
 
-### Filtrer, mapper, trier et afficher
+### Transformer une liste en map avec groupingBy et partitioningBy
+
+`groupingBy` permet de créer N groupes de différents types, alors que `partitioningBy` permet de créer 2 groupes (true et false) à partir d'un booléen ou d'un précidat
 
 ```java
-liste.stream()
-    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
-    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
-    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
-    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
-    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
+// Création d'une Map<Boolean, List<Person>> avec le booléen estUnHomme en clé et une liste de personnes en valeur
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.groupingBy(Person::isEstHomme));
+
+// Création d'une Map<Boolean, Set<String>> avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur
+Map<Boolean, Set<String>> map = liste.stream()
+	.filter(p -> p.getPrenom() != null)
+	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
+// {false=[Florine], true=[null, Gaëtan, Louis]}
 ```
 
-### Mapper, supprimer les doublons, puis collecter dans une liste
+```java
+// Création d'une map avec 2 clés : true et false selon un prédicat
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.partitioningBy(p -> p.getAge()>18));
+
+Map<Boolean, List<Person>> map = liste.stream()
+	.collect(Collectors.partitioningBy(Person::isEstHomme));
+```
+
+----
+
+### Collecter dans une map
 
 ```java
-List<String> listePrenom = liste.stream()
-    .map(Person::getPrenom)
-    .distinct()
-    .collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
+// Création d'un map à partir d'une liste où on met l'id en clé et l'objet en valeur
+// ATTENTION : si la clé de la map n'est pas unique, il y aura une erreur
+Map<Integer, Person> map = liste.stream()
+	.collect(Collectors.toMap(Person::getId, Function.identity()));
+	//.collect(Collectors.toMap(p -> p.getId(), p -> p));
+
+// si la clé est en double, il faut dire si on souhaite garder l'ancienne ou la nouvelle valeur
+// sinon faire un groupingBy pour avoir une Map<String, List<Person>>
+Map<String, Person> map2 = liste.stream()
+    .sorted(Comparator.comparing(Person::getAge).reversed())
+    .collect(Collectors.toMap(Person::getPrenom, Function.identity(), (oldValue, newValue) -> oldValue));
+
+// parcours d'une map avec entrySet()
+map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
+```
+
+----
+
+### Obtenir une collection non modifiable
+
+```java
+Set<Person> unmodifiableSet = liste.stream()
+	.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+```
+
+### Choisir l'implémentation de notre collection
+
+```java
+// exemple où l'on force à utiliser une LinkedHashSet
+Set<Person> unmodifiableSet = liste.stream()
+	.collect(Collectors.toCollection(LinkedHashSet::new));
 ```
 
 ----
@@ -365,6 +401,49 @@ List<Person> listePrenom = liste.stream()
     })
     .collect(Collectors.toList());
 ```
+
+----
+
+### Streams vs Parallel Streams
+
+- les opérations peuvent être **stateless** (traitements sur les éléments un à un sans prendre en compte les autres éléments) ou **stateful**
+- les opérations **stateful** ont besoin de connaître l'ensemble du stream (par exemple, *distinct* ou *sorted*), il ne faut donc pas paralléliser ses streams
+
+```java
+// création d'un parallel stream à partir d'une liste
+liste.parallelStream() // au lieu de liste.stream()
+
+// si on part directement d'un stream, il faut utiliser la méthode parallel()
+Stream<Person> stream = Stream.of(p1, p2);
+stream.parallel()...
+
+// pour savoir si le stream est parallel (true, false)
+stream.isParallel()
+```
+
+----
+
+### Filtrer, mapper, trier et afficher
+
+```java
+liste.stream()
+    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
+    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
+    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
+    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
+    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
+```
+
+### Mapper, supprimer les doublons, puis collecter dans une liste
+
+```java
+List<String> listePrenom = liste.stream()
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
+```
+
+----
 
 ### Compter le nombre d'éléments filtrés
 ```java
@@ -422,54 +501,6 @@ long somme = stats.getSum();
 
 ----
 
-### Collecter dans une map
-
-```java
-// Création d'un map à partir d'une liste où on met l'id en clé et l'objet en valeur
-// ATTENTION : si la clé de la map n'est pas unique, il y aura une erreur
-Map<Integer, Person> map = liste.stream()
-	.collect(Collectors.toMap(Person::getId, Function.identity()));
-	//.collect(Collectors.toMap(p -> p.getId(), p -> p));
-
-// si la clé est en double, il faut dire si on souhaite garder l'ancienne ou la nouvelle valeur
-// sinon faire un groupingBy pour avoir une Map<String, List<Person>>
-Map<String, Person> map2 = liste.stream()
-    .sorted(Comparator.comparing(Person::getAge).reversed())
-    .collect(Collectors.toMap(Person::getPrenom, Function.identity(), (oldValue, newValue) -> oldValue));
-
-// parcours d'une map avec entrySet()
-map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
-```
-
-----
-
-### Transformer une liste en map avec groupingBy et partitioningBy
-
-`groupingBy` permet de créer N groupes de différents types, alors que `partitioningBy` permet de créer 2 groupes (true et false) à partir d'un booléen ou d'un précidat
-
-```java
-// Création d'une Map<Boolean, List<Person>> avec le booléen estUnHomme en clé et une liste de personnes en valeur
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.groupingBy(Person::isEstHomme));
-
-// Création d'une Map<Boolean, Set<String>> avec le booléen estUnHomme en clé et un ensemble de prénoms en valeur
-Map<Boolean, Set<String>> map = liste.stream()
-	.filter(p -> p.getPrenom() != null)
-	.collect(Collectors.groupingBy(Person::isEstHomme, Collectors.mapping(Person::getPrenom, Collectors.toSet())));
-// {false=[Florine], true=[null, Gaëtan, Louis]}
-```
-
-```java
-// Création d'une map avec 2 clés : true et false selon un prédicat
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.partitioningBy(p -> p.getAge()>18));
-
-Map<Boolean, List<Person>> map = liste.stream()
-	.collect(Collectors.partitioningBy(Person::isEstHomme));
-```
-
-----
-
 ### Savoir l'attribut le plus représenté
 
 ```java
@@ -483,38 +514,3 @@ String prenomLePlusFrequent = liste.stream()
     .get(); // Louis
 ```
 
-----
-
-### Obtenir une collection non modifiable
-
-```java
-Set<Person> unmodifiableSet = liste.stream()
-	.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-```
-
-### Choisir l'implémentation de notre collection
-
-```java
-// exemple où l'on force à utiliser une LinkedHashSet
-Set<Person> unmodifiableSet = liste.stream()
-	.collect(Collectors.toCollection(LinkedHashSet::new));
-```
-
-----
-
-### Streams vs Parallel Streams
-
-- les opérations peuvent être **stateless** (traitements sur les éléments un à un sans prendre en compte les autres éléments) ou **stateful**
-- les opérations **stateful** ont besoin de connaître l'ensemble du stream (par exemple, *distinct* ou *sorted*), il ne faut donc pas paralléliser ses streams
-
-```java
-// création d'un parallel stream à partir d'une liste
-liste.parallelStream() // au lieu de liste.stream()
-
-// si on part directement d'un stream, il faut utiliser la méthode parallel()
-Stream<Person> stream = Stream.of(p1, p2);
-stream.parallel()...
-
-// pour savoir si le stream est parallel (true, false)
-stream.isParallel()
-```
