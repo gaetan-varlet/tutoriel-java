@@ -191,7 +191,7 @@ runnable.run(); // toto
 
 ## Les comparaisons : l'interface Comparable
 
-Pour trier les éléments d'une collection, il faut que le type de l'objet implémente l'interface **Comparable** en redéfinissant la méthode **int compareTo(T other)**. Certaines classes comme *String* ou *Integer* le font déjà :
+Pour trier les éléments d'une collection, le type de l'objet doit implémenter l'interface **Comparable** en redéfinissant la méthode **int compareTo(T other)**. Certaines classes comme *String* ou *Integer* le font déjà :
 
 ```java
 // exemple en utilisant le tri naturel sur des chaînes de caractères
