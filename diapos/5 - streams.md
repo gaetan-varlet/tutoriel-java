@@ -340,7 +340,6 @@ System.out.println(map3); // {false=Optional[Person [age=30, homme=false, prenom
 ```java
 // Création d'une map avec 2 clés : true et false selon un prédicat
 Map<Boolean, List<Person>> map = liste.stream().collect(Collectors.partitioningBy(p -> p.getAge()>18));
-
 Map<Boolean, List<Person>> map = liste.stream().collect(Collectors.partitioningBy(Person::isEstHomme));
 ```
 
@@ -363,6 +362,27 @@ Map<String, Person> map2 = liste.stream()
 
 // parcours d'une map avec entrySet()
 map.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " - " + e.getValue()));
+```
+
+----
+
+### Exemple : connaître l'attribut le plus représenté
+
+```java
+List<Person> liste = Arrays.asList(new Person("Gaëtan", 32, true), new Person("Louis", 2, true),
+    new Person("Florine", 30, false), new Person("Louis", 1, true));
+
+String prenomLePlusFrequent = liste.stream()
+.filter(p -> p.getPrenom() != null)
+.collect(Collectors.groupingBy(Person::getPrenom, Collectors.counting()))
+// Map<String, Long> : {Florine=1, Gaëtan=1, Louis=2}
+// parcours des paires clé/valeur grâce à entrySet()
+.entrySet()
+.stream()
+.max(Comparator.comparingLong(Entry::getValue))
+.map(Entry::getKey)
+.get();
+System.out.println(prenomLePlusFrequent); // Louis
 ```
 
 ----
@@ -501,20 +521,5 @@ double moyenne = stats.getAverage();
 int min = stats.getMin();
 int max = stats.getMax();
 long somme = stats.getSum();
-```
-
-----
-
-### Savoir l'attribut le plus représenté
-
-```java
-String prenomLePlusFrequent = liste.stream()
-    .filter(p -> p.getPrenom() != null)
-    .collect(Collectors.groupingBy(Person::getPrenom, Collectors.counting()))
-    .entrySet()
-    .stream()
-    .max(Comparator.comparingLong(Entry::getValue))
-    .map(Entry::getKey)
-    .get(); // Louis
 ```
 
