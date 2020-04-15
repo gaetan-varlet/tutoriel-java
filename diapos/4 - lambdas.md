@@ -196,7 +196,6 @@ En Java, pour trier les éléments d'une collection, il faut que le type de l'ob
 ```java
 // exemple en utilisant le tri naturel sur des chaînes de caractères
 List<String> listeString = Arrays.asList("a", "c", "d", "b");
-System.out.println(listeString); // [a, c, d, b]
 Collections.sort(listeString); System.out.println(listeString); // [a, b, c, d]
 
 // exemple d'implémentation de l'interface Comparable
@@ -213,7 +212,6 @@ public class Person implements Comparable<Person> {
 // il est mainteant possible de trier notre liste
 List<Person> list = Arrays.asList(new Person("Gaëtan", 32, true), new Person("Louis", 2, true),
     new Person("Florine", 30, true), new Person("Louis", 1, true));
-System.out.println(list); // 32 2 30 1
 Collections.sort(list); System.out.println(list); // 1 2 30 32
 ```
 
@@ -238,13 +236,10 @@ System.out.println(comparatorLength.compare("aa", "b")); // 1
 System.out.println(comparatorLength.compare("a", "bb")); // -1
 
 List<String> listeString = Arrays.asList("a", "c", "d", "b");
-Collections.sort(listeString, comparatorStringParDefaut);
-System.out.println(listeString); // [a, b, c, d]
-Collections.sort(listeString, comparatorInverse);
-System.out.println(listeString); // [d, c, b, a]
+Collections.sort(listeString, comparatorStringParDefaut); System.out.println(listeString); // [a, b, c, d]
+Collections.sort(listeString, comparatorInverse); System.out.println(listeString); // [d, c, b, a]
 // possibilité d'utiliser la méthode sort de List depuis Java 8 en spécifiant un comparateur
-listeString.sort(comparatorStringParDefaut);
-System.out.println(listeString); // [a, b, c, d]
+listeString.sort(comparatorStringParDefaut); System.out.println(listeString); // [a, b, c, d]
 ```
 
 ----
