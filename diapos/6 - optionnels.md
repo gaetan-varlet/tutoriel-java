@@ -245,8 +245,11 @@ Optional<String> optionalOfPrenom = optionalPerson.flatMap(Person::getPrenom);
 - depuis Java 9, il est possible de transformer un optionnel en stream :
 
 ```java
-// exemple avec une liste d'identifiants de personnes pour lesquels on souhaite récupérer un stream de Person
+// la méthode stream() construit un stream soit l'objet wrappé par l'optional soit un stream vide si l'optionnal est vide
+System.out.println(Optional.ofNullable("a").stream().count()); // 1
+System.out.println(Optional.ofNullable(null).stream().count()); // 0
 
+// exemple avec une liste d'identifiants de personnes pour lesquels on souhaite récupérer un stream de Person
 // méthode qui renvoie un Optional<Person> en fonction de l'id en paramètre
 Optional<Person> findPerson(String personId);
 
@@ -257,7 +260,6 @@ public Stream<Person> findPersons(Collection<String> personIds) {
 		.filter(Optional::isPresent)
 		.map(Optional::get);
 }
-
 // en java 9
 public Stream<Person> findPersons(Collection<String> personIds) {
 	return personIds.stream()

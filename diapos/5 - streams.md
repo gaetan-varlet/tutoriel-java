@@ -387,19 +387,22 @@ System.out.println(prenomLePlusFrequent); // Louis
 
 ----
 
-### Obtenir une collection non modifiable
-
-```java
-Set<Person> unmodifiableSet = liste.stream()
-	.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-```
-
 ### Choisir l'implémentation de notre collection
+
+Le collector *toList()* crée une **ArrayList** et le collector *toSet()* crée un **HashSet**. Il est possible de choisir une autre implémentation de collection avec la méthode **toCollection()** :
 
 ```java
 // exemple où l'on force à utiliser une LinkedHashSet
 Set<Person> unmodifiableSet = liste.stream()
 	.collect(Collectors.toCollection(LinkedHashSet::new));
+```
+
+### Obtenir une collection non modifiable
+
+```java
+Set<Person> unmodifiableSet = liste.stream().collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+// à partir de Java 10 :
+Set<Person> unmodifiableSet = liste.stream().collect(Collectors.toUnmodifiableSet());
 ```
 
 ----
