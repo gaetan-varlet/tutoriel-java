@@ -262,9 +262,9 @@ listeString.sort(c3); System.out.println(listeString); // [d, c, b, a]
 // tri sur l'aĝe par ordre croissant (ancienne et nouvelle syntaxe)
 Comparator<Person> compPerson1 = (p1, p2) -> (p1.getAge() - p2.getAge());
 Comparator<Person> compPerson2 = Comparator.comparing(Person::getAge);
-// tri sur le prénom par ordre croissant (ancienne et nouvelle syntaxe)
-Comparator<Person> compPerson3 = (p1, p2) -> (p1.getPrenom().compareTo(p2.getPrenom()));
-Comparator<Person> compPerson4 = Comparator.comparing(Person::getPrenom);
+// tri sur le prénom par ordre décroissant (ancienne et nouvelle syntaxe)
+Comparator<Person> compPerson3 = (p1, p2) -> (p2.getPrenom().compareTo(p1.getPrenom()));
+Comparator<Person> compPerson4 = Comparator.comparing(Person::getPrenom).reversed();
 // tri sur le prénom par ordre alphabétique puis l'âge par ordre décroissant
 Comparator<Person> compPerson5 = Comparator.comparing(Person::getPrenom).thenComparing(Comparator.comparing(Person::getAge).reversed());
 // tri sur le prénom par ordre alphabétique en mettant les prénoms null à la fin
