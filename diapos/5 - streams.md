@@ -189,6 +189,36 @@ List<String> liste = listeDeListe.stream().flatMap(l -> l.stream()).collect(Coll
 
 ----
 
+### Filtrer, mapper, trier et afficher
+
+```java
+liste.stream()
+    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
+    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
+    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
+    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
+    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
+```
+
+### Mapper, supprimer les doublons, puis collecter dans une liste
+
+```java
+List<String> listePrenom = liste.stream()
+    .map(Person::getPrenom)
+    .distinct()
+    .collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
+```
+
+### Compter le nombre d'éléments filtrés
+
+```java
+long a = liste.stream()
+.filter(p -> p.getPrenom() != null) // équivalent à .filter(p -> !(p.getPrenom() == null))
+.count(); // 4 personnes ont un prénom non null
+ ```
+
+----
+
 ### Débugger avec peek()
 
 ```java
@@ -311,6 +341,53 @@ String maChaine = liste.stream()
     .map(Person::getPrenom)
     .distinct()
     .collect(Collectors.joining(", ", "Les prénoms sont : ",".")); // Les prénoms sont : Gaëtan, Florine, Louis.
+```
+
+----
+
+### Récupérer le max ou le min
+```java
+// création d'un comparateur de personne selon l'âge
+//Comparator<Person> comparator = Comparator.comparing(Person::getAge);
+
+// personne la plus âgée
+Person personnePlusAgee = liste.stream()
+	.max(Comparator.comparing(Person::getAge)).get();
+
+String maxChar = Stream.of("H", "T", "D", "I", "J")
+    .max(Comparator.comparing(String::valueOf)).get();
+
+Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    .max(Comparator.comparing(Integer::valueOf)).get();
+
+// transformer le stream en IntStream permet évite d'avoir à définir le comparateur
+Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+	.mapToInt(i -> i).max().getAsInt();
+
+Integer sum =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).sum();
+Double mean =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).average().getAsDouble();
+```
+
+----
+
+### Faire la moyenne et la somme
+
+```java
+// ces méthodes fonctionnent sur les types primitifs et sur les classes wrappers
+// il n'y a pas besoin de faire une opération map avant l'opération de collecte
+Double ageMoyen = liste.stream().collect(Collectors.averagingInt(Person::getAge));
+Integer sommeAge = liste.stream().collect(Collectors.summingInt(Person::getAge));
+```
+
+### Calculer des statistiques sur une liste de nombres
+```java
+List<Integer> liste = Arrays.asList(1,2,3);
+IntSummaryStatistics stats = liste.stream().mapToInt(i->i).summaryStatistics();
+long nbElements = stats.getCount();
+double moyenne = stats.getAverage();
+int min = stats.getMin();
+int max = stats.getMax();
+long somme = stats.getSum();
 ```
 
 ----
@@ -447,82 +524,3 @@ stream.parallel()...
 // pour savoir si le stream est parallel (true, false)
 stream.isParallel()
 ```
-
-----
-
-### Filtrer, mapper, trier et afficher
-
-```java
-liste.stream()
-    .filter(p -> p.getPrenom() != null) // filtrage sur les prénoms non null
-    .map(p -> p.getPrenom().toUpperCase()) // mapping : on ne conserve que le prénom que l'on met en majuscules
-    .sorted() // tri sur l'ordre naturel, ici l'ordre alphabétique
-    //.sorted(Comparator.reverseOrder()) // tri sur l'ordre inverse de l'ordre naturel
-    .forEach(System.out::println); // impression des prénoms dans la console : FLORINE GAËTAN LOUIS LOUIS
-```
-
-### Mapper, supprimer les doublons, puis collecter dans une liste
-
-```java
-List<String> listePrenom = liste.stream()
-    .map(Person::getPrenom)
-    .distinct()
-    .collect(Collectors.toList()); // [Gaëtan, Florine, Louis, null]
-```
-
-----
-
-### Compter le nombre d'éléments filtrés
-```java
-long a = liste.stream()
-.filter(p -> p.getPrenom() != null) // équivalent à .filter(p -> !(p.getPrenom() == null))
-.count(); // 4 personnes ont un prénom non null
- ```
-
-----
-
-### Récupérer le max ou le min
-```java
-// création d'un comparateur de personne selon l'âge
-//Comparator<Person> comparator = Comparator.comparing(Person::getAge);
-
-// personne la plus âgée
-Person personnePlusAgee = liste.stream()
-	.max(Comparator.comparing(Person::getAge)).get();
-
-String maxChar = Stream.of("H", "T", "D", "I", "J")
-    .max(Comparator.comparing(String::valueOf)).get();
-
-Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
-    .max(Comparator.comparing(Integer::valueOf)).get();
-
-// transformer le stream en IntStream permet évite d'avoir à définir le comparateur
-Integer maxNumber =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
-	.mapToInt(i -> i).max().getAsInt();
-
-Integer sum =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).sum();
-Double mean =  Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(i -> i).average().getAsDouble();
-```
-
-----
-
-### Faire la moyenne et la somme
-
-```java
-// ces méthodes fonctionnent sur les types primitifs et sur les classes wrappers
-// il n'y a pas besoin de faire une opération map avant l'opération de collecte
-Double ageMoyen = liste.stream().collect(Collectors.averagingInt(Person::getAge));
-Integer sommeAge = liste.stream().collect(Collectors.summingInt(Person::getAge));
-```
-
-### Calculer des statistiques sur une liste de nombres
-```java
-List<Integer> liste = Arrays.asList(1,2,3);
-IntSummaryStatistics stats = liste.stream().mapToInt(i->i).summaryStatistics();
-long nbElements = stats.getCount();
-double moyenne = stats.getAverage();
-int min = stats.getMin();
-int max = stats.getMax();
-long somme = stats.getSum();
-```
-
