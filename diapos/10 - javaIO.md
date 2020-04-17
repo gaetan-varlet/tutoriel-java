@@ -13,7 +13,7 @@
 Historique :
 - 1995, en Java 1 : Java I/O
 - 2002, en Java 4 : Java NIO (nouvelles classes, nouvelles fonctionnalités)
-- 2011, en Java 7 : Java NIO2 (nouveaux classes, nouveaux concepts)
+- 2011, en Java 7 : Java NIO2 (nouvelles classes, nouveaux concepts)
 
 ----
 
