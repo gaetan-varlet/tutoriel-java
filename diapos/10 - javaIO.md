@@ -88,3 +88,77 @@ Ces 4 classes sont abstraites. Elles définissent la façon de lire/écrire mais
 ----
 
 ## Lecture de caractères avec un Reader
+
+La classe **Reader** est abstraite. Elle définie les opérations de base de lecture de texte :
+- **read()** permet de lire un caractère à partir d'un médium de sortie
+- **read(char[])** permet de lire un tableau de caractères
+- **skip()** permet de sauter un certain nombre de caractères
+- **close()** permet de fermer les ressources que l'on a ouverte
+
+```java
+// Exemple de lecture d'un fichier avec un FileReader
+Reader reader = null;
+try {
+    reader = new FileReader(new File("test"));
+    char[] chars = new char[1024];
+    StringBuilder sb = new StringBuilder();
+    int n = reader.read(chars); // renvoie le nombre de caractères lu
+    // quand n vaut -1, la lecture du fichier est terminée
+    while (n > -1) {
+        sb.append(chars, 0, n);
+        n = reader.read(chars);
+    }
+    System.out.println(sb.toString()); // impresssion du contenu
+} catch (IOException e) {
+    e.printStackTrace();
+} finally { // fermeture du reader dans le finally au ca où une exception est jetée
+    try { if(reader != null){reader.close();} } catch (IOException e) { e.printStackTrace(); }
+}
+```
+
+----
+
+## Utilisation d'un Reader avec try-with-resources
+
+- arrivée avec Java 7
+- les ressources ouvertes dans le *try* vont automatiquement être fermées
+- possibilité de mettre dans le try-with-resources toutes les ressources qui implémentent ***AutoCloseable**
+
+```java
+File file = new File("test");
+try(Reader reader = new FileReader(file)){
+    char[] chars = new char[1024];
+    StringBuilder sb = new StringBuilder();
+    int n = reader.read(chars); // renvoie le nombre de caractères lu
+    // quand n vaut -1, la lecture du fichier est terminée
+    while (n > -1) {
+        sb.append(chars, 0, n);
+        n = reader.read(chars);
+    }
+    System.out.println(sb.toString()); // impresssion du contenu
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+----
+
+## Utilisation d'un BufferedReader
+
+**BufferedReader** est une extension de Reader qui a 2 méthodes supplémentaires intéressantes :
+- **readLine()** renvoie un String qui contient une ligne du fichier texte
+- **lines()** renvoie un `Stream<String>`
+
+**LineNumberReader** étend lui-même BufferedReader est à une méthode supplémentaire intéressante :
+- **getLineNumber()** permet de retourner le numéro de ligne du fichier
+- **setLineNumber(int i)** permet de changer ce numéro de ligne
+
+```java
+File file = new File("test");
+// fermeture automatique du BufferedReader puis du Reader
+try(Reader reader = new FileReader(file); BufferedReader br = new BufferedReader(reader);){
+    br.lines().forEach(System.out::println);
+} catch (IOException e){
+    e.printStackTrace();
+}
+```
