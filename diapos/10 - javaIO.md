@@ -20,7 +20,6 @@ Historique :
 ## Modélisation de chemins sur un disque avec File et Path
 
 - la classe **File** et l'interface **Path** l'interface permettent de modéliser des chemins vers le système de fichiers. L'intérêt d'avoir une interface est qu'on peut avoir une implémentation propre à chaque OS
-
 - la création d'un *File* ou d'un *Path* crée un objet en mémoire qui modélise un chemin sur le système de fichier. Cela ne crée en aucun cas un fichier sur le système de fichiers. Aucun accès disque n'est réalisé
 
 ```java
@@ -89,7 +88,7 @@ Ces 4 classes sont abstraites. Elles définissent la façon de lire/écrire mais
 
 ## Lecture de caractères avec un Reader
 
-La classe **Reader** est abstraite. Elle définie les opérations de base de lecture de texte :
+La classe abstraite **Reader** définie les opérations de base de lecture de texte :
 - **read()** permet de lire un caractère à partir d'un médium de sortie
 - **read(char[])** permet de lire un tableau de caractères
 - **skip()** permet de sauter un certain nombre de caractères
@@ -122,7 +121,7 @@ try {
 
 - arrivée avec Java 7
 - les ressources ouvertes dans le *try* vont automatiquement être fermées
-- possibilité de mettre dans le try-with-resources toutes les ressources qui implémentent ***AutoCloseable**
+- possibilité de mettre dans le try-with-resources toutes les ressources qui implémentent **AutoCloseable**
 
 ```java
 File file = new File("test");
@@ -167,7 +166,7 @@ try(Reader reader = new FileReader(file); BufferedReader br = new BufferedReader
 
 ## Ecrire dans un fichier avec un Writer
 
-La classe **Writer** est abstraite. Elle définie les opérations de base d'écriture d'un caractère, de tableaux de caractères, de chaînes de caractères :
+La classe abstraite **Writer** définie les opérations de base d'écriture d'un caractère, de tableaux de caractères et de chaînes de caractères :
 - **write(int i)** écrit un caractère
 - **write(char[]c)** écrit un tableau de caractères dans le flux de sortie
 - **write(String s)** écrit une chaîne de caractères
@@ -208,11 +207,11 @@ BufferedWriter bw = Files.newBufferedWriter(path);
 
 | Reader          | Writer          | classes abstraites permettant de lire et écrire les flux textuelles
 | :---:           | :---:           | :---
-| FileReader      | FileWriter      | lecture et écriture dans un fichier texte
-| StringReader    | StringWriter    | lecture et écriture dans une chaîne de caractères
-| CharArrayReader | CharArrayWriter | lecture et écriture dans un tableau de caractères
+| FileReader      | FileWriter      | lecture/écriture dans un fichier texte
+| StringReader    | StringWriter    | lecture/écriture dans une chaîne de caractères
+| CharArrayReader | CharArrayWriter | lecture/écriture dans un tableau de caractères
 | BufferedReader  | BufferedWriter  | **Pattern Decorator** : extension qui nécessite un Reader déjà construit
-| -               | PrintWriter     | extension de Writer qui permet de faire de la mise en forme
+| -               | PrintWriter     | extension de Writer permettant de faire de la mise en forme
 
 ----
 
