@@ -17,11 +17,11 @@ Historique :
 
 ----
 
-## Modélisation de chemins sur un disque avec File et Path
+## Modélisation de chemins sur un disque avec File et Path
 
 - la classe **File** et l'interface **Path** l'interface permettent de modéliser des chemins vers le système de fichiers. L'intérêt d'avoir une interface est qu'on peut avoir une implémentation propre à chaque OS
 
-- La création d'un *File* ou d'un *Path* crée un objet en mémoire qui modélise un chemin sur le système de fichier. Cela ne crée en aucun cas un fichier sur le système de fichiers. Aucun accès disque n'est réalisé
+- la création d'un *File* ou d'un *Path* crée un objet en mémoire qui modélise un chemin sur le système de fichier. Cela ne crée en aucun cas un fichier sur le système de fichiers. Aucun accès disque n'est réalisé
 
 ```java
 // création à partir de chemin absolu ou relatif
@@ -80,8 +80,8 @@ System.out.println(f.isFile()); // true
 Java I/O est séparé en 4 catégories :
 - les flux de texte en lecture : **Reader**
 - les flux de texte en écriture : **Writer**
-- les flux binaire en lecture : **InputStream**
-- les flux binaire en écriture : **OutpoutStream**
+- les flux binaires en lecture : **InputStream**
+- les flux binaires en écriture : **OutpoutStream**
 
 Ces 4 classes sont abstraites. Elles définissent la façon de lire/écrire mais pas le médium de sortie : un **Fichier**, un **Socket** ou un **Buffer** (mémoire)
 
@@ -162,3 +162,59 @@ try(Reader reader = new FileReader(file); BufferedReader br = new BufferedReader
     e.printStackTrace();
 }
 ```
+
+----
+
+## Ecrire dans un fichier avec un Writer
+
+La classe **Writer** est abstraite. Elle définie les opérations de base d'écriture d'un caractère, de tableaux de caractères, de chaînes de caractères :
+- **write(int i)** écrit un caractère
+- **write(char[]c)** écrit un tableau de caractères dans le flux de sortie
+- **write(String s)** écrit une chaîne de caractères
+- **append(...)** permet d'ajouter du texte à un endroit précis
+- **close()** ferme le write
+- **flush()** garanti que ce qui a été écrit dans le writer est transmis vers le flux de sortie (l'appel à close appel flush)
+
+```java
+// écriture dans un fichier FileWriter
+File file = new File("test");
+try(Writer writer = new FileWriter(file); BufferedWriter bw = new BufferedWriter(writer);){
+    bw.write("Hello"); bw.newLine(); bw.write("World");
+} catch (IOException e){ e.printStackTrace(); }
+
+// la classe PrintWriter a des méthodes supplémentaires (utilisée dans l'API Servlet)
+PrintWriter pw = new PrintWriter(file);
+pw.println("Coucou");
+pw.close();
+```
+
+----
+
+## Utilisation de Files pour créer des flux bufferisés
+
+- **Files.newBufferedReader(path)** permet de créer un BufferedReader, possibilité de spécifier l'encodage en UTF-8 par défaut
+- **Files.newBufferedWriter(path)** permet de créer un BufferedWriter
+
+```java
+Path path = Path.of("chemin");
+BufferedReader br = Files.newBufferedReader(path); // par défaut en UTF8
+BufferedReader br2 = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+BufferedWriter bw = Files.newBufferedWriter(path);
+```
+
+----
+
+## Résumé des Reader et Writer
+
+| Reader          | Writer          | classes abstraites permettant de lire et écrire les flux textuelles
+| :---:           | :---:           | :---
+| FileReader      | FileWriter      | lecture et écriture dans un fichier texte
+| StringReader    | StringWriter    | lecture et écriture dans une chaîne de caractères
+| CharArrayReader | CharArrayWriter | lecture et écriture dans un tableau de caractères
+| BufferedReader  | BufferedWriter  | **Pattern Decorator** : extension qui nécessite un Reader déjà construit
+| -               | PrintWriter     | extension de Writer qui permet de faire de la mise en forme
+
+----
+
+## OutputStream
+
