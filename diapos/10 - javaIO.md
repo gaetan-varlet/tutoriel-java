@@ -205,7 +205,7 @@ BufferedWriter bw = Files.newBufferedWriter(path);
 
 ## Résumé des Reader et Writer
 
-| Reader          | Writer          | classes abstraites permettant de lire et écrire les flux textuelles
+| Reader          | Writer          | classes abstraites permettant de lire/écrire les flux textuels
 | :---:           | :---:           | :---
 | FileReader      | FileWriter      | lecture/écriture dans un fichier texte
 | StringReader    | StringWriter    | lecture/écriture dans une chaîne de caractères
