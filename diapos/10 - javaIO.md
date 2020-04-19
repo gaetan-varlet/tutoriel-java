@@ -240,11 +240,9 @@ try (OutputStream os = new FileOutputStream(file);
 
 ## InputStream
 
-InputStream est abstrait : **FileInputStream**, **ByteArrayInputStream**
-
+InputStream est abstrait : **FileInputStream**, **ByteArrayInputStream**  
 Les principales méthodes :
-- **read()** renvoie un *int*
-- **read(byte[])** renvoie un *int* avec le nombre d'octets lus
+- **read()** renvoie un *int*, **read(byte[])** renvoie un *int* avec le nombre d'octets lus
 - **readAll()** renvoie le tableau d'octets complet, risque de saturation de la mémoire de la JVM
 - **mark()** permet de mettre un index dans l'inputStream, **reset()** permet de revenir à l'index posé
 - **close()** pour fermer le flux
