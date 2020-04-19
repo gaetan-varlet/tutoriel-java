@@ -217,3 +217,50 @@ BufferedWriter bw = Files.newBufferedWriter(path);
 
 ## OutputStream
 
+- équivalent de Writer pour les flux binaires, elle modélise l'écriture d'octets sur des flux
+- classe abstraire qui va étendre par un certain nombre de classe pour définir le médium de sortie :
+**FileOutputStream**, **ByteArrayOutputStream**
+
+Les principales méthodes :
+- **write(byte[])** ou **write(int)** pour écrire sur le flux de sortie
+- **flush()** comme le flush du Writer
+- **close()** avec appel de la méthode flush
+
+```java
+// exemple d'écriture avec un FileOutputStream et BufferedOutputStream
+File file = new File("test");
+try (OutputStream os = new FileOutputStream(file);
+        BufferedOutputStream bos = new BufferedOutputStream(os);) {
+    byte[] bytes = null;
+    bos.write(bytes);
+} catch (IOException e) { e.printStackTrace();}
+```
+
+----
+
+## InputStream
+
+InputStream est abstrait : **FileInputStream**, **ByteArrayInputStream**
+
+Les principales méthodes :
+- **read()** renvoie un *int*
+- **read(byte[])** renvoie un *int* avec le nombre d'octets lus
+- **readAll()** renvoie le tableau d'octets complet, risque de saturation de la mémoire de la JVM
+- **mark()** permet de mettre un index dans l'inputStream, **reset()** permet de revenir à l'index posé
+- **close()** pour fermer le flux
+
+```java
+File file = new File("test");
+try (InputStream is = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(is);
+        // stockage des octets lus dans le ByteArrayOutputStream
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();) {
+    byte[] bytes = new byte[1024];
+    int count = bis.read(bytes);
+    while(count != 1){
+        bos.write(bytes, 0, count);
+        count = bis.read(bytes);
+    }
+    byte[] readBytes = bos.toByteArray(); // récupération du tableau d'octets lu
+} catch (IOException e) { e.printStackTrace();}
+```
