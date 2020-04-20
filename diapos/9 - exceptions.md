@@ -36,3 +36,41 @@ La classe **RuntimeException** :
 - pas de gestion explicite de ces erreurs (appelées **Unchecked** Exception), correction du bug quand il arrive
 
 ----
+
+## Gestion des Checked Exception
+
+Le JDK oblige à gérer certains cas d'erreurs lors de certaines actions comme par exemple lors de la lecture d'un fichier, gérer le cas où le fichier n'est pas lisible.
+
+2 approches possibles :
+- attraper l'exception et la traiter localement
+- transmettre l'exception au code appelant
+
+----
+
+## Transmettre une exception avec throws
+
+- ajout du mot clé **throws** suivi du nom de l'exception à la fin de la signature de la méthode
+
+```java
+public String save(Person p) throws SQLException {
+    return "person save";
+}
+```
+
+## Traiter l'exception localement
+
+- pattern **try/catch**, la partie *catch* n'est exécutée qui si une erreur survient dans la partie *try*
+
+```java
+public String save(Person p) {
+    try {
+        // code pouvant générer une SQLException	
+        return "person save";
+    } catch (SQLException e) {
+        // affichage de l'erreur
+    }
+}
+```
+
+----
+
