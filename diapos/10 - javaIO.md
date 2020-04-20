@@ -207,9 +207,9 @@ BufferedWriter bw = Files.newBufferedWriter(path);
 
 | Reader          | Writer          | classes abstraites permettant de lire/écrire les flux textuels
 | :---:           | :---:           | :---
-| FileReader      | FileWriter      | lecture/écriture dans un fichier texte
-| StringReader    | StringWriter    | lecture/écriture dans une chaîne de caractères
-| CharArrayReader | CharArrayWriter | lecture/écriture dans un tableau de caractères
+| FileReader      | FileWriter      | lire/écrire dans un fichier texte
+| StringReader    | StringWriter    | lire/écrire dans une chaîne de caractères
+| CharArrayReader | CharArrayWriter | lire/écrire dans un tableau de caractères
 | BufferedReader  | BufferedWriter  | **Pattern Decorator** : extension qui nécessite un Reader déjà construit
 | -               | PrintWriter     | extension de Writer permettant de faire de la mise en forme
 
@@ -290,9 +290,9 @@ flux caractères = flux d'octets interprété avec un **Charset**, par exemple U
 
 | InputStream (Lecture) | OutputStream (Ecriture) | classes abstraites
 | :---:                 | :---:                   | :---
-| FileI.S.              | FileO.S.                | lecture/écriture dans un fichier
-| ByeArrayI.S.          | ByeArrayO.S.            | lecture/écriture dans un tableau
-| DataI.S.              | DataO.S.                | lecture/écriture des types primitifs
+| FileI.S.              | FileO.S.                | lire/écrire dans un fichier
+| ByeArrayI.S.          | ByeArrayO.S.            | lire/écrire dans un tableau
+| DataI.S.              | DataO.S.                | lire/écrire des types primitifs
 | ObjectI.S.            | ObjectO.S.              | (dé)sérialisation des objets (déconseillé)
 | GZipI.S. et ZipI.S.   | GZipO.S. et ZipO.S.     | gestion automatique des flux compressés
-| InputStreamReader     | OutputStreamWriter      | lecture/écriture de caractères sur un flux binaire
+| InputStreamReader     | OutputStreamWriter      | lire/écrire des caractères sur un flux binaire
