@@ -131,7 +131,7 @@ Iterator<T> it2 = ll.iteror();
 
 - l'interface `SortedSet` étend l'interface `Set`
 - l'implémentation est un `TreeSet` : `SortedSet<T> set = new TreeSet<>();`
-- en plus du `Set`, les éléments sont automatiquement triés dans l'ordre croissant (ce qui est différent d'une liste ou les éléments sont ordonnés via leur index dans l'ordre où ils sont ajoutés
+- en plus du `Set`, les éléments sont automatiquement triés dans l'ordre croissant, ce qui est différent d'une liste ou les éléments sont ordonnés via leur index dans l'ordre où ils sont ajoutés
 - les éléments doivent étendre l'interface `Comparable`, ou alors le `SortedSet` doit être créé avec un `Comparator` pour que le `SortedSet` puisse les trier
 
 ----
