@@ -53,6 +53,7 @@ Le JDK oblige à gérer certains cas d'erreurs lors de certaines actions comme p
 
 ```java
 public String save(Person p) throws SQLException {
+    // code pouvant générer une SQLException
     return "person save";
 }
 ```
@@ -74,3 +75,29 @@ public String save(Person p) {
 
 ----
 
+## Attraper plusieurs exceptions
+
+- possibilité de catcher la classe **Exception** voire **Throwable** qui va capturer toutes les exceptions mais ce n'est pas une bonne idée car on ne veut pas forcément capturer toutes les exceptions
+- possibilité d'avoir plusieurs blocs *catch* à la suite, ou d'utiliser le **multicatch** pour capturer différentes exceptions dans le même bloc *catch* :
+
+```java
+// enchaînement de catch
+try { // code pouvant générer une SQLException
+    return "person save";
+} catch (SQLException e) {
+    /* traitement de l'erreur */
+} catch (IOException e) {
+    /* traitement de l'erreur */
+}
+
+// multicatch
+try { // code pouvant générer une SQLException
+    return "person save";
+} catch (SQLException | IOException e) {
+    /* traitement de l'erreur */
+}
+```
+
+----
+
+## Créer et jeter une exception applicative à partir d'une exception du JDK
