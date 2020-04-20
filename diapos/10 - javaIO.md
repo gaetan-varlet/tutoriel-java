@@ -268,7 +268,7 @@ try (InputStream is = new FileInputStream(file);
 
 ## Les InputStream et OutputStream spécifiques
 
-construction par décoration d'un *InputStream* ou d'un *OutputStream* :
+construction par décoration d'un *InputStream* ou d'un *OutputStream* et ajoutant des méthodes :
 - possibilité de lire/écrire des types primitifs avec des **DataInputStream** et des **DataOutputStream**
 - possibilité de lire/écrire des objets *Serializable* avec des **ObjectInputStream** et des **ObjectOutputStream**
 
@@ -292,7 +292,7 @@ flux caractères = flux d'octets interprété avec un **Charset**, par exemple U
 | :---:                 | :---:                   | :---
 | FileI.S.              | FileO.S.                | lecture/écriture dans un fichier
 | ByeArrayI.S.          | ByeArrayO.S.            | lecture/écriture dans un tableau
-| DataI.S.              | DataO.S.                | extension d'I.S et d'O.S permettant d'écrire des types primitifs
-| ObjectI.S.            | ObjectO.S.              | extension d'I.S et d'O.S permettant de sérialiser des objets (déconseillé)
-| GZipI.S. et ZipI.S.   | GZipO.S. et ZipO.S.     | gestion automatique des flux compressés au format gzip/zip
+| DataI.S.              | DataO.S.                | lecture/écriture des types primitifs
+| ObjectI.S.            | ObjectO.S.              | (dé)sérialisation des objets (déconseillé)
+| GZipI.S. et ZipI.S.   | GZipO.S. et ZipO.S.     | gestion automatique des flux compressés
 | InputStreamReader     | OutputStreamWriter      | lecture/écriture de caractères sur un flux binaire
