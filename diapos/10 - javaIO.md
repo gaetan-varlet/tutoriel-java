@@ -227,9 +227,10 @@ Les principales méthodes :
 - **close()** avec appel de la méthode flush
 
 ```java
-// exemple d'écriture avec un FileOutputStream et BufferedOutputStream
+// exemple d'écriture avec un FileOutputStream
 File file = new File("test");
 try (OutputStream os = new FileOutputStream(file);
+        // création d'un BufferedOutputStream par décoration de l'OutputStream pour améliorer les performances des écritures
         BufferedOutputStream bos = new BufferedOutputStream(os);) {
     byte[] bytes = null;
     bos.write(bytes);
@@ -262,3 +263,36 @@ try (InputStream is = new FileInputStream(file);
     byte[] readBytes = bos.toByteArray(); // récupération du tableau d'octets lu
 } catch (IOException e) { e.printStackTrace();}
 ```
+
+----
+
+## Les InputStream et OutputStream spécifiques
+
+construction par décoration d'un *InputStream* ou d'un *OutputStream* :
+- possibilité de lire/écrire des types primitifs avec des **DataInputStream** et des **DataOutputStream**
+- possibilité de lire/écrire des objets *Serializable* avec des **ObjectInputStream** et des **ObjectOutputStream**
+
+----
+
+## Les flux mixtes texte/binaire
+
+**InputStreamReader** **OutputStreamWriter** sont des flux mixtes :
+- *InputStreamReader* étend *Reader* et est construit par décoration d'un *InputStream*
+    - lire des caractères sur un flux d'octets au lieu d'un flux de caractères
+- *OutputStreamWriter* étend *Writer* et est construit par décoration d'un *OutputStream*
+    - écrire des caractères sur un flux d'octets
+
+flux caractères = flux d'octets interprété avec un **Charset**, par exemple UTF-8 ou ISO-8859, qui permet de convertir des octets en caractère.
+
+----
+
+## Résumé des flux binaires
+
+| InputStream (Lecture) | OutputStream (Ecriture) | classes abstraites
+| :---:                 | :---:                   | :---
+| FileI.S.              | FileO.S.                | lecture/écriture dans un fichier
+| ByeArrayI.S.          | ByeArrayO.S.            | lecture/écriture dans un tableau
+| DataI.S.              | DataO.S.                | extension d'I.S et d'O.S permettant d'écrire des types primitifs
+| ObjectI.S.            | ObjectO.S.              | extension d'I.S et d'O.S permettant de sérialiser des objets (déconseillé)
+| GZipI.S. et ZipI.S.   | GZipO.S. et ZipO.S.     | gestion automatique des flux compressés au format gzip/zip
+| InputStreamReader     | OutputStreamWriter      | lecture/écriture de caractères sur un flux binaire
