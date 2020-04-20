@@ -6,7 +6,7 @@
 
 - les **bugs** : doivent être corrigé, par exemple la nom protection contre une *NullPointerException*
 - les problèmes lié au **Runtime** : par exemple un dépassement de la mémoire allouée par la JVM
-- les erreurs **anticipables** : par exemple, l'accès aux ressources externes ne fonctionnent plus, un input n'est pas au format attendu...
+- les erreurs **anticipables** : par exemple, l'accès aux ressources externes ne fonctionnent plus
 
 ----
 
@@ -15,8 +15,8 @@
 -Toutes les classes qui étendent **Throwable** vont modéliser des erreurs et seront gérées de façon particulière par la JVM.
 
 3 propriétés fondamentales :
-- **getMessage()** : message d'erreur au format chaîne de caractères
-- **printStackTrace()** : pile d'appel qui contient l'enchainement de la liste des méthodes qui ont généré l'erreur. La méthode affiche la pile d'appel dans la console ou ailleurs on lui passant des paramètres
+- **message** : message d'erreur au format chaîne de caractères, récupérable via la méthode `getMessage()`
+- **stack trace** : pile d'appel qui contient l'enchainement de la liste des méthodes qui ont généré l'erreur. La méthode `printStackTrace()` affiche la pile d'appel dans la console ou ailleurs on lui passant des paramètres
 - **rootCause** : permet de savoir si une erreur est généré à cause d'une erreur en amont
 
 ----
