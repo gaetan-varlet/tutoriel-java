@@ -101,3 +101,30 @@ try { // code pouvant générer une SQLException
 ----
 
 ## Créer et jeter une exception applicative à partir d'une exception du JDK
+
+- création d'une exception applicative que l'on va transmettre lorsqu'on attrape une exception du JDK avec le mot clé **throw**
+- il faut transmettre l'exception dans le constructeur de notre exception applicative pour récupérer la *rootCause* et savoir l'origine de l'erreur
+
+```java
+try{
+    String chaine = "t";
+    int n = Integer.parseInt(chaine);
+    System.out.println(n);
+} catch (NumberFormatException e){
+    throw new MyException(e);
+}
+```
+
+----
+
+## Le bloc finally
+
+- possibilité d'ajouter une clause **finally** qui garantie que le code soit exécuté qu'une exception soit levée ou pas
+- ne jamais écrire de *return* dans un catch ou un finally
+
+```java
+try {
+} catch (Exception e) {
+} finally {
+}
+```
