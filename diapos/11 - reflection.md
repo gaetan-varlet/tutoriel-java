@@ -1,6 +1,6 @@
 # Java Reflection
 
----
+----
 
 ## Introduction
 
@@ -11,7 +11,7 @@
   - accès aux champs de cette classe
 - On parle d'introspection, c'est à dire qu'on peut examiner le contenu d'un objet sans connaître le nom de sa classe à la compilation
 
----
+----
 
 ## la classe Class
 
@@ -35,7 +35,7 @@ System.out.println(cl); // java.lang.String
 System.out.println(c == cl); // true
 ```
 
----
+----
 
 ## Instancier une classe et récupérer ses attributs
 
@@ -54,3 +54,6 @@ System.out.println(Arrays.toString(attributsPrives));
 Field field = cl.getDeclaredField("age");
 System.out.println(field); // private int exemple.Person.age
 ```
+
+----
+
