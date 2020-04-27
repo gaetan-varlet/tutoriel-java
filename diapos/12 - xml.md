@@ -24,7 +24,7 @@
 
 ----
 
-## Structure d'un document XML
+## Structure d'un document XML (1)
 
 - document textuel avec une unique balise racine
 - langage de balise :
@@ -35,6 +35,11 @@
 - on parle de **noeud** pour tout ce qu'on peut trouver dans un document XML : élément, attribut, balise, commentaire
 - on parle de **branche** ce qui permet de mettre en relation 2 éléments XML entre-eux : *age* est fils de *personne*; *age* est également frère de *prenom*
 - possibilité d'ajouter du texte brut qui ne sera pas parsé lorsqu'on a du texte qui contient des caractères qui ont un sens pour les analyseurs XML comme les signes `<` ou `>` avec **CDATA** pour *character data*
+
+----
+
+## Structure d'un document XML (2)
+
 - définir un **espace de nom** dans un document XML permet de différencier les documents XML qui ont le même nom
     - attribut **xmlns** pour *XML namespace* sous la forme d'URI qui est un identificateur pour l'espace de nom de l'élément défini, mais ne correspond pas à une page web
     - 2 façons d'attacher un élément XML à un espace de nom : méthode d'association par défaut, ou de manière explicite en ajoutant un préfixe à l'attribut *xmlns* : **xmlns:i** et ajout de ce préfixe sur les balises, par exemple `<i:age></i:age>`
