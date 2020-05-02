@@ -121,7 +121,7 @@ xmlWriter.close();
 
 - l'exemple que nous venons de voir crée un **modèle objet** en mémoire qui est l'équivalent du document XML en lisant l'intégralité du fichier XML et en le montant en mémoire : on parle d'approche **DOM** pour **Document Object Model**
     - fonctionne pour les petits documents XML
-    - trop couteux en CPU et en mémoire les gros documents
+    - trop coûteux en CPU et en mémoire les gros documents
 - l'approche **SAX** permet de traiter le document XML morceau par morceau, ce qui permet de ne pas monter tout le fichier en mémoire
     - **SAX** fonctionne sur un **modèle d'événements**
     - création d'un analyseur SAX qui va regarder le document élément par élément, et générer des événements, par exemple **start document**, **start element**, apparition d'un élément texte, apparation d'une erreur...
@@ -141,18 +141,76 @@ sp.setNamespaceAware(true);
 sp.setValidating(true);
 SAXParser parser = sp.newSAXParser();
 // un handler permet de définir comment on souhaite analyser le document XML
-// par défaut, ils ne vont rien, il faut leur dire quoi quoi
+// par défaut, ils ne vont rien faire, il faut leur dire quoi faire en redéfinissant des méthodes
 DefaultHandler dh = new DefaultHandler() {
     // exemple en écrivant dans la console au début du document
     public void startDocument() {
         System.out.println("Début du document");
     }
+
+    @Override
+    // méthode qui détecte l'ouverture des éléments XML
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {}
 };
 // utilisation de la méthode parse qui parse le document XML en paramètre
 // avec l'handler en paramètre
 parser.parse(new File("test.xml"), dh);
 
 // écriture dans la console : Début du document
+```
+
+----
+
+## Création d'un handler qui compte le nombre d'éléments
+
+```java
+// Création d'un handler perso qui étend DefaultHandler
+public class CountingHandler extends DefaultHandler {
+	private int countNbElements, countC, countCInB;
+	private boolean inB = false;
+	public int getCountNbElements() { return countNbElements; }
+	public int getCountC() { return countC; }
+	public int getCountCInB() { return countCInB; }
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		countNbElements++;
+		if (localName.equals("c")) { countC++; }
+		if (localName.equals("b")) { inB = true; }
+		if (localName.equals("c") && inB) { countCInB++; }
+	}
+	@Override
+	public void endElement(String uri, String localName, String qName) {
+		if (localName.equals("b")) { inB = false; }
+	}
+}
+```
+
+----
+
+## Utilisation de cet handler personnalisé
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<a>
+  <b id="2">
+    <c>Toto</c>
+    <c>Tata</c>
+    <d>100</d>
+  </b>
+  <c>Titi</c>
+</a>
+```
+
+```java
+SAXParserFactory sp = SAXParserFactory.newInstance();
+sp.setNamespaceAware(true);
+sp.setValidating(true);
+SAXParser parser = sp.newSAXParser();
+CountingHandler ch = new CountingHandler();
+parser.parse(new File("test.xml"), ch);
+System.out.println(ch.getCountNbElements()); // 6
+System.out.println(ch.getCountC()); // 3
+System.out.println(ch.getCountCInB()); // 2
 ```
 
 ----
