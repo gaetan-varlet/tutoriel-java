@@ -214,3 +214,46 @@ System.out.println(ch.getCountCInB()); // 2
 ```
 
 ----
+
+## Nécessité de contrats dans l'échange de documents XML : DTD et XML Schema
+
+- lorsque des serveurs échangent des documents XML, ils ont besoin de contrats qui permettent de fixer la forme des documents XML, de les valider/invalider
+- 2 langages (tous les 2 standards du W3C) permettent cela :
+    - la **DTD** pour **Document Type Definition**, permet de fixer la forme que doit avoir le document XML : le nom de ses éléments et de ses sous-éléments
+    - le format **XML Schema** permet de compléter les limitations du DTD
+
+----
+
+## Ecriture d'une DTD
+
+Ecriture de la DTD dans le document XML :
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<user id="2">
+<!DOCTYPE user [
+    <!ELEMENT user(name, age)>
+    <!ELEMENT name(#CDATA)>
+    <!ELEMENT age(#PCDATA)>
+    <!ATTLIST user id #REQUIRED>
+]>
+  <name>Gaëtan</name>
+  <age>32</age>
+</user>
+```
+
+Ecriture du DTD dans un fichier texte et attachement de la DTD au document XML :
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<user id="2">
+<!DOCTYPE user PUBLIC "nom que l'on donne au DTD" "URL du fichier texte contenu la DTD">
+<!-- <!DOCTYPE user SYSTEM "nom que l'on donne au DTD" "endroit sur le sytème de fichier ou est le fichier"> -->
+  <name>Gaëtan</name>
+  <age>32</age>
+</user>
+```
+
+----
+
+## Attacher un élément XML à un XML Schema
