@@ -284,7 +284,7 @@ version="3.1">
 
 ```xml
 <!-- exemple de XML Schema pour l'exemple de fichier XML produit avant -->
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="nom de l'espace de nom" targetNamespace="...">
     <xsd:element name="user">
         <xsd:complexType>
             <xsd:sequence>
@@ -305,3 +305,46 @@ version="3.1">
 ```
 
 ----
+
+## Ecrire des requêtes sur des documents XML avec XPath
+
+- XPath est un moteur de requête qui permet d'aller chercher des informations par requête dans un document XML
+- il est normalisé par le W3C, en V1, V2 et V3
+- une requête XPath est une chaîne de caractères qui suit une syntaxe
+- supporté par les API Xerces et DOM4J
+
+```java
+Document document = ...;
+String xPath = "...";
+
+List<Node> nodes = document.selectNodes(xPath);
+Node node = document.selectSingleNode(xPath);
+String value = document.valueOf(xPath);
+```
+
+----
+
+## Exemples de requêtes XPath
+
+- une requête commence par un / (chemin absolu depuis a racine) ou // (chemin relatif)
+- __/A__ le noeud XML qui est racine
+- __/A/B__ les noeuds B enfants de A
+- __//B__ l'intégralité des noeuds du document peut importe où ils se trouvent dans le document
+- __//C/D__ les noeuds D enfants de C
+- __/A/B/*__ tous les éléments enfants de B enfants de A
+- __/A/B[2]__ le 2e élément B qui est enfant de A
+- __//B/*[last()]__ le dernier enfant de B
+- __//@id__ sélectionne l'attribut id
+- __//B[@id]__ sélectionne les éléments B qui ont l'attribut id
+-__//B[@id='15]__ sélectionne les éléments B qui ont l'attribut id qui vaut 15
+- __/A/B/descendant::*__ sélectionne tous les descendants de B enfant de A, et pas seulement les enfants directs
+
+----
+
+## JAXP vs JAXB
+
+- **JAXP** pour *Java API for XML Parsing*, est l'API Java permettant la création, la manipulation et le traitement de fichiers XML à bas niveau
+    - les 2 principales API sont **SAX** et **DOM**
+    - une troisième API est apparue avec Java 6 : **StAX** est l'acronyme de Streaming Api for XML : c'est une API qui permet de traiter un document XML de façon simple en consommant peu de mémoire tout en permettant de garder le contrôle sur les opérations d'analyse ou d'écriture
+
+- **JAXB**, pour *Java Architecture for XML Binding*, est une spécification qui permet de faire correspondre un document XML à un ensemble de classes et vice versa au moyen d'opérations de sérialisation/désérialisation nommées marshalling/unmarshalling
