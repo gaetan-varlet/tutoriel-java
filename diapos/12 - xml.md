@@ -273,3 +273,35 @@ version="3.1">
 - la déclaration du XML Schéma ce fait via l'attribut **xsi:schemaLocation**, qui est un attribut standard attaché à l'espace de nom `XMLSchema-instance`. C'est une chaîne de caractères composé de 2 éléments :
     - premier élément est un URI, représente le nom d'un espace de nom
     - deuxième élément est une URL, qui pointe sur le XML schéma (au format xsd) auquel le document *web.xml* est attaché. Permet de valider la grammaire de l'élément *web-app*, équivalent au fichier DTD avec une syntaxe différente
+
+----
+
+## Ecriture d'un XML Schema
+
+- c'est un document XML avec un élément racine, des sous-éléments...
+- permet de spécifier le type : *xsd:string*, *xsd:integer*, *xsd:deciaml*, *xsd:boolean*, *xsd:date*, *xsd:time*
+- beaucoup plus précis et plus complexe que la DTD
+
+```xml
+<!-- exemple de XML Schema pour l'exemple de fichier XML produit avant -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns>
+    <xsd:element name="user">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nom" type="xsd:string"/>
+                <xsd:element name="age">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:integer">
+                            <xsd:minInclusive value="0">
+                            <xsd:maxInclusive value="150">
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:int"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
+```
+
+----
