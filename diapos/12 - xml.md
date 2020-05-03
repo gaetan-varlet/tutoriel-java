@@ -34,7 +34,7 @@
     - possibilité d'ajouter des commentaires
 - on parle de **noeud** pour tout ce qu'on peut trouver dans un document XML : élément, attribut, balise, commentaire
 - on parle de **branche** ce qui permet de mettre en relation 2 éléments XML entre-eux : *age* est fils de *personne*; *age* est également frère de *prenom*
-- possibilité d'ajouter du texte brut qui ne sera pas parsé lorsqu'on a du texte qui contient des caractères qui ont un sens pour les analyseurs XML comme les signes `<` ou `>` avec **CDATA** pour *character data*
+- possibilité d'ajouter du texte brut qui ne sera pas parsé lorsqu'on a du texte qui contient des caractères qui ont un sens pour les analyseurs XML comme les signes `<` ou `>` avec **CDATA** pour *character data*, contrairement aux données parsées **PCDATA**
 
 ----
 
@@ -226,7 +226,7 @@ System.out.println(ch.getCountCInB()); // 2
 
 ## Ecriture d'une DTD
 
-Ecriture de la DTD dans le document XML :
+- Ecriture de la DTD dans le document XML :
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -242,7 +242,7 @@ Ecriture de la DTD dans le document XML :
 </user>
 ```
 
-Ecriture du DTD dans un fichier texte et attachement de la DTD au document XML :
+- Ecriture de la DTD dans un fichier texte et attachement du fichier au document XML :
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -257,3 +257,18 @@ Ecriture du DTD dans un fichier texte et attachement de la DTD au document XML :
 ----
 
 ## Attacher un élément XML à un XML Schema
+
+- fait après la DTD, apporte des avantages, de la précision mais aussi de la complexité (par exemple dire que tel attribut doit avoir une valeur entière)
+
+
+```xml
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+        http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+version="3.1">
+```
+
+La déclaration du XML Schéma ce fait via l'attribut **xsi:schemaLocation**
+- premier élément est un URI, représente le nom d'un espace de nom
+- deuxième élément est une URL, qui pointe sur le XML schéma (au format xsd) auquel le document *web.xml* est attaché. Permet de valider la grammaire de l'élément *web-app*, équivalent au fichier DTD avec une syntaxe différente
