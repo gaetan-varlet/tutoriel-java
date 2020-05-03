@@ -346,5 +346,4 @@ String value = document.valueOf(xPath);
 - **JAXP** pour *Java API for XML Parsing*, est l'API Java permettant la création, la manipulation et le traitement de fichiers XML à bas niveau
     - les 2 principales API sont **SAX** et **DOM**
     - une troisième API est apparue avec Java 6 : **StAX** est l'acronyme de Streaming Api for XML : c'est une API qui permet de traiter un document XML de façon simple en consommant peu de mémoire tout en permettant de garder le contrôle sur les opérations d'analyse ou d'écriture
-
 - **JAXB**, pour *Java Architecture for XML Binding*, est une spécification qui permet de faire correspondre un document XML à un ensemble de classes et vice versa au moyen d'opérations de sérialisation/désérialisation nommées marshalling/unmarshalling
