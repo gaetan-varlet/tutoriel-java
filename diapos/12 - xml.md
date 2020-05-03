@@ -220,7 +220,7 @@ System.out.println(ch.getCountCInB()); // 2
 - lorsque des serveurs échangent des documents XML, ils ont besoin de contrats qui permettent de fixer la forme des documents XML, de les valider/invalider
 - 2 langages (tous les 2 standards du W3C) permettent cela :
     - la **DTD** pour **Document Type Definition**, permet de fixer la forme que doit avoir le document XML : le nom de ses éléments et de ses sous-éléments
-    - le format **XML Schema** permet de compléter les limitations du DTD
+    - le format **XML Schema** permet de compléter les limitations du DTD. Il a été fait après la DTD, apporte des avantages, de la précision (par exemple dire que tel attribut doit avoir une valeur entière) mais aussi de la complexité
 
 ----
 
@@ -258,8 +258,7 @@ System.out.println(ch.getCountCInB()); // 2
 
 ## Attacher un élément XML à un XML Schema
 
-- fait après la DTD, apporte des avantages, de la précision mais aussi de la complexité (par exemple dire que tel attribut doit avoir une valeur entière)
-
+Exemple d'attachement d'un XML Schéma sur le document XML **web.xml**, document qui permet de spécifier une application web Java EE, avec comme élément racine `<web-app>` :
 
 ```xml
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
@@ -269,6 +268,8 @@ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 version="3.1">
 ```
 
-La déclaration du XML Schéma ce fait via l'attribut **xsi:schemaLocation**
-- premier élément est un URI, représente le nom d'un espace de nom
-- deuxième élément est une URL, qui pointe sur le XML schéma (au format xsd) auquel le document *web.xml* est attaché. Permet de valider la grammaire de l'élément *web-app*, équivalent au fichier DTD avec une syntaxe différente
+- l'attribut **xmlns** est l'espace de nom du document
+- pour dire que cet espace de nom est attaché à un *XML Schema* particulier, on utilise l'attribut standard défini par le W3C **xmlns:xsi**, qui est un espace de nom standard que les parseurs XML connaissent
+- la déclaration du XML Schéma ce fait via l'attribut **xsi:schemaLocation**, qui est un attribut standard attaché à l'espace de nom `XMLSchema-instance`. C'est une chaîne de caractères composé de 2 éléments :
+    - premier élément est un URI, représente le nom d'un espace de nom
+    - deuxième élément est une URL, qui pointe sur le XML schéma (au format xsd) auquel le document *web.xml* est attaché. Permet de valider la grammaire de l'élément *web-app*, équivalent au fichier DTD avec une syntaxe différente
