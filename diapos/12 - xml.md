@@ -125,7 +125,7 @@ xmlWriter.close();
 - l'approche **SAX** permet de traiter le document XML morceau par morceau, ce qui permet de ne pas monter tout le fichier en mémoire
     - **SAX** fonctionne sur un **modèle d'événements**
     - création d'un analyseur SAX qui va regarder le document élément par élément, et générer des événements, par exemple **start document**, **start element**, apparition d'un élément texte, apparation d'une erreur...
-    - captation de ces événéments sous forme de callback, et lorsque l'événement est émis par SAX, notre code est appelé
+    - captation de ces événéments sous forme de callback (fonction passée en paramètre, qui va être appelée à une condition, le plus souvent “quand le traitement est terminé”), et lorsque l'événement est émis par SAX, notre code est appelé
     - possibilité de capter uniquement certains éléments, par exemple un élément particulier
 
 ----
