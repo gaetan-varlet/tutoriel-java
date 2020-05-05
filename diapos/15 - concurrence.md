@@ -24,14 +24,50 @@ Une application Java peut être vu comme une tâche. La méthode **main()** est 
 // création d'une tâche
 Runnable task = () -> System.out.println("Hello World !");
 // exécution de cette tâche
-// il n'y a pas eu de Thread de créé, la tâche est donc exécuté par le thread courant, ici le thread main
+// il n'y a pas eu de Thread de créé, la tâche est donc exécutée par le thread courant, ici le thread main
 task.run();
 
 // création d'un Thread en lui passant la tâche qu'il doit prendre en charge
 Thread t = new Thread(task);
-// démaragge du Thread avec la méthode start()
+// démarrage du Thread avec la méthode start()
 // elle va exécuter la méthode run() de notre tâche dans un thread différent
 t.start();
 ```
 
 ----
+
+## Notion de thread daemon
+
+- une fois qu'un thread a fini de s'exécuter, il va s'arrêter. Dans l'exemple précédent :
+    - le thread *main* s'arrête une fois qu'il a lancé la méthode start() du thread t
+    - le thread *t* s'arrête une fois que la méthode ru de l'objet task
+- lorsque le thread *main* s'éteind, la JVM regarde si elle doit s'arrêter, ce qu'elle fera s'il n'y a plus aucun thread de type **daemon** en fonctionnement
+    - lors du démarrage de la JVM, il y a plein de threads qui démarrent, notamment un qui s'occupe du garbage collector. Ce thread ne bloque pas la fermeture de la JVM car c'est un thread particulier de type daemon
+    - *daemon* est un attribut de la classe Thread de type booléen. Si ce booléen vaut true, la présence de ce thread ne va pas bloquer l'extinction de la JVM
+    - le thread main n'est pas de type daemon, tant qu'il est vivant, la JVM ne va pas s'arrêter
+
+----
+
+## Affichage du thread courant et si le thread est daemon
+
+```java
+Runnable task = () -> System.out.println(
+    // Thread.currentThread() renvoie une référence vers le thread qui est en train d'exécuter la tâche
+    "Hello World ! : " + Thread.currentThread().getName() + " : " + Thread.currentThread().isDaemon());
+task.run();
+
+// affichage du nom du thread courant et s'il est de type Daemon
+System.out.println(Thread.currentThread().getName() + " : " + Thread.currentThread().isDaemon());
+
+Thread t = new Thread(task);
+t.start();
+
+// Affichage dans la console
+Hello World ! : main : false
+main : false
+Hello World ! : Thread-0 : false
+```
+
+- la tâche *task* commence par être exécuté via sa méthode *run()* dans le thread main (qui n'est pas de type daemon)
+- ensuite, affichage dans la console du thread courant et s'il est de dtype daemon. Il s'agit ici du thread main
+- enfin, création d'un thread qui va prendre en charge la tâche task et démarrage du thread via sa méthode *start()* qui va exécuter la tâche *task* dans son thread
