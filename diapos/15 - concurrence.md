@@ -111,3 +111,65 @@ synchronized(lock){
 
 ----
 
+## Les différentes méthodes de synchronisation
+
+il existe plusieurs façon de synchroniser un bloc de code
+- bloc synchronisé explicite :
+    - voir exemple précédent
+    - meilleure façon de faire car possibilité de cacher l'objet **lock** car s'il est exposé, risque de créer des ***deadlock**
+- bloc synchronisé implicite :
+    - sur une méthode d'instance : l'intégralité du corps de la méthode va être synchronisé. L'objet lock va être l'instance de la classe dans laquelle on se trouve : **this**
+    - sur une méthode statique : l'intégralité du corps de la méthode statique va aussi être synchronisé. l'objet qui porte la clé est ici l'objet Class qui modélise la classe dans laquelle on est
+
+```java
+public synchronized void maMethode(){}
+public synchronized static void maMethodeStatique(){}
+```
+
+----
+
+## Synchronisation réentrante
+
+Si 2 méthodes *m1* et *m2* sont synchronisées avec le même lock et que *m1* appelle *m2*, lorsqu'on thread rentre dans la méthode *m1*, il récupère la clé du lock, et lorsqu'il s'apprête à rentrer dans *m2*, il ne peut pas récupérer la clé car il l'a possède déjà. Dans ce cas, le thread va pouvoir exécuter la méthode *m2* car il possède déjà la clé. On parle de **réentrant**.
+
+----
+
+## Synchronisation avec une même clé
+
+- si 2 méthodes sont synchronisées avec le même lock (par exemple de manière implicite en écrivant *synchronized* dans la signature de la méthode), alors si un thread *t1* exécute la méthode *getName()*, alors un thread *t2* ne pourra ni exécuter *getName()*, ni *getAge()* car les 2 méthodes sont synchronisées sur le même objet this
+
+```java
+public class User {
+    synchronized String getName(){}
+    synchronized int getAge(){}
+}
+```
+
+----
+
+## Synchronisation avec une même clé d'instance vs une même clé statique
+
+- avec une synchronisation explicite sur un objet lock qui est un champ de la classe : cette situation revient à la même situation que l'exemple précédent : un thread *t1* qui exécute une des 2 méthodes synchronisées empêche l'exécution par un thread *t2* l'exécution des 2 méthodes sur la même instance de la classe User
+
+```java
+public class User {
+    Object lock = new Object();
+    String getName(){ synchronized(lock){} }
+    int getAge(){ synchronized(lock){} }
+}
+```
+
+- cependant, si les 2 threads travaillent sur 2 instances différentes de User, *u1* et *u2*, alors un thread *t1* peut exécuter une méthode sur u1 pendant qu'un thread *t2* exécute la même méthode sur u2.
+- si on veut rendre une méthode protégée quelque soit l'instance, il faut que l'objet lock soit partagé par toutes les instances, en rendant le lock **static**
+
+```java
+public class User {
+    static Object lock = new Object();
+    String getName(){ synchronized(lock){} }
+    int getAge(){ synchronized(lock){} }
+}
+```
+
+----
+
+## Les deadlock
