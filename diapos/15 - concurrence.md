@@ -98,4 +98,16 @@ public class Service {
 
 ## Synchroniser un bloc de code
 
-- sur certains bloc de code, possibilit
+sur certains blocs de code, possibilité d'empêher le *Thread Scheduler* d'interrompre un thread, plus précisément d'empêcher un autre thread d'entrer dans ce bloc de code. Pour cela il faut utiliser le mot clé **synchronized**
+- qui prend un objet **lock** en paramètre, qui va servir de verrou sur le bloc de code synchronisé. Cet objet lock (comme tous les objets en Java) possède une clé
+- si un thread t1 exécute le code synchronisé, il prend la clé du lock, qui n'a donc plus sa clé. S'il est interrompu par le *Thread Scheduler*, et qu'un thread t2 essaie d'exécuter le code synchronisé, il va être bloqué à l'entrée du bloc de code dans une file d'attente appelé **WAIT_LIST** (ou sont mis en attente les threads) en attendant que lock récupère sa clé. Le *Thread Scheduler* va mettre t2 en attente, et redonner la main à d'autres threads. Quand t1 finit l'exécution du bloc synchronisé, il rend la clé à lock, et quand le *Thread Scheduler* redonne la main à t2, il peut récupérer la clé auprès de lock et exécuter le code du bloc synchronisé
+
+```java
+Object lock = new Object();
+synchronized(lock){
+    ...
+}
+```
+
+----
+
