@@ -98,8 +98,8 @@ public class Service {
 
 ## Synchroniser un bloc de code
 
-sur certains blocs de code, possibilité d'empêher le *Thread Scheduler* d'interrompre un thread, plus précisément d'empêcher un autre thread d'entrer dans ce bloc de code. Pour cela il faut utiliser le mot clé **synchronized**
-- qui prend un objet **lock** en paramètre, qui va servir de verrou sur le bloc de code synchronisé. Cet objet lock (comme tous les objets en Java) possède une clé
+sur certains blocs de code, possibilité d'empêher le *Thread Scheduler* d'interrompre un thread, plus précisément d'empêcher un autre thread d'entrer dans ce bloc de code en utilisaant le mot clé **synchronized**
+- il prend un objet **lock** en paramètre, qui va servir de verrou sur le bloc de code synchronisé. Cet objet lock (comme tous les objets en Java) possède une clé
 - si un thread t1 exécute le code synchronisé, il prend la clé du lock, qui n'a donc plus sa clé. S'il est interrompu par le *Thread Scheduler*, et qu'un thread t2 essaie d'exécuter le code synchronisé, il va être bloqué à l'entrée du bloc de code dans une file d'attente appelé **WAIT_LIST** (ou sont mis en attente les threads) en attendant que lock récupère sa clé. Le *Thread Scheduler* va mettre t2 en attente, et redonner la main à d'autres threads. Quand t1 finit l'exécution du bloc synchronisé, il rend la clé à lock, et quand le *Thread Scheduler* redonne la main à t2, il peut récupérer la clé auprès de lock et exécuter le code du bloc synchronisé
 
 ```java
@@ -130,13 +130,13 @@ public synchronized static void maMethodeStatique(){}
 
 ## Synchronisation réentrante
 
-Si 2 méthodes *m1* et *m2* sont synchronisées avec le même lock et que *m1* appelle *m2*, lorsqu'on thread rentre dans la méthode *m1*, il récupère la clé du lock, et lorsqu'il s'apprête à rentrer dans *m2*, il ne peut pas récupérer la clé car il l'a possède déjà. Dans ce cas, le thread va pouvoir exécuter la méthode *m2* car il possède déjà la clé. On parle de **réentrant**.
+Si 2 méthodes *m1* et *m2* sont synchronisées avec le même lock et que *m1* appelle *m2*, lorsqu'un thread rentre dans la méthode *m1*, il récupère la clé du lock, et lorsqu'il s'apprête à rentrer dans *m2*, il ne peut pas récupérer la clé car il la possède déjà. Dans ce cas, le thread va pouvoir exécuter la méthode *m2* car il possède déjà la clé. On parle de **réentrant**.
 
 ----
 
 ## Synchronisation avec une même clé
 
-- si 2 méthodes sont synchronisées avec le même lock (par exemple de manière implicite en écrivant *synchronized* dans la signature de la méthode), alors si un thread *t1* exécute la méthode *getName()*, alors un thread *t2* ne pourra ni exécuter *getName()*, ni *getAge()* car les 2 méthodes sont synchronisées sur le même objet this
+Si 2 méthodes sont synchronisées avec le même lock (par exemple de manière implicite en écrivant *synchronized* dans la signature de la méthode). alors si un thread *t1* exécute la méthode *getName()*, un thread *t2* ne pourra ni exécuter *getName()*, ni *getAge()* car les 2 méthodes sont synchronisées sur le même objet this.
 
 ```java
 public class User {
@@ -147,7 +147,7 @@ public class User {
 
 ----
 
-## Synchronisation avec une même clé d'instance vs une même clé statique
+## Synchronisation clé d'instance vs clé statique
 
 - avec une synchronisation explicite sur un objet lock qui est un champ de la classe : cette situation revient à la même situation que l'exemple précédent : un thread *t1* qui exécute une des 2 méthodes synchronisées empêche l'exécution par un thread *t2* l'exécution des 2 méthodes sur la même instance de la classe User
 
@@ -173,3 +173,19 @@ public class User {
 ----
 
 ## Les deadlock
+
+- exemple : un thread *t1* exécute *m1* (et récupère la clé de lock1) et un thread *t2* exécute *m2* (et récupère la clé de lock2). *t1* ne peut pas exécuter *m2* car la clé n'est pas disponible et *t2* ne peut pas exécuter *m3* car la clé n'est pas disponible. Les 2 threads possèdent chacun un lock, et sont en attente du fait que l'autre thread libère le lock qu'il possède. Cette situation n'a pas de solution, elle est bloquée. On parle de **deadlock**
+- c'est une situation de blocage, la seule façon de se libérer d'un deadlock est de redémarrer l'application
+- les IDE et la JVM peuvent aider à débuguer ces situations
+- pour éviter que cela arrive, il faut privilégier les blocs synchronisés sur les méthodes privées. Le fait que ces blocs de code ne soient pas exposés permet de mieux contrôler et analyser qui va utiliser ces morceaux de code (uniquement les méthodes de la classe)
+
+```java
+public class User {
+    Object lock1, lock2;
+    void m1(){ synchronized(lock1){ m2() } }
+    void m2(){ synchronized(lock2){ m3() } }
+    void m3(){ synchronized(lock1){...} }
+}
+```
+
+----
