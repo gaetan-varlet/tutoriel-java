@@ -71,3 +71,32 @@ Hello World ! : Thread-0 : false
 - la tâche *task* commence par être exécutée via sa méthode *run()* dans le thread main (qui n'est pas de type daemon)
 - ensuite, affichage dans la console du thread courant et s'il est de de type daemon. Il s'agit ici du thread main
 - enfin, création d'un thread qui va prendre en charge la tâche task et démarrage du thread via sa méthode *start()* qui va exécuter la tâche *task* dans son thread
+
+----
+
+## Pattern Singleton
+
+Pattern dans lequel on ne veut qu'une instance d'une classe à l'échelle de toute l'application
+- interdire de créer des instances de la classe en mettant le constructeur privé
+- création d'une méthode statique qui va se charger de l'instanciation si elle n'a pas déjà eu lieu et renvoie de l'instance
+
+Cette façon de faire est buguée :
+-elle ne garantie pas qu'il n'y aura qu'une instance de la classe à cause de la **race condition**, ou concurrence d'accès sur les données : 2 threads peuvent lire et écrire une même variable en même temps
+- ici le *Thread Scheduler* peut interrompre un thread après le if de *getInstance()* mais avant l'instanciation de Service, et donner la main à un autre thread qui va faire l'instanciation. Quand le premier thread reprend la main, il va faire une instanciation alors qu'une instance de Service existe déjà et écraser le Service existant
+
+```java
+public class Service {
+    private static Service service;
+    private Service() {}
+
+    public static Service getInstance() {
+        if (service == null) {
+            service = new Service();
+        }
+        return service;
+    }
+}
+```
+
+----
+
