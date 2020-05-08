@@ -202,11 +202,16 @@ dans l'exemple sur le pattern Singleton, 2 threads *t1* et *t2* veulent accéder
 
 ----
 
-## Impact de la lecture synchronisée du Singleton sur un CPU multicoeur
+## Impact de la lecture synchronisée du Singleton sur un CPU multi-coeur (1)
 
 - sur un CPU mono-coeur, 2 threads qui veulent accéder à la méthode synchronisée *getInstance()* vont s'exécuter l'un à la suite de l'autre. Le second pourra s'exécuter quand le premier sera terminé et aura rendu la clé. Sur un CPU multi-coeur, si les 2 threads s'exécutent en même temps sur 2 coeurs dinstincts, le deuxième va devoir attendre que le premier ait terminé son exécution et rendu la clé. Il n'y a donc pas de gains de performance à avoir une architecture multi-coeur sur cette méthode ce qui est dommage pour une méthode en lecture (car l'instanciation n'a lieu qu'une seule fois, les fois suivantes, uniquement de la lecture)
 - tentative de résolution de ce problème par le pattern **Double Check Locking** : plutôt que d'avoir un bloc synchronisé qui gère la lecture et l'écriture, on commence par écrire un bloc non synchronisé qui teste si l'instance est non null et renvoie l'instance si c'est le cas. Si elle est nulle, création d'un bloc synchronisé pour créer l'instance en commençant par tester si l'instance est non nulle car le Thread Scheduler a pu interrompre le thread dans la méthode avant d'entrer dans le bloc synchronisé, et renvoie de l'instance créé. Il n'y aura besoin de rentrer dans le bloc synchronisé qu'une seule fois pour créer le service, et après les threads pourront exécuter la méthode en même temps pour faire de la lecture
-- ce pattern est **buggé**, voir ci-après le fonctionnement des architectures multi-coeurs
+
+----
+
+## Impact de la lecture synchronisée du Singleton sur un CPU multi-coeur (2)
+
+- ce pattern est **buggé**, voir ci-après le fonctionnement des architectures multi-coeur
 
 ```java
 public static Service getInstance() {
@@ -217,3 +222,5 @@ public static Service getInstance() {
     }
 }
 ```
+
+----
