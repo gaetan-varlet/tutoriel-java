@@ -196,6 +196,24 @@ public class User {
 
 ## Fonctionnement du Pattern Singleton synchronisé sur un CPU multicoeur
 
-dans notre exemple précédent sur le pattern Singleton, 2 threads *t1* et *t2* veulent accéder en même temps à la méthode *getInstance()* qui est synchronisée
+dans l'exemple sur le pattern Singleton, 2 threads *t1* et *t2* veulent accéder en même temps à la méthode synchronisée *getInstance()* :
 - avec un CPU mono-coeur, t1 va avoir la main, rentrer dans la méthode. Le Thread Scheduler peut reprendre la main pour donner du temps à t2, qui ne pourra pas rentrer dans le bloc synchronisé tant que t1 est dedans. Immédiatement, le Thread Scheduler va donner la main à un autre thread. Quand t1 aura rendu la clé de la méthode, et que t2 reprendra la main, t2 pourra rentrer dans la méthode
 - avec un CPU multi-coeur, 2 choses peuvent se dérouler en même temps. Si t1 rentre dans le bloc synchronisé sur le coeur 1, et t2 au même moment est exécuté sur le coeur 2. Le Thread Scheduler ne va pas rendre la main de suite pour t2, mais attendre un peu en se disant que la méthode synchronisée que veut exécuter t2 va peut-être se libérer en étant exécutée sur l'autre coeur, ce qui n'est pas possible sur une architecture avec un seul coeur. Le coeur 2 va donc exécuter le thread t2 ou passer à un autre thread s'il a attendu trop longtemps. Une fois que la méthode synchronisée aura été libérée, le thread t2 pourra être éxécutée sur le coeur 1 ou le coeur 2
+
+----
+
+## Impact de la lecture synchronisée du Singleton sur un CPU multicoeur
+
+- sur un CPU mono-coeur, 2 threads qui veulent accéder à la méthode synchronisée *getInstance()* vont s'exécuter l'un à la suite de l'autre. Le second pourra s'exécuter quand le premier sera terminé et aura rendu la clé. Sur un CPU multi-coeur, si les 2 threads s'exécutent en même temps sur 2 coeurs dinstincts, le deuxième va devoir attendre que le premier ait terminé son exécution et rendu la clé. Il n'y a donc pas de gains de performance à avoir une architecture multi-coeur sur cette méthode ce qui est dommage pour une méthode en lecture (car l'instanciation n'a lieu qu'une seule fois, les fois suivantes, uniquement de la lecture)
+- tentative de résolution de ce problème par le pattern **Double Check Locking** : plutôt que d'avoir un bloc synchronisé qui gère la lecture et l'écriture, on commence par écrire un bloc non synchronisé qui teste si l'instance est non null et renvoie l'instance si c'est le cas. Si elle est nulle, création d'un bloc synchronisé pour créer l'instance en commençant par tester si l'instance est non nulle car le Thread Scheduler a pu interrompre le thread dans la méthode avant d'entrer dans le bloc synchronisé, et renvoie de l'instance créé. Il n'y aura besoin de rentrer dans le bloc synchronisé qu'une seule fois pour créer le service, et après les threads pourront exécuter la méthode en même temps pour faire de la lecture
+- ce pattern est **buggé**, voir ci-après le fonctionnement des architectures multi-coeurs
+
+```java
+public static Service getInstance() {
+    if (service != null) { return service; }
+    synchronized(lock) {
+        if (service == null) { service = new Service(); }
+        return service;
+    }
+}
+```
