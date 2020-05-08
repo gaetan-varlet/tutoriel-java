@@ -190,7 +190,68 @@ public class User {
 
 ----
 
-## TODO
+## Présentation du pattern Producteur / Consommateur
+
+- création d'une classe qui permet d'ajouter un élément dans un tableau et supprimer un élément dans un tableau
+- si 2 threads **producer** et **consumer** essaient d'exécuter simultanément respectivement *add()* et *remove()*, la variable *index* est soumise à une concurrence d'accès, de même que le tableau buffer qui va être lu de 2 threads différents. Il va falloir utilisé la synchronisation
+
+```java
+public class Buffer {
+    int[] buffer = ...
+    int index = 0
+
+    public void add(){ buffer[index] = index; index++; }
+    public int remove(){ int i = buffer[index]; index--; return i; }
+}
+```
+
+----
+
+## Essai de synchronisation du pattern Producteur / Consommateur
+
+- protection de la méthodde *add()* en vérifiant qu'il reste de la place dans le tableau, et de la méthode *remove()* en vérifant que le tableau n'est pas vide, en ajoutant une boucle d'attente
+- synchronisation des méthodes *add* et *remove* avec le même objet pour éviter qu'un un thread ajoute un élément au même moment qu'un autre thread retire un élément
+- ce système ne fonctionne pas car si un thread rentre dans la méthode *produce* pour ajouter un élément et que le tableau est plein, il va rentrer dans la boucle d'attente en attendant que le tableau ait de la place disponible. Sauf qu'un autre thread ne pourra pas exécuter la méthode *consume* car la clé est déjà possédé par le premier thread qui est dans la méthode *produce*. Si un thread rentre dans une boucle d'attente, il y restera pour toujours
+
+```java
+public class Buffer {
+    int[] buffer = ...
+    int index = 0
+
+    public void produce(){ synchronized(lock){
+        while(isFull(buffer)){}
+        buffer[index] = index; index++;
+    }}
+    public int consume(){ synchronized(lock){
+        while(isEmpty(buffer)){}
+        int i = buffer[index]; index--; return i;
+    }}
+}
+```
+
+----
+
+## Utilisation du Wait / Notify
+
+- une solution au problème précédant serait de pouvoir mettre le thread qui est dans la boucle d'attente, en attente, en rendant la clé, pour qu'un autre thread puisse venir consommer un élément du tableau. Ce thread de consommation une fois qu'il aura libéré de la place, viendra notifier le thread de production en attente. Cela s'appelle le mécanisme **Wait / Notify**
+- utilisation de la méthode **wait()** qui ne doit être appelé que sur un objet dont le thread possède le moniteur (la clé), donc à l'intérieur d'un bloc synchronisé. Le thread courant est mis en sommeil, il va cesser de s'exécuter, dans une file d'attente de type WAIT particulière, et rend le moniteur de lock
+- pour sortir un thread de cet état d'attente, il faut utiliser **notify()** sur l'objet lock. Il va prendre un thread qui est dans la file d'attente et le réveiller et lui donner le moniteur pour continuer son exécution là ou il s'était arrêté. Possibilité d'utiliser **notifyAll()** qui réveille tous les threads
+
+```java
+public class Buffer {
+    int[] buffer = ...
+    int index = 0
+
+    public void produce(){ synchronized(lock){
+        while(isFull(buffer)){ lock.wait(); }
+        buffer[index] = index; index++; lock.notify();
+    }}
+    public int consume(){ synchronized(lock){
+        while(isEmpty(buffer)){ lock.wait(); }
+        int i = buffer[index]; index--; return i; lock.notify();
+    }}
+}
+```
 
 ----
 
