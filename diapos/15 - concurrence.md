@@ -207,11 +207,11 @@ public class Buffer {
 
 ----
 
-## Essai de synchronisation du pattern Producteur / Consommateur
+## Essai de synch du pattern Producteur/Consommateur
 
 - protection de la méthodde *add()* en vérifiant qu'il reste de la place dans le tableau, et de la méthode *remove()* en vérifant que le tableau n'est pas vide, en ajoutant une boucle d'attente
 - synchronisation des méthodes *add* et *remove* avec le même objet pour éviter qu'un un thread ajoute un élément au même moment qu'un autre thread retire un élément
-- ce système ne fonctionne pas car si un thread rentre dans la méthode *produce* pour ajouter un élément et que le tableau est plein, il va rentrer dans la boucle d'attente en attendant que le tableau ait de la place disponible. Sauf qu'un autre thread ne pourra pas exécuter la méthode *consume* car la clé est déjà possédé par le premier thread qui est dans la méthode *produce*. Si un thread rentre dans une boucle d'attente, il y restera pour toujours
+- ce système ne fonctionne pas car si un thread rentre dans la méthode *produce* pour ajouter un élément et que le tableau est plein, il va rentrer dans la boucle d'attente en attendant que le tableau ait de la place. Sauf qu'un autre thread ne pourra pas exécuter la méthode *consume* car la clé est déjà possédé par le premier thread qui est dans la méthode *produce*. Si un thread rentre dans une boucle d'attente, il y restera pour toujours
 
 ```java
 public void produce(){ synchronized(lock){
@@ -235,12 +235,10 @@ public int consume(){ synchronized(lock){
 ```java
 public void produce(){ synchronized(lock){
     while(isFull(buffer)){ lock.wait(); }
-    buffer[index] = index; index++; lock.notify();
-}}
+    buffer[index] = index; index++; lock.notify(); }}
 public int consume(){ synchronized(lock){
     while(isEmpty(buffer)){ lock.wait(); }
-    int i = buffer[index]; index--; return i; lock.notify();
-}}
+    int i = buffer[index]; index--; return i; lock.notify(); }}
 ```
 
 ----
