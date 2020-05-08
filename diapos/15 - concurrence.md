@@ -189,3 +189,13 @@ public class User {
 ```
 
 ----
+
+## TODO
+
+----
+
+## Fonctionnement du Pattern Singleton synchronisé sur un CPU multicoeur
+
+dans notre exemple précédent sur le pattern Singleton, 2 threads *t1* et *t2* veulent accéder en même temps à la méthode *getInstance()* qui est synchronisée
+- avec un CPU mono-coeur, t1 va avoir la main, rentrer dans la méthode. Le Thread Scheduler peut reprendre la main pour donner du temps à t2, qui ne pourra pas rentrer dans le bloc synchronisé tant que t1 est dedans. Immédiatement, le Thread Scheduler va donner la main à un autre thread. Quand t1 aura rendu la clé de la méthode, et que t2 reprendra la main, t2 pourra rentrer dans la méthode
+- avec un CPU multi-coeur, 2 choses peuvent se dérouler en même temps. Si t1 rentre dans le bloc synchronisé sur le coeur 1, et t2 au même moment est exécuté sur le coeur 2. Le Thread Scheduler ne va pas rendre la main de suite pour t2, mais attendre un peu en se disant que la méthode synchronisée que veut exécuter t2 va peut-être se libérer en étant exécutée sur l'autre coeur, ce qui n'est pas possible sur une architecture avec un seul coeur. Le coeur 2 va donc exécuter le thread t2 ou passer à un autre thread s'il a attendu trop longtemps. Une fois que la méthode synchronisée aura été libérée, le thread t2 pourra être éxécutée sur le coeur 1 ou le coeur 2
