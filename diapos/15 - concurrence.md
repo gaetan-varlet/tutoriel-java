@@ -214,19 +214,14 @@ public class Buffer {
 - ce système ne fonctionne pas car si un thread rentre dans la méthode *produce* pour ajouter un élément et que le tableau est plein, il va rentrer dans la boucle d'attente en attendant que le tableau ait de la place disponible. Sauf qu'un autre thread ne pourra pas exécuter la méthode *consume* car la clé est déjà possédé par le premier thread qui est dans la méthode *produce*. Si un thread rentre dans une boucle d'attente, il y restera pour toujours
 
 ```java
-public class Buffer {
-    int[] buffer = ...
-    int index = 0
-
-    public void produce(){ synchronized(lock){
-        while(isFull(buffer)){}
-        buffer[index] = index; index++;
-    }}
-    public int consume(){ synchronized(lock){
-        while(isEmpty(buffer)){}
-        int i = buffer[index]; index--; return i;
-    }}
-}
+public void produce(){ synchronized(lock){
+    while(isFull(buffer)){}
+    buffer[index] = index; index++;
+}}
+public int consume(){ synchronized(lock){
+    while(isEmpty(buffer)){}
+    int i = buffer[index]; index--; return i;
+}}
 ```
 
 ----
@@ -238,19 +233,14 @@ public class Buffer {
 - pour sortir un thread de cet état d'attente, il faut utiliser **notify()** sur l'objet lock. Il va prendre un thread qui est dans la file d'attente et le réveiller et lui donner le moniteur pour continuer son exécution là ou il s'était arrêté. Possibilité d'utiliser **notifyAll()** qui réveille tous les threads
 
 ```java
-public class Buffer {
-    int[] buffer = ...
-    int index = 0
-
-    public void produce(){ synchronized(lock){
-        while(isFull(buffer)){ lock.wait(); }
-        buffer[index] = index; index++; lock.notify();
-    }}
-    public int consume(){ synchronized(lock){
-        while(isEmpty(buffer)){ lock.wait(); }
-        int i = buffer[index]; index--; return i; lock.notify();
-    }}
-}
+public void produce(){ synchronized(lock){
+    while(isFull(buffer)){ lock.wait(); }
+    buffer[index] = index; index++; lock.notify();
+}}
+public int consume(){ synchronized(lock){
+    while(isEmpty(buffer)){ lock.wait(); }
+    int i = buffer[index]; index--; return i; lock.notify();
+}}
 ```
 
 ----
