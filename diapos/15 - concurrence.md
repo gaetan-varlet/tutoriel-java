@@ -357,6 +357,7 @@ Callable<Void> c = () -> {
 es.submit(c); // Bonjour depuis le thread pool-1-thread-2
 ```
 
+----
 
 ## Récupérer le résultat d'une tâche Callable au travers d'un Future
 
@@ -371,3 +372,7 @@ Callable<String> c = () -> "Bonjour";
 Future<String> future = es.submit(c);
 System.out.println(future.get()); // Bonjour
 ```
+
+----
+
+## Etats d'un Thread, transitions entre ces états
