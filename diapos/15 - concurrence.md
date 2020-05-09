@@ -344,6 +344,6 @@ index++; // l'opération peut être interrompue par le Thread Scheduler entre la
 ## Créer et exécuter des tâches de type Callable
 
 - jusqu'en Java 5, le modèle de tâche est l'interface Runnable avec une seule méthode abstraire **void run()**
+- cette interface à quelques défauts : ne retourne pas de valeur, ne jette pas d'exception en cas de problème
 - Java 5 introduit une nouvelle interface fonctionnelle **Callable<V>** qui a une unique méthode abstraire **V call() throws Exception**
-- cela résoud le problème 
 - pour exécuter une tâche Callable, il faut utiliser la méthode **submit(callable)** d'ExecutorSubmit
