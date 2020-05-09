@@ -273,3 +273,77 @@ public static Service getInstance() {
 ```
 
 ----
+
+## Les CPU multicoeurs
+
+- depuis environ 2005, les processeurs ont plusieurs coeurs
+- impact sur le fonctionnement et les patterns de la programmation concurrente
+- vitesse des processeurs :
+    - dans les années 90, les processeurs sont connectés à la RAM, en environ 70 ns (10⁻⁹ sec)
+    - aujourd'hui, le temps d'accès à la RAM est toujours d'environ 70 ns, mais les CPU ne sont plus connectés directement à la RAM, ils sont capable de traiter les données à environ 1 ns par donnée.
+- pour traiter ce problème de différence de vitesse, un empilement de cache a été mis en place sur le processseur, entre les coeurs du proccesseur et la RAM. Les caches les plus proches du processeurs sont plus rapides mais de taille plus petite :
+    - au plus proche du processeur, les cache L1, un par coeur, avec une quantité de mémoire de l'ordre de 32ko. Il est capable de fournir des données à environ 1 ns
+    - viennent ensuite les cache L2, d'environ 256ko, fourni des données à environ 3 ns
+    - un cache L3, d'environ 8Mo, partagé entre tous les coeurs, fourni des données à environ 15 ns
+
+----
+
+## Les liens Happens Before
+
+- l'architecture des CPU multicoeurs cela impacte la façon de programmer
+- si un thread travaille sur un coeur du CPU et initialise une variable dans le cache du coeur, et qu'un autre thread veut utiliser cette variable, comment va t'il connaître sa valeur ? On parle de **visiblité** : comment un thread voit-il les modifications effectuées dans un autre thread
+- à l'intérieur du langage du Java, il y a la notion de **Happens Before**, qui est un lien entre une écriture et une lecture. Un lien existe entre toute écriture synchronisée ou volatile et toute lecture synchronisée ou volatile qui suit
+- par exemple, on a une classe avec une méthode qui incrémente un attribut *i* de la classe, et une autre méthode affichant sa valeur. La première méthode va être exécutée par un thread *t1* dans une boucle, et la deuxième méthode dans un thread *t2* dans une autre boucle. Comme il n'y a pas de synchronisation, il n'y a pas de lien Happens Before, il n'y a donc pas de garantie que t2 lise bien la valeur de *i*. Pour qu'il s'exécute correctement, il faut synchroniser le contenu des 2 méthodes
+- les traitements qui se font entre les 2 threads vont devoir repasser par le cache L3 au lieu de rester dans le cache L1, ce qui ralenti les performances
+
+----
+
+## Notion de champs volatiles
+
+- la *volatilité* est l'écriture ou la lecture sur un champ déclaré volatile
+- donne la **visibilité** : les opérations de modifications sont visibles d'un thread à l'autre
+- contrairement à la synchronisation, la volatilité **ne garantie pas l'atomicité** (impossibilité de donner la main à un autre thread sur un bloc synchronisé)
+
+```java
+private volatile int index = 0;
+
+index++; // l'opération peut être interrompue par le Thread Scheduler entre la lecture de l'index et l'écriture de la nouvelle valeur de l'index
+```
+
+- revenons sur notre problème de **Double Check Locking** sur le pattern **Singleton**, le problème est que l'opération de lecture au début de la méthode *getInstance()* est non synchronisée, donc il n'y a pas de garantie de lire la bonne valeur si elle a été écrite dans un autre coeur. Pour éviter ce problème, on peut rendre le champ volatile
+
+----
+
+## Problèmes posés par le pattern Thread / Runnable
+
+- avec la généralisation des CPU multicoeurs, le modèle de programmation concurrente évolue
+- les notions de Thread et Runnable va être revue
+- lorsqu'on thread est créé via le constructeur de la classe Thread puis démarré via sa méthode *start()*, on crée un objet sur une ressource système, et une fois que l'exécution est terminée, le thread va disparaître
+- ce pattern est coûteux du fait des requêtes faites sur l'OS
+- ce pattern laisse l'application créer des threads à la demande, ce qui peut poser problème si ce nombre devient trop important
+- à partir de Java 5 (2004), nouveau pattern **Executor**
+
+----
+
+## Introduction de la notion d'ExecutorService
+
+- appelé **Executor** ou **ExecutorService**
+- c'est une réserve de threads, qui sont créés au moment où cette réserve de threads est créée, et restent disponible durant toute la vie de l'objet Executor
+- lors de la création d'une tâche Runnable que l'on souhaite exécuter, on la soumet à Executor, qui va prendre un thread eistant, et une fois terminé, rendre le thread à la réserve des threads disponible
+- cela règle le problème de création/destruction des threads inutiles et le problème de création de threads à la demande
+- le patter **Thread / Runnable** existe toujours mais il n'est plus souhaite de l'utiliser
+- **ExecutorService** est une interface qui étend l'interface **Executor**. Il y a une classe factory **Executors** qui permet de retourner des instances d'ExecutorService :
+    - `newSingleThreadExecutor()` : création d'un pool de thread avec un seul thread
+    - `neFixedThreadPoolExecutor(i)` : permet de créer un pool de i threads
+- la taille de l'ExecutorService (nombre de threads) dépend de la nature des tâches et du nombre de coeurs dans le CPU. Si les threads font essentiellements des calculs qui ne sortent pas de la mémoire, on va définir autant de threads que de coeurs sur le CPU. Si les threads font des opérations I/O, les threads vont peu utiliser le CPU car ils vont passer leur temps à attendre, on peut avoir plus de threads que de coeurs sur le CPU
+- pour exécuter une tâche de type *Runnable*, il faut utiliser la méthode **execute(runnable)** de *ExecutorService*
+- l'*ExecutorService* gère une file d'attente des tâches s'il n'y a plus de threads disponible
+
+----
+
+## Créer et exécuter des tâches de type Callable
+
+- jusqu'en Java 5, le modèle de tâche est l'interface Runnable avec une seule méthode abstraire **void run()**
+- Java 5 introduit une nouvelle interface fonctionnelle **Callable<V>** qui a une unique méthode abstraire **V call() throws Exception**
+- cela résoud le problème 
+- pour exécuter une tâche Callable, il faut utiliser la méthode **submit(callable)** d'ExecutorSubmit
