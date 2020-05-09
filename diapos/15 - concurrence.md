@@ -327,23 +327,47 @@ index++; // l'opération peut être interrompue par le Thread Scheduler entre la
 
 ## Introduction de la notion d'ExecutorService
 
-- appelé **Executor** ou **ExecutorService**
-- c'est une réserve de threads, qui sont créés au moment où cette réserve de threads est créée, et restent disponible durant toute la vie de l'objet Executor
-- lors de la création d'une tâche Runnable que l'on souhaite exécuter, on la soumet à Executor, qui va prendre un thread eistant, et une fois terminé, rendre le thread à la réserve des threads disponible
-- cela règle le problème de création/destruction des threads inutiles et le problème de création de threads à la demande
-- le patter **Thread / Runnable** existe toujours mais il n'est plus souhaite de l'utiliser
+- appelé **Executor** ou **ExecutorService**, c'est une réserve de threads, qui sont créés au moment où cette réserve de threads est créée, et restent disponible durant toute la vie de l'objet Executor
+- lors de la création d'une tâche Runnable, on la soumet à Executor, qui va prendre un thread disponible, et une fois terminé, rendre le thread à la réserve des threads
+- cela règle le problème de création/destruction des threads inutiles et le problème de création de threads à la demande. Le pattern **Thread / Runnable** existe toujours mais il n'est plus souhaite de l'utiliser
 - **ExecutorService** est une interface qui étend l'interface **Executor**. Il y a une classe factory **Executors** qui permet de retourner des instances d'ExecutorService :
     - `newSingleThreadExecutor()` : création d'un pool de thread avec un seul thread
-    - `neFixedThreadPoolExecutor(i)` : permet de créer un pool de i threads
-- la taille de l'ExecutorService (nombre de threads) dépend de la nature des tâches et du nombre de coeurs dans le CPU. Si les threads font essentiellements des calculs qui ne sortent pas de la mémoire, on va définir autant de threads que de coeurs sur le CPU. Si les threads font des opérations I/O, les threads vont peu utiliser le CPU car ils vont passer leur temps à attendre, on peut avoir plus de threads que de coeurs sur le CPU
-- pour exécuter une tâche de type *Runnable*, il faut utiliser la méthode **execute(runnable)** de *ExecutorService*
+    - `newFixedThreadPoolExecutor(i)` : permet de créer un pool de i threads
+- la taille de l'ExecutorService (nombre de threads) dépend de la nature des tâches et du nombre de coeurs dans le CPU. Si les threads font essentiellement des calculs qui ne sortent pas de la mémoire, on va définir autant de threads que de coeurs sur le CPU. Si les threads font des opérations I/O, ils vont peu utiliser le CPU car ils vont passer leur temps à attendre, on peut avoir plus de threads que de coeurs sur le CPU
 - l'*ExecutorService* gère une file d'attente des tâches s'il n'y a plus de threads disponible
+- pour exécuter une tâche de type *Runnable*, il faut utiliser la méthode **execute(runnable)** de *ExecutorService*
 
 ----
 
 ## Créer et exécuter des tâches de type Callable
 
 - jusqu'en Java 5, le modèle de tâche est l'interface Runnable avec une seule méthode abstraire **void run()**
-- cette interface à quelques défauts : ne retourne pas de valeur, ne jette pas d'exception en cas de problème
+- cette interface à quelques défauts : elle ne retourne pas de valeur et ne jette pas d'exception en cas de problème
 - Java 5 introduit une nouvelle interface fonctionnelle **Callable<V>** qui a une unique méthode abstraire **V call() throws Exception**
 - pour exécuter une tâche Callable, il faut utiliser la méthode **submit(callable)** d'ExecutorSubmit
+
+```java
+ExecutorService es = Executors.newFixedThreadPool(4);
+Runnable r = () -> System.out.println("Coucou depuis le thread " + Thread.currentThread().getName());
+es.execute(r); // Coucou depuis le thread pool-1-thread-1
+Callable<Void> c = () -> {
+    System.out.println("Bonjour depuis le thread " + Thread.currentThread().getName());
+    return null;
+};
+es.submit(c); // Bonjour depuis le thread pool-1-thread-2
+```
+
+
+## Récupérer le résultat d'une tâche Callable au travers d'un Future
+
+- renvoi un **Future<V>** qui modélise la communication entre le thread qui a créé la tâche et le thread qui exécute la tâche
+- la méthode **get()** renvoie l'objet généré par le Callable. Si la tâche prend du temps à s'exécuter, la méthode **get()** va prendre du temps pour répondre. On dit que la méthode constitue un appel **bloquant**. Il existe une version de **get(timeout)** qui jette une exception si la tâche dépasse le temps spécifiée
+- si la méthode *get()* renvoie une exception, elle va être captée par l'objet future et wrapée dans une **ExecutionException**, on va pouvoir la récupérer dans un try/catch et la rootCause est bien l'exception capturée dans l'objet future
+- l'intérêt des Future est de pouvoir faire d'autres choses entre la soumission de la tâche et la récupération de son résultat, comme par exemple soumettre d'autres tâches
+
+```java
+ExecutorService es = Executors.newFixedThreadPool(4);
+Callable<String> c = () -> "Bonjour";
+Future<String> future = es.submit(c);
+System.out.println(future.get()); // Bonjour
+```
