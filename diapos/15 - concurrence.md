@@ -405,3 +405,33 @@ System.out.println(future.get()); // Bonjour
     - doit être appelé à la fin d'une application si on a créé un ExecutorService car ses threads sont ne sont pas de type daemon, ce qui fait que la JVM ne va pas pouvoir s'arrêter
     - les tâches en cours d'exécution vont se terminer normalement, les tâches dans la file d'attente vont être exécutées, les nouvelles tâches vont être refusées
 - **shutdownNow()** : les tâches en cours d'exécution vont se terminer normalement, les tâches dans la file d'attente vont être retirées de la file d'attente et ne seront pas exécutées, les nouvelles tâches seront refusées
+
+----
+
+## Utilisation des variables atomiques
+
+- dans notre classe *Compteur* qui a un champ privé index et 2 méthodes *increment()* et *getIndex()*, si plusieurs threads incrémentent en même temps cet index, on a va avoir de la concurrence d'accès et on va rater des comptages, et si un autre thread lit la valeur du compteur, on va avoir des problèmes de visibilté
+- possibilité de gérer le problème en mettant le contenu des 2 méthodes dans un bloc synchronisé
+- à partir de Java 5, il y a des nouvelles classes qui commencent par **Atomic** (*AtomicInteger*, *AtomicLong*, *AtomicReference*) qui vont gérer la synchronisation comme si on synchronisait les blocs des méthodes
+
+```java
+AtomicLong index = new AtomicLong(0L);
+index.incrementAndGet(); // fait l'incrémentation et retourne la nouvelle valeur
+// compilé en une seule instruction assembleur
+```
+
+----
+
+## Primitives de synchronisation introduites en Java 5
+
+nouveautés Java 5 qui rendent obsolète la synchronisation introduite dans les débuts de Java :
+- interface **Lock**, classe d'implémentation **ReentrantLock**
+- **ReadWriteLock**
+- **CyclicBarrier**
+- **Latch**, classe d'implémentation **CountDownLatch**
+- **Semaphore**
+
+----
+
+## Synchronisation interruptible avec l'interface Lock
+
