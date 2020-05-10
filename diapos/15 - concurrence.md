@@ -384,3 +384,24 @@ System.out.println(future.get()); // Bonjour
 - il peut être dans l'état **TIMED_WAITING** en appelant la méthode **sleep(timeout)** (revient à l'état Runnable lorsque le timeout est écoulé)
 - lorsqu'il a fini d'exécuter une tâche, il est dans l'état **TERMINATED**
 
+
+----
+
+## Arrêt et interruption d'un thread
+
+- on ne peut pas arrêter un thread
+- il existe une méthode **stop()** qui est dépréciée qu'il ne faut donc pas appelé
+- la méthode **interrupt()** permet de dire à un thread de s'arrêter
+    - cela va passer le booléen *interrupt* du thread à true. Le thread lorsqu'il s'exécute, scrute régulièrement ce booléen et met un terme à la tâche en cours d'exécution
+    - cependant, si un thread n'est pas dans l'état RUNNABLE, cela ne fonctionne pas
+    - si le thread est dans l'état WAINTING ou TIMED_WAITING, cela va jeter une InterruptedException
+    - si le thread est dans l'état BLOCKED, on ne peut rien faire pour l'arrêter, il faut qu'il récupère la clé du moniteur sur lequel il est synchronisé
+
+----
+
+## Arrêter un ExecutorService
+
+- **shutdown()**
+    - doit être appelé à la fin d'une application si on a créé un ExecutorService car ses threads sont ne sont pas de type daemon, ce qui fait que la JVM ne va pas pouvoir s'arrêter
+    - les tâches en cours d'exécution vont se terminer normalement, les tâches dans la file d'attente vont être exécutées, les nouvelles tâches vont être refusées
+- **shutdownNow()** : les tâches en cours d'exécution vont se terminer normalement, les tâches dans la file d'attente vont être retirées de la file d'attente et ne seront pas exécutées, les nouvelles tâches seront refusées
