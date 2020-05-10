@@ -361,7 +361,7 @@ es.submit(c); // Bonjour depuis le thread pool-1-thread-2
 
 ## Récupérer le résultat d'une tâche Callable au travers d'un Future
 
-- renvoi un **Future<V>** qui modélise la communication entre le thread qui a créé la tâche et le thread qui exécute la tâche
+- *submit(callable)* renvoie un **Future<V>** qui modélise la communication entre le thread qui a créé la tâche et le thread qui exécute la tâche
 - la méthode **get()** renvoie l'objet généré par le Callable. Si la tâche prend du temps à s'exécuter, la méthode **get()** va prendre du temps pour répondre. On dit que la méthode constitue un appel **bloquant**. Il existe une version de **get(timeout)** qui jette une exception si la tâche dépasse le temps spécifiée
 - si la méthode *get()* renvoie une exception, elle va être captée par l'objet future et wrapée dans une **ExecutionException**, on va pouvoir la récupérer dans un try/catch et la rootCause est bien l'exception capturée dans l'objet future
 - l'intérêt des Future est de pouvoir faire d'autres choses entre la soumission de la tâche et la récupération de son résultat, comme par exemple soumettre d'autres tâches
@@ -376,3 +376,11 @@ System.out.println(future.get()); // Bonjour
 ----
 
 ## Etats d'un Thread, transitions entre ces états
+
+- lors de la création d'un thread, il est dans l'état **NEW** qui est un état transitoire. Aucune ressource système ne lui est encore affectée
+- lorsqu'il exécute une tâche, il est dans l'état **RUNNABLE**. Sa méthode start() a été invoquée
+- lorsqu'il attend à l'entrée d'un bloc synchronisé, il est dans l'état **BLOCKED**. Pour en sortir, et revenir à l'état RUNNABLE, il faut que la clé du bloc synchronisé se libère pour qu'il rentre dans le bloc
+- il peut être dans l'état **WAITING** pour plusieurs raisons : attente à cause d'un accès I/O (retour à l'état Runnable lorsque l'accès est terminé), appel à la méthode *wait()* (appel de *notify()* pour en sortir)
+- il peut être dans l'état **TIMED_WAITING** en appelant la méthode **sleep(timeout)** (revient à l'état Runnable lorsque le timeout est écoulé)
+- lorsqu'il a fini d'exécuter une tâche, il est dans l'état **TERMINATED**
+
