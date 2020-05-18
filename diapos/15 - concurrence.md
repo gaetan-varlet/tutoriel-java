@@ -454,7 +454,7 @@ try {
 
 ## ReadWriteLock pour les lectures concurrentes
 
-- l'interface **ReadWriteLock** permet de s'assurer qu'on ne puisse faire qu'une seule écriture à la fois et plusieurs lectures en même temps et en faisant bien le lien Happens Before : la visibilité sur les modifications faites dans un coeur sera visible par les autres coeurs
+- l'interface **ReadWriteLock** permet de s'assurer qu'on ne puisse faire qu'une seule écriture à la fois et plusieurs lectures en même temps en assurant la visibilité sur les modifications faites dans un coeur par les autres coeurs (lien Happens Before)
 - le **writeLock** va empêcher d'autres threads d'exécuter le bloc qu'il garde (celui en écriture) et également le bloc de code gardé par le *readLock*
 pendant la mise à jour de l'objet, aucun autre thread ne pourra lire l'objet
 - le **readLock** ne va pas empêcher d'autre threads d'exécuter le bloc qu'il garde (celui en lecture), mais il empêche l'exécution du bloc gardé par le *writeLock*
