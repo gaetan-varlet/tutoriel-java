@@ -425,13 +425,135 @@ index.incrementAndGet(); // fait l'incrémentation et retourne la nouvelle valeu
 ## Primitives de synchronisation introduites en Java 5
 
 nouveautés Java 5 qui rendent obsolète la synchronisation introduite dans les débuts de Java :
-- interface **Lock**, classe d'implémentation **ReentrantLock**
-- **ReadWriteLock**
-- **CyclicBarrier**
-- **Latch**, classe d'implémentation **CountDownLatch**
-- **Semaphore**
+- l'interface **Lock**
+- l'interface **ReadWriteLock**
+- la classe **Semaphore**
+- la classe **CyclicBarrier**
+- l'interface **Latch**
 
 ----
 
 ## Synchronisation interruptible avec l'interface Lock
 
+- l'objet **Lock** peut remplacer le bloc synchronisé grâce à ses méthodes **lock()** et **unlock()**, un seul thread peut exécuter le bloc de code entre le lock et le unlock
+- la méthode unlock doit impérativement être appelée après la méthode lock, sinon l'objet lock sera verrouillé en permanance et aucun thread ne pourra exécuter la méthode. Il faut donc faire attention aux exceptions qui peuvent être levé dans notre code
+- les méthodes **tryLock()** et **tryLock(timeout)** permettent aux threads de ne pas attendre dans la file d'attente (ou le temps en paramètre) si le lock est est verrouillé par un autre thread
+- il existe un objet Condition : **Condition c = lock.newCondition();** et 2 méthodes **await()** et **signal()** équivalentes à *wait()* et *notify()* dans les blocs synchronisés
+
+```java
+Lock lock = new ReentrantLock();
+try {
+    lock.lock();
+    // code
+} finally {
+    lock.unlock();
+}
+```
+
+----
+
+## Utilisation de ReadWriteLock pour autoriser les lectures concurrentes
+
+- l'interface **ReadWriteLock** permet de s'assurer qu'on ne puisse faire qu'une seule écriture à la fois et plusieurs lectures en même temps
+- le **writeLock** va empêcher d'autres threads d'exécuter le bloc qu'il garde (celui en écriture) et également le bloc de code gardé par le *readLock*
+pendant la mise à jour de l'objet, aucun autre thread ne pourra lire l'objet
+- le **readLock** ne va pas empêcher d'autre threads d'exécuter le bloc qu'il garde (celui en lecture), mais il empêche l'exécution du bloc gardé par le *writeLock*
+- le lien Happens Before entre les put et les get est bien fait : la visibilité sur les modifications faites dans un coeur sera visible par les autres coeurs
+
+```java
+ReadWriteLock lock = ReentrantReadWriteLock();
+Lock readLock = lock.readLock();
+Lock writeLock = lock.writeLock();
+
+Map<String, Object> cache = ...
+
+public void put(String key, Object o){
+    try { writeLock.lock();
+        cache.put(key, o);
+    } finally { writeLock.unlock(); }
+}
+public Object get(String key){
+    try { readLock.lock();
+        return map.get(key);
+    } finally { readLock.unlock(); }
+}
+```
+
+----
+
+## La classe Semaphore
+
+- fonctionne comme un lock mais en spécifiant le nombre de threads qui peuvent rentrer dans le bloc de code en même temps, contrairement au lock qui n'en laisse rentrer qu'un
+
+```java
+Semaphore semaphore = new Semaphore(3);
+try{
+    semaphore.tryAcquire();
+    // code
+} finally { semaphore.release(); }
+```
+
+----
+
+## La CyclicBarrier
+
+- classe qui prend en paramètre le nombre de threads que la barrière peut gérer
+- gros traitement que l'on va découper en plusieurs tâches pour qu'il soit exécuté par plusieurs threads
+- récupération d'un signal quand toutes les tâches sont terminées. Chaque thread va exécuter la méthode **await()** et quand chaque thread aura exécuté cette méthode, alors la barrière sera "levée" et le code pourra continuer
+
+```java
+CyclicBarrier barrier = new CyclicBarrier(3);
+```
+
+----
+
+## Utilisation du CountDownLatch pour lancer une application
+
+- créer avec un nombre qui va être décrémenté en interne à chaque fois qu'une certaine méthode est appelé, et quand le latch (serrure) arrive à 0, il va s'ouvrir et laisser passer le thread en attente
+- cela peut servir au démarrage d'une application en laissant les différents services qui ont besoin de s'exécuter pour que l'application fonctionne correctement
+- à la différence d'une barrière, une fois qu'un latch est ouvert, il ne se referme jamais
+
+----
+
+## Les collections concurrentes
+
+Les collections suivantes sont thread-safes, c'est-à-dire qu'elles peuvent être utilisé en multithread avec les garanties de performance, de visibilité et de synchronisation :
+- CopyOnWriteArrayList
+- BlockingQueue
+- ConcurrentHashMap
+
+----
+
+## CopyOnWriteArrayList
+
+- c'est un tableau en mémoire qui à une particularité lorsqu'il y a une opération de modification : le tableau est copié avec le nouvel élément et le pointeur du tableau est ensuite déplacé de manière atomique sur le nouveau tableau : le tableau est donc **immutable**
+- c'est une opération lourde qui a l'avantage de pouvoir être lu pour tous les threads en même temps car le tableau n'est jamais modifié
+- utile quand il y a beaucoup de lecture et peu d'écriture
+
+----
+
+## Les files d'attente concurrentes
+
+- LIFO (Last In First Out) et FIFO (First In First Out)
+- interface **Queue** et **Deque** qui est une extension de *Queue* qui permet d'aller chercher des éléments des 2 côtés de la file d'attente
+- les interfaces **BlockingQueue** et **BlockingDeque** supportent la concurrence
+- les implémentations sont **ArrayBlockingQueue** (taille fixée à la construction), **LinkedBlockingQueue** (taille fixe ou taille extensible au choix) et **SynchronousBlockingQueue** (file de taille 0). Et enfin **LinkedBlockingDeque**
+- il existe aussi une autre implémentation de **Queue** : **ConcurrentLinkedQueue** (taille extensible)
+
+----
+
+## Comportements de BlockingQueue lorsque la file d'attente est vide ou pleine
+
+- lorsque la file d'attente est pleine et qu'on souhaite ajouter un élément ou vide et qu'on souhaite en retirer un
+    - on peut retourner une valeur particulière (booléen)
+    - bloquer jusqu'à ce qu'une case se libère ou un élément soit disponible
+    - bloquer avec un timeout
+    - jeter une exception
+- la *SynchronousBlockingQueue* est juste un transmetteur d'élément entre un consommateur et un producteur. Très performant quand il y a beaucoup de producteurs et de consommateurs
+
+----
+
+## La ConcurrentHashMap
+
+- changement d'implémentation à partir du JDK 8. Jusqu'en Java 7, elle fonctionne correctement jusqu'à 16 threads, beaucoup plus dans l'implémentation de Java 8
+- utile pour faire des caches
