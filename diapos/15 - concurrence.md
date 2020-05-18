@@ -452,7 +452,7 @@ try {
 
 ----
 
-## Utilisation de ReadWriteLock pour autoriser les lectures concurrentes
+## ReadWriteLock pour les lectures concurrentes
 
 - l'interface **ReadWriteLock** permet de s'assurer qu'on ne puisse faire qu'une seule écriture à la fois et plusieurs lectures en même temps
 - le **writeLock** va empêcher d'autres threads d'exécuter le bloc qu'il garde (celui en écriture) et également le bloc de code gardé par le *readLock*
@@ -461,12 +461,11 @@ pendant la mise à jour de l'objet, aucun autre thread ne pourra lire l'objet
 - le lien Happens Before entre les put et les get est bien fait : la visibilité sur les modifications faites dans un coeur sera visible par les autres coeurs
 
 ```java
-ReadWriteLock lock = ReentrantReadWriteLock();
+ReadWriteLock lock = new ReentrantReadWriteLock();
 Lock readLock = lock.readLock();
 Lock writeLock = lock.writeLock();
 
 Map<String, Object> cache = ...
-
 public void put(String key, Object o){
     try { writeLock.lock();
         cache.put(key, o);
