@@ -285,3 +285,31 @@ builder.put(entity);
 ----
 
 ## Effacer une donnée avec un service REST DELETE
+
+
+```java
+@DELETE
+@Path("{id}")
+public Response delete(@PathParam("id") long id){
+    Commune c = ...
+    c.setName(commune.getName());
+    return Response.status(201).build();
+}
+```
+
+----
+
+## Les différentes annotations
+
+- `@FormParam`, `@PathParam`, `@QueryParam`, `@HeaderParam`, `@CookieParam`, `@MatrixParam`
+- `@Context`, peut, et permet d'aller chercher des infos dans le contexte du service REST : **UriInfo**, **Request** (propre à JAX-RS), **HttpServletRequest**, **HttpHeaders**, **Configuration**
+- *HttpServletRequest* permet de gérer une session, mais il ne faut pas le faire car c'est une mauvaise pratique
+
+```java
+@GET @Path("{id}")
+public getById(@PathParam("id") long id, @Context HttpHeaders headers){...}
+```
+
+----
+
+## Conversion d'objets en documents XML avec JAXB
