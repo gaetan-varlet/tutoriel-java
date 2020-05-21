@@ -313,3 +313,109 @@ public getById(@PathParam("id") long id, @Context HttpHeaders headers){...}
 ----
 
 ## Conversion d'objets en documents XML avec JAXB
+
+- JAX-RS est capable de convertir des objets Java en XML via l'API **JAX-B**, ou en JSON l'API **JSON-B**
+- possibilité de personnaliser le XML ou le JSON produit en annotant l'objet Java
+
+Exemple pour le XML avec les annotations JAX-B :
+- **@XmlRootElement** permet de spécifier le nom de l'élément racine
+- **@XmlType** permet de préciser l'ordre des champs pour écrire le document XML
+- **@XmlAccessorType** permet de dire que l'on veut travailler avec les champs plutôt que sur les getters (valeur par défaut)
+- **@XmlElement** permet de créer un sous-élément XML pour le champ Java
+- **@XmlAttribute** permet de mettre un champ Java en attribut XML
+- **@XmlElementWrapper** permet de définir le nom d'un élément wrapper contenant d'autres éléments XML
+
+
+```java
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"name","communes"})
+@XmlRootElement(name = "dept")
+public class Departement {
+
+    @XmlAttribute(name = "code-postal")
+    private String codePostal;
+
+    @XmlElement(name = "name")
+    private String name;
+
+    @XmlElementWrapper(name = "communes")
+    private List<Commune>;
+}
+```
+
+----
+
+## Modèle de maturité de Richardson
+
+- la création de services REST répond à une théorie appelée *Modèle de maturité de Richardson*
+- article de Martin Fowler : https://www.martinfowler.com/articles/richardsonMaturityModel.html
+- 4 niveaux :
+    - niveau 0 : échange de données au format XML/JSON
+    - niveau 1 : notion de ressources, assocations des objets à des URI
+    - niveau 2 : convention qui repose sur l'utilisation des méthodes HTTP GET/POST/PUT/DELETE...
+    - niveau 3 : notion HATEOAS, retourne des informations supplémentaires au client, pour l'informer d'autres requêtes qu'il peut faire sur l'API
+
+----
+
+## Persister des données en Java EE avec JPA et des EJB
+
+- solution ancienne remplacée par CDI, qui risque de devenir dépréciée
+- toutes les méthodes d'un EJB sont transactionnelles
+- le serveur Java EE est responsable de l'instanciation de l'Entity Manager et de la classe CommuneEJB, et de l'injecter dans les champs annotés, on parle d'**injection**
+
+```java
+public class CommuneResource {
+    @EJB private CommuneEJB communeEJB;
+
+    public Response create (Commmune commune){ communeEJB.persist(commune); }
+}
+
+@Stateless
+public class CommuneEJB {
+    @PersistanceContext(unitName = "jpa") private EntityManager em; // unitName prend le nom de l'unité de persistance définie dans le fichier META-INF/persistance.xml
+
+    public void persist(Commune commune){ em.persist(commune); }
+}
+```
+
+----
+
+## Persister des données en Java EE avec JPA et CDI
+
+- même principe qu'EJB en utilisant d'autres annotations
+- les méthodes ne sont pas transactionnelles par défaut, il faut ajouter l'annotation **@Transactional** sur la classe ou la méthode pour que ce soit le cas
+- CDI propose plus d'options qu'EJB pour contrôler ce qu'on va injecter, par exemple utiliser une base de test au lieu de la base de prod
+
+```java
+public class CommuneResource {
+    @Inject private CommuneService communeService;
+
+    public Response create (Commmune commune){ communeService.persist(commune); }
+}
+
+public class CommuneService {
+    @PersistanceContext(unitName = "jpa") private EntityManager em;
+
+    @Transactional public void persist(Commune commune){ em.persist(commune); }
+}
+```
+
+----
+
+## Configurer JPA et CDI en Java EE
+
+- pour utiliser CDI et JPA, il faut configurer le fichier **META-INF/persistance.xml**
+- pour CDI, il faut ajouter un fichier **META-INF/beans.xml** avec dans le fichier `<beans/>` car aucune configuration spécifique n'est requise
+- dans le fichier *persistance.xml*, il faut modifier un peu les choses
+
+```xml
+<!-- le conteneur Java EE gère les transactions et qu'on ne peut plus les gérer à la main -->
+<persistance-unit name="jpa" transaction-type="JTA">
+    <provider>...</provider>
+    <!-- ajout d'un élément jta-data-source qui permet à JTA de se connecter à la base de données à la place des properties concernant les éléments de connexion à la BDD -->
+    <jta-data-source>jdbc/MySQLDS</jta-data-source>
+```
+
+----
+
+## Architecture des appels asynchrones et réactifs
