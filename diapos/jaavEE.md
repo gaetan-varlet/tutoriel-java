@@ -419,3 +419,82 @@ public class CommuneService {
 ----
 
 ## Architecture des appels asynchrones et réactifs
+
+- un client envoie une requête HTTP sur un serveur, traiter la demande du client et envoyer la réponse. Chaque requête est exécutée dans un thread et donc bloque un thread
+- un serveur peut gérer quelques centaines / milliers de threads mais pas davantage
+- si la formation de la réponse est trop longue, le client casse la connexion et envoie une TimeouException, et le serveur continue à travailler pour rien
+- en faisant une requête synchrone, le client envoie une requête au serveur et reçoit une réponse quand celle-ci est prête
+- en faisant une requête asynchrone, le client envoie une requête en disant qu'il veut faire une requête asynchrone. Le serveur quand il reçoit la requête, envoie une information au client pour lui dire que la requête est bien prise en compte et qu'il envoie la réponse dès qu'elle est prête. Cela libère le client qui peut faire autre chose. Quand le client reçoit la réponse, il va pouvoir réagir à la réponse
+- il existe 2 façons de faire :
+    - le client envoie un callback, avec 2 méthodes pour traiter le cas où c'est ok et le cas d'erreur
+    - le serveur retourne un objet particulier pour faire de la programmation réactive via l'API **CompletionStage**
+
+----
+
+## Ecriture d'un service REST asynchrone
+
+- le service ne renvoie rien car la répose va être renvoyée via le callback fourni par le client
+
+```java
+@Path("async")
+public class AsyncRestService {
+    @Resource ManagedExecutorService es;
+
+    @GET
+    @Path("{message}")
+    public void findById(@PathParam("message") String message, @Suspended AsyncResponse response){
+        Runnable task = () -> {...
+            response.resume(...);}
+        es.submit(task);
+    }
+}
+```
+
+----
+
+## Ecriture d'un client REST asynchrone
+
+- client fonctionne comme le client synchrone
+
+```java
+Client client = ClientBuilder.newClient();
+WebTarget target = client.target("http://localhost:8080");
+WebTarget path = target.target("{message}");
+path = path.resolveTempalte("message","hello");
+AsyncInvoker ai = path.request().async();
+InvocationCallback<String> callback = new InvocationCallback<>(){
+    public void completed(String s){...}
+    public void failed(Throwable t){...}
+}
+Future f = ai.get(callback);
+```
+
+----
+
+## Ecriture d'un client et d'un serveur REST réactif
+
+- même structure qu'avec *AsyncResponse* et *InvocationCallback* en plus simple et plus riche
+
+```java
+@Path("async")
+public class AsyncRestService {
+    @Resource ManagedExecutorService es;
+
+    @GET
+    @Path("{message}")
+    public CompletableFuture<String> findById(@PathParam("message") String message){
+        Supplier<String> task = () -> {...};
+        CompletableFuture<String> cf = CompletableFuture.supplyAsync(task, es);
+        return cf;
+    }
+}
+```
+
+```java
+// client
+CompletableFuture<String> cf = path.request().rx().get(String.class);
+```
+
+----
+
+## Créer des chaînes de traitement réactifs avec CompletableFuture
