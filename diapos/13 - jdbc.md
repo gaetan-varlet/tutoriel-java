@@ -56,7 +56,7 @@ DriverManager.registerDriver(mySqlDriver);
 
 ----
 
-## Envoie d'une requêtes SQL et analyse du résultat 
+## Envoie d'une requête SQL et analyse du résultat 
 
 - la méthode **createStatement()** permet de créer un objet **Statement** qui va permettre d'exécuter une requête SQL avec la méthode **executeQuery(requete)**
 - récupération du résultat dans un objet **ResultSet**
@@ -92,7 +92,7 @@ if(select){
 
 ----
 
-## Passer un paramètre à la requête dans une clause where
+## Passer un paramètre à la requête
 
 - possibilité de concaténer dans la requête SQL un paramètre
 - il ne faut JAMAIS LE FAIRE car cela est une faille de sécurité connue sous le nom d'**injection SQL**
