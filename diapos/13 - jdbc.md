@@ -4,7 +4,7 @@
 
 ## Introduction
 
-- **JDBC** (Java Database Connectivity) est une API du JDK qui permet à une application Java d'interagir de façon standard avec des données enregistrées dans une base de données relationnelles (via le langage SQL)
+- JDBC, pour **Java Database Connectivity**, est une API du JDK qui permet à une application Java d'interagir de façon standard avec des données enregistrées dans une base de données relationnelles (via le langage SQL)
 - pour interagir avec les bases NoSQL, il existe d'autres API
 - pour interagir avec une base, il faut utiliser un module appelé **driver JDBC** spécifique à la base de données (MySQL, Postgre...) qui sont des JAR
 - JDBC contient essentiellement des interfaces (Connection, Statement, PreparedStatement, ResultSet...), les implémentations sont fournies par les éditeurs de base de données dans leur driver
@@ -15,7 +15,7 @@
 
 - **Connection** : connection à une BDD (URL, username, password)
 - **Statement** et **PreparedStatement** permettent de transporter des requêtes SQL vers la base de données
-- une fois les requêtes exécutées en base, on peut récupérer le résultat dans un objet **ResultSet**, correspond à une table en base de données avec des lignes et des colonnes
+- une fois les requêtes exécutées en base, on peut récupérer le résultat dans un objet **ResultSet**, correspondant à une table en base de données avec des lignes et des colonnes
 
 ----
 
