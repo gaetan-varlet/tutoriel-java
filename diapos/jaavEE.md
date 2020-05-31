@@ -434,6 +434,9 @@ public class CommuneService {
 ## Ecriture d'un service REST asynchrone
 
 - le service ne renvoie rien car la répose va être renvoyée via le callback fourni par le client
+- le callback est de type **AsyncResponse**, annotée avec **@Suspended** qui permet de faire de l'asynchrone
+- appel de la méthode **resume()** de response avec en paramètre le résultat du traitement, qui va informer le client
+- la tâche est confiée à un ExecutorService. Dans un environnemennt Java EE, on n'a pas le droit de créer nos propres threads, il faut donc injecter un ExecutorService en tant que ressource fournie par le serveur d'application
 
 ```java
 @Path("async")
@@ -442,8 +445,8 @@ public class AsyncRestService {
 
     @GET
     @Path("{message}")
-    public void findById(@PathParam("message") String message, @Suspended AsyncResponse response){
-        Runnable task = () -> {...
+    public void process(@PathParam("message") String message, @Suspended AsyncResponse response){
+        Runnable task = () -> { ...// traitement
             response.resume(...);}
         es.submit(task);
     }
@@ -455,18 +458,19 @@ public class AsyncRestService {
 ## Ecriture d'un client REST asynchrone
 
 - client fonctionne comme le client synchrone
+- récupération de la réponse sous forme de Future
 
 ```java
 Client client = ClientBuilder.newClient();
 WebTarget target = client.target("http://localhost:8080");
 WebTarget path = target.target("{message}");
-path = path.resolveTempalte("message","hello");
-AsyncInvoker ai = path.request().async();
+path = path.resolveTempalte("message","hello"); // définition de message avec la chaîne "hello"
+AsyncInvoker ai = path.request().async(); // async() permet de dire qu'on fait une requête async
 InvocationCallback<String> callback = new InvocationCallback<>(){
     public void completed(String s){...}
     public void failed(Throwable t){...}
-}
-Future f = ai.get(callback);
+} // création du callback avec 2 méthodes, une quand le traitement sur le serveur se passe bien et une quand il y a une erreur
+Future f = ai.get(callback); // envoie du callback en le passant en paramètre de l'AsyncInvoker
 ```
 
 ----
@@ -474,6 +478,9 @@ Future f = ai.get(callback);
 ## Ecriture d'un client et d'un serveur REST réactif
 
 - même structure qu'avec *AsyncResponse* et *InvocationCallback* en plus simple et plus riche
+- pas besoin de l'objet technique *AsyncResponse*
+- production d'un résultant avec un `Supplier<T>`
+- création d'une tâche asynchrone avec un CompletableFuture
 
 ```java
 @Path("async")
@@ -482,7 +489,7 @@ public class AsyncRestService {
 
     @GET
     @Path("{message}")
-    public CompletableFuture<String> findById(@PathParam("message") String message){
+    public CompletableFuture<String> process(@PathParam("message") String message){
         Supplier<String> task = () -> {...};
         CompletableFuture<String> cf = CompletableFuture.supplyAsync(task, es);
         return cf;
@@ -490,11 +497,52 @@ public class AsyncRestService {
 }
 ```
 
+- utilisation de **rx()** à la place de **async()** pour faire du réactif qui renvoie un CompletableFuture
+
 ```java
 // client
-CompletableFuture<String> cf = path.request().rx().get(String.class);
+CompletableFuture<String> cf = path.request().rx().get(String.class); // type de get() correspond au type du Supplier et du CompletableFuture
 ```
 
 ----
 
 ## Créer des chaînes de traitement réactifs avec CompletableFuture
+
+- **CompletableFuture** est une classe qui implémente l'interface *ComletationStage* qui étend lui-même *Future*. C'est donc un objet qui un moment dans le futur va encapsuler un résultat
+- méthodes de Future : **get()** (récupération du résultat), **isDone()** (tester si le résultat est là), **cancel()** (annuler la tâche qui s'exécute dans un autrez thread)
+- méthodes additionnelles de *CompletableFuture* :
+    - **thenAccept(Consumer)** : une fois que la réponse arrive dans le CF, la méthode *thenAccept()* va être activée et le Consumer en paramètre va être invoqué
+    - **thenApply(Function)** : renvoie un autre CF
+    - **thenRun(Runnable)** : renvoie un CF void comme *thenAccept()*
+
+```java
+cf.thenAccept(s -> System.out.println(s)); // affichage dans la console du résultat
+```
+
+- possibilité d'enchaîner les CF pour créer des chaînes de traitement qui s'active quand les données rentrent dedans
+- possibilité d'enchaîner des CF de manière non linéaire, ou aussi de créer un CF à partir de plusieurs CF
+
+----
+
+## Contrôler les threads d'exécution dans l'API CompletableFuture
+
+- l'utilisation classique des méthodes **thenAccept()**, **thenApply()**... s'exécutent dans le même thread
+- il existe une deuxième version des méthodes : **thenAcceptAsync()**... qui permet d'exécuter un autre thread
+- sans préciser un ExecutorService en paramètre de ces méthodes *Async*, les méthodes s'exécutent dans un ExecutorService spécial défini au niveau de la JVM : le **ForkJoinPoll**
+- si on précise un ExecutorService, la tâche sera exécuté dans un thread de l'ExecutorService en paramètre
+
+----
+
+## Gérer les exception avec l'API CompletableFuture
+
+- si une tâche jette une exception, il va transmettre son exception au CF suivante qui va être aussi être en erreur jusqu'au CF final
+- utilisation de CF spéciaux qui vont capter le résultat d'une tâche ou l'éventuelle exception, et faire un choix de transmettre l'exception, ou de rattraper l'erreur, en mettant une valeur par défaut à la place ou ne rien afficher
+- utilisation de la méthode **exceptionally()** qui prend une *Function* en paramètre qui reçoit un *Throwable*. Cette fonction sera invoquée si le CF a jeté une exception
+- possibilité d'utiliser **handle()** qui prend une *BiFunction* en paramètre, et elle sera systématiquement appelé
+- possibilité aussi d'utiliser **whenComplete()**
+
+```java
+cf.exceptionally(Function<Throwable,...>);
+cf.handle(BiFunction<T, Throwable, ...>);
+cf.whenComplete(BiConsumer<T, Throwable>);
+```
