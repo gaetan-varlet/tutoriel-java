@@ -40,7 +40,7 @@ public class User implements Serializable {
 
 ----
 
-## Décrire une unité de persistence dans un fichier persistence.xml (1)
+## Décrire une unité de persistence dans persistence.xml
 
 - pour créer une application JPA, il faut un descripteur XML **persistance.xml** dans le répertoire **META-INF**
 - contient la description et le paramétrage de l'application JPA notamment des entités JPA
@@ -57,7 +57,7 @@ public class User implements Serializable {
 
 ----
 
-## Décrire une unité de persistence dans un fichier persistence.xml (2)
+## Exemple de fichier persistence.xml
 
 ```xml
 <persistence>
