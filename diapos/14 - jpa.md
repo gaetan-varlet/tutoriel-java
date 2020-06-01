@@ -138,7 +138,7 @@ em.remove(user);
 em.getTransaction().commit();
 ```
 
------
+----
 
 ## Confier la génération des valeurs de clés primaires à JPA
 
