@@ -245,3 +245,23 @@ em.detach(user);
 em.merge(user);
 em.refresh(user);
 ```
+
+----
+
+## Cycle de vie d'une entité JPA
+
+- lors de la création d'une Entity, son état est **NEW**. L'entitée n'a pas encore vu la base et n'est pas attaché à un EM
+- lors de l'utilisation de la méthode *persist()*, le bean passe à l'état **MANAGED**, ça veut dire qu'il est géré par un EM
+- lors de l'utilisation de la méthode *remove()*, le bean passe à l'état **REMOVED**
+- lors de l'utilisation de la méthode *detach()*, le bean passe à l'état **DETACHED**. Il y a toujours des informations notamment de clé primaire qui permettent de le localiser en base, ainsi que des informations sur la version, ce qui permet si l'hypothèse optimiste a été violée ou pas
+- lors de l'utilisation de la méthode *merge()*, le bean passe de l'état *DETACHED* à *MANAGED*
+- la méthode *refresh()* n'a de sens que sur un objet à l'état *MANAGED*
+
+```java
+User user = new User(...) // NEW
+em.persist(user); // NEW -> MANAGED
+em.remove(user); // MANAGED -> REMOVED
+em.detached(user); // MANAGED -> DETACHED
+em.merge(user);  // DETACHED -> MANAGED
+em.refresh(user); // MANAGED -> MANAGED
+```
