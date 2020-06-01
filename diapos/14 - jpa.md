@@ -5,7 +5,7 @@
 ## Introduction à JPA et au mapping objet relationnel
 
 - JPA, pour **Java Persistance API**, consiste à écrire les champs d'un objet dans une base de données
-- JPA est une spécification (interface et annotations), Hibernate (date de 2003), EclipseLink, OpenJPA sont des implémentations
+- JPA est une spécification (interfaces et annotations), Hibernate (date de 2003), EclipseLink, OpenJPA sont des implémentations
 - JPA permet de faire le lien entre les champs d'un objet Java et les colonnes d'une table en BDD. On parle d'ORM (**Object Relationnal Mapping**)
 - plutôt qu'écrire du code JDBC pour chaque classe, JPA va faire ces associations automatiquement grâce à de la déclaration que l'on doit faire sur nos classes
 
