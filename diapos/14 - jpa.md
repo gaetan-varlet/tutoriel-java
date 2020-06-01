@@ -75,3 +75,173 @@ public class User implements Serializable {
 ----
 
 ## Créer un entity manager pour une unité de persistence
+
+- la classe **Persistence** de JPA a une méthode factory **createEntityManagerFactory("nom persistence-unit")** qui crée un EntityManagerFactory (EMF). Il sera construit si toute la configuration est correcte
+- le rôle de l'EMF est de créer un **EntityManager** qui va permettre de réaliser toutes les opérations de persistance
+- l'EMF et l'EM sont des interfaces de JPA, les implémentations sont fournies par Hibernate
+
+```java
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("test-jpa");
+EntityManager em = emf.createEntityManager();
+```
+
+----
+
+## Ecriture d'un premier bean en base
+
+- étant donné qu'il s'agit d'une opération de modification de la BDD, elle doit se dérouler dans une transaction
+- un EM est associé à une seule transaction
+
+```java
+User user = ...
+EntityManager em = ...
+em.getTransaction().begin(); // démarrage de la transaction
+em.persist(user);
+em.getTransaction().commit();
+```
+
+----
+
+## Récupérer un objet en fonction de son id
+
+- utilisation de la méthode **find()** où l'on précise le type de l'objet et la valeur de la clé primaire
+- opération de type select, pas obligatoire de l'attacher à une transaction
+
+```java
+User user = em.find(User.class, 12);
+```
+
+----
+
+## Mise à jour des champs d'un bean
+
+- récupération de l'objet puis mise à jour de l'objet dans une transaction
+- pas de méthode update. Le simple fait de prendre une entité JPA récupérée via un EM va générer une requête en base lorsqu'on modifie un de ces champs et qu'on demande le commit de la transaction
+
+```java
+em.getTransaction().begin();
+User user = em.find(User.class, 12);
+user.setAge(10);
+em.getTransaction().commit();
+```
+
+----
+
+## Effacement d'un bean d'une base
+
+- inconvénient du delete et qu'il faut d'abord faire un **find()** avant de faire un **remove()**
+
+```java
+em.getTransaction().begin();
+User user = em.find(User.class, 12);
+em.remove(user);
+em.getTransaction().commit();
+```
+
+-----
+
+## Confier la génération des valeurs de clés primaires à JPA
+
+- lors de l'enregistrement en base d'une nouvelle entité JPA, il faut gérer la valeur de la clé primaire
+- on peut confier la génération des clés primaires à la base
+- on peut aussi confier la génération à Hibernate
+- utilisation de l'annotation **@GeneratedValue** sur la clé primaire pour dire que ce n'est pas nous qui gérons la valeur de la clé primaire
+- l'annotation prend un attribut**strategy** qui peut prendre comme valeur 
+    - **GenerationType.AUTO** : Hibernate choisit la meilleure stratégie pour gérer les clés primaires
+    - **GenerationType.IDENTITY**
+    - **GenerationType.TABLE**
+    - **GenerationType.SEQUENCE**
+
+----
+
+## Choisir le mode d'accès aux valeurs des champs d'une entité JPA
+
+Hibernate utilise l'API Reflection :
+- utilisation du constructeur vide
+- accès direct aux champs privés ou via les getters et les setters
+- possibilité d'annoter les *Entity* avec l'annotation **@Access** pour dire à Hibernate d'utiliser les champs ou les getters/setters
+
+```java
+@Access(AccessType.FIELD) // @Access(AccessType.PROPERTY)
+@Entity
+public class User {}
+```
+
+----
+
+## Préciser le mapping d'une entité
+
+- possibilité de mapper l'Entity avec une table qui a un nom différent avec l'annotation **@Table**
+    - possibilité de dire à JPA de créer des contraintes d'intégrité dans cette annotation
+    - il s'agit de contraintes en BDD, il est possible de ne pas les respecter en Java, mais il y aura une exception SQL lorsqu'on voudra sauvegarder les beans en base
+- possibilité d'utiliser l'annotation **@Column** pour préciser le nom en base de données du champ de l'Entity
+
+```java
+@Entity
+@Table(name="utilisateur", uniqueConstraints={
+    @UniqueConstraint=(name="..." columnNames={"first_name", "last_name"})
+})
+public class User {
+    @Column(name="first_name", length=40)
+    private String firstName;
+    private String lastName;
+}
+```
+
+----
+
+## Mapper les trois types de dates avec @Temporal
+
+- les types "Date" ne sont pas gérés automatiquement
+- il existe 3 types de date : **DATE**, **TIME** et **TIMESTAMP**
+- il faut le préciser à JPA avec l'annotation **@Temporal(TemporalType.DATE)** en précisant DATE, TIME ou TIMESTAMP
+- **java.sql.Date** n'est pas utilisable en JPA, il faut utiliser **java.util.Date**
+
+----
+
+## Mapper les énumération avec @Enumerated
+
+- utilisation de l'annotation **@Enumerated** qui prend 2 valeurs possibles : **EnumType.STRING** et **EnumType.ORDINAL**
+- ORDINAL va enregistrer en base le numéro d'index de la valeur de l'énumération (commence à 0) au lieu du nom de la valeur énumérée avec le type STRING
+
+```java
+enum Civility { MRS, MR }
+
+public class User {
+    @Enumerated(EnumType.STRING)
+    Civility civility;
+}
+```
+
+----
+
+## Mapper les champs Serializable dans des BLOB avec @Lob
+
+- les champs restant peuvent être classés dans 2 catégories :
+    - les champs non sérialisables, ne pourront pas aller en base de données
+    - les champs sérialisables, par exemple un tableau d'entiers, de String
+- les champs sérialisables doivent être mappés dans des BinaryObject, avec l'annotation **@Lob** (pour Large Object Binary) et iront en BDD dans un champ de type BLOB
+- ces champs sont coûteux en BDD en lecture et en écriture
+- ces champs ne peuvent pas être requêtés dans une clause WHERE
+
+```java
+@Lob
+private int [] securityKey
+```
+
+----
+
+## Opérations detach, merge et refresh, hypothèse optimiste
+
+- **persist()** permet d'écrire une entité JPA en base, **remove()** permet d'effacer une entité JPA en base
+- il existe 3 autres opérations de persistance :
+    - **detach()** permet de couper le lien entre l'EM et le bean Entity pour libérer l'EntityManager. Si des modifications sont faites et doivent être persistées en base, il va falloir recréer le lien avec *merge()*
+    - **merge()** attache une entité JPA à l'EM sur lequel on appelle le merge. 2 raisons d'utilisation : s'il a été détaché, soit s'il est attaché à un autre EM
+    - fonctionne dans le cas d'une hypothèse *OPTIMISTE*, c'est-à-dire qu'un autre opérateur n'a pas fait de modification sur la même entité, auquel cas, une *OptimisticLockException* est généré
+    - **refresh()** permet de prendre les modifications faites en base pour rafraîchir l'objet Java
+
+```java
+em.detach(user);
+em.merge(user);
+em.refresh(user);
+```
