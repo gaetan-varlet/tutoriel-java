@@ -43,15 +43,15 @@ public class User implements Serializable {
 ## Décrire une unité de persistence dans persistence.xml
 
 - pour créer une application JPA, il faut un descripteur XML **persistance.xml** dans le répertoire **META-INF**
-- contient la description et le paramétrage de l'application JPA notamment des entités JPA
+- contient la description et le paramétrage de l'application JPA notamment des *Entity*
 - une unité de persistance est un ensemble d'entités JPA qui appartiennent à la même application JPA. 2 attributs obligatoire :
     - **name** : nom logique qu'on référence dans le code pour dire que le code Java s'adresse à cette unité de persistance
-    - **transaction-type** : avec 2 valeurs possibles JTA (les transactions sont gérées automatiquement) RESOURCE-LOCAL (transactions gérées à la main)
-- le sous-élément **provider** est une classe qui implémente une interface JPA qui est PersistanceProvider. Pour Hibernate, il s'agit *org.hibernate.jpa.HibernatePersistenceProvider*
+    - **transaction-type** : avec 2 valeurs possibles JTA (les transactions sont gérées automatiquement) et RESOURCE-LOCAL (transactions gérées à la main)
+- le sous-élément **provider** : classe qui implémente l'interface JPA **PersistanceProvider**. Pour Hibernate, il s'agit *org.hibernate.jpa.HibernatePersistenceProvider*
 - le sous-élément **class** liste les classes gérées par JPA
 - le sous-élément **properties** permet de configurer l'unité de persitance dans des sous-éléments *property*
     - propriétés standard JPA (commence par javax.persistence) et propriétés propres à l'implémentation (commence par hibernate pour Hibernate)
-    - les propriétés *javax.persistence.jdbc.url* *jdbc.driver* *jdbc.user* *jdbc.password* permettent de se connecter à la base
+    - les propriétés *javax.persistence.jdbc.url*, *jdbc.driver*, *jdbc.user*, *jdbc.password* pour se connecter à la base
     - la propriété *hibernate.hbm2ddl* permet de fixer le comportement d'Hibernate vis à vis de l'existance ou non des tables associées aux entités JPA : **validate**, **update**, **create**, **create-drop**
     - la propriété *hibernate.dialect* permet de préciser à quelle base de données s'adresse l'application pour générer du code SQL optimisé pour cette base, sinon ce sera du code SQL standard basique
 
