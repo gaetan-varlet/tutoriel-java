@@ -409,7 +409,7 @@ public class CommuneService {
 - dans le fichier *persistance.xml*, il faut modifier un peu les choses
 
 ```xml
-<!-- le conteneur Java EE gère les transactions et qu'on ne peut plus les gérer à la main -->
+<!-- le conteneur Java EE gère les transactions et on ne peut plus les gérer à la main -->
 <persistance-unit name="jpa" transaction-type="JTA">
     <provider>...</provider>
     <!-- ajout d'un élément jta-data-source qui permet à JTA de se connecter à la base de données à la place des properties concernant les éléments de connexion à la BDD -->
