@@ -14,7 +14,7 @@
 
 ----
 
-## Spécifications Java EE
+## Spécifications Java EE
 
 - Java EE est un jeu de spécifications
     - chaque spécification est précisé dans un document appelé **JSR** (Java Specification Request). Il y en a environ 20 dans Java EE 8
@@ -57,7 +57,7 @@ A partir de 2009, Java EE définit 2 profils :
 
 ----
 
-## Microprofile
+## Microprofile
 
 - une spécification alternative à Java EE est apparue avec l'arrivée des microservices, appelée **Microprofile**, essentiellement du service de données au format JSON.
 - on y retrouve les spécifications **JSON-B** (Binding) et **JSON-P** (Processing), la spécification JAX-RS, et CDI, le moteur d'injection de dépendance de Java EE. Ainsi que d'autres spécifications ajoutés par Microprofile
@@ -65,7 +65,7 @@ A partir de 2009, Java EE définit 2 profils :
 
 ----
 
-## Différence entre Java EE et Spring
+## Différence entre Java EE et Spring
 
 - Spring est un framework Java, concurrent technique de Java EE
 - c'est un ensemble de composant Java, qui fait les choses un peu différemment
@@ -74,7 +74,7 @@ A partir de 2009, Java EE définit 2 profils :
 
 ----
 
-## Traitement d'une requête HTTP
+## Traitement d'une requête HTTP
 
 lorsqu'une requête HTTP arrive sur un serveur, l'URL est analysé. Par exemple, l'URL `http://www.data.gouv.fr/stats/maires/liste`
 - en commençant par le **nom de domaine**, résolu par un DNS (serveur de noms)
@@ -94,7 +94,7 @@ lorsqu'une requête HTTP arrive sur un serveur, l'URL est analysé. Par exemple,
 
 ----
 
-## Générer du Contenu Dynamique avec des Servlets
+## Générer du Contenu Dynamique avec des Servlets
 
 - l'API Servlet est une classe Java qui permet de mapper une URI et avec une classe Java auprès de Tomcat
 - il n'y a pas de méthode *main()* dans les servlets, c'est Tomcat qui va déclencher l'exécution des servlets
@@ -153,7 +153,7 @@ request.getCookies();
 
 ----
 
-## Echanger des données XML avec SOAP
+## Echanger des données XML avec SOAP
 
 - **SOAP**, pour *Simple Object Access Protocol*, permet de faire des requêtes sur des serveurs et récupérer des données au format XML
 - développé en 98-99, devient une norme du W3C en 2003
@@ -166,7 +166,7 @@ request.getCookies();
 
 ----
 
-## Echanger des données avec REST
+## Echanger des données avec REST
 
 - REST, pour *Representational State Transfert*, présenté par Roy Fielding dans sa thèse en 2000
 - comme SOAP, l'idée est de transférer des données sur internet au format XML (aujourd'hui davantage JSON)
@@ -197,7 +197,7 @@ public class HelloWorldRS {
 
 ----
 
-## Implémenter un service REST GET
+## Implémenter un service REST GET
 
 - renvoie un objet Java au format XML ou JSON. Possibilité de configurer avec `@Produces`
 
@@ -216,7 +216,7 @@ public class Commune {
 
 ----
 
-## Fixer le retour d'un service REST avec l'objet Response
+## Fixer le retour d'un service REST avec l'objet Response
 
 - renvoyer un code 200 si tout est ok, 404 si l'objet n'existe pas
 
@@ -238,7 +238,7 @@ public class Commune {
 
 ----
 
-## Créer une donnée avec un service REST POST
+## Créer une donnée avec un service REST POST
 
 - saisie d'un nom formulaire dans une page HTML et envoie du contenu à la méthode suivante :
 
@@ -253,7 +253,7 @@ public Response create(@FormParam("codePostal") String codePostal, @FormParam("n
 
 ----
 
-## Mettre à jour ou créer une donnée avec un service REST PUT
+## Mettre à jour ou créer une donnée avec un service REST PUT
 
 - PUT peut faire de la mise à jour en spécifiant la clé primaire de l'objet que l'on met à jour
 - même URI que le GET (convention)
@@ -299,7 +299,7 @@ public Response delete(@PathParam("id") long id){
 
 ----
 
-## Les différentes annotations
+## Les différentes annotations
 
 - `@FormParam`, `@PathParam`, `@QueryParam`, `@HeaderParam`, `@CookieParam`, `@MatrixParam`
 - `@Context`, peut, et permet d'aller chercher des infos dans le contexte du service REST : **UriInfo**, **Request** (propre à JAX-RS), **HttpServletRequest**, **HttpHeaders**, **Configuration**
@@ -431,7 +431,7 @@ public class CommuneService {
 
 ----
 
-## Ecriture d'un service REST asynchrone
+## Ecriture d'un service REST asynchrone
 
 - le service ne renvoie rien car la répose va être renvoyée via le callback fourni par le client
 - le callback est de type **AsyncResponse**, annotée avec **@Suspended** qui permet de faire de l'asynchrone
@@ -524,7 +524,7 @@ cf.thenAccept(s -> System.out.println(s)); // affichage dans la console du résu
 
 ----
 
-## Contrôler les threads d'exécution dans l'API CompletableFuture
+## Contrôler les threads d'exécution dans l'API CompletableFuture
 
 - l'utilisation classique des méthodes **thenAccept()**, **thenApply()**... s'exécutent dans le même thread
 - il existe une deuxième version des méthodes : **thenAcceptAsync()**... qui permet d'exécuter un autre thread
@@ -533,7 +533,7 @@ cf.thenAccept(s -> System.out.println(s)); // affichage dans la console du résu
 
 ----
 
-## Gérer les exception avec l'API CompletableFuture
+## Gérer les exception avec l'API CompletableFuture
 
 - si une tâche jette une exception, il va transmettre son exception au CF suivante qui va être aussi être en erreur jusqu'au CF final
 - utilisation de CF spéciaux qui vont capter le résultat d'une tâche ou l'éventuelle exception, et faire un choix de transmettre l'exception, ou de rattraper l'erreur, en mettant une valeur par défaut à la place ou ne rien afficher
