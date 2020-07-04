@@ -1,4 +1,4 @@
-# Java EE
+# Java EE
 
 ----
 
