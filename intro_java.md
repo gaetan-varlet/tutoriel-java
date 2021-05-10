@@ -236,3 +236,81 @@ for(int i = 0 ; i < tabInt.length ; i++){
 ```java
 Arrays.toString(tabInt); // permet d'afficher le contenu du tableau
 ```
+
+
+# Structure d'une classe
+
+Les éléments d'une classe :
+- les **champs** de la classe
+- les **constructeurs** (même nom que la classe, pas de type de retour, un bloc de paramètres)
+- les **méthodes**
+- le mot clé **this** fait référence au champ de la classe, c'est un pointeur vers l'objet dans lequel on se trouve
+
+La visibilité des éléments :
+- **public** : élément visible de n'importe où
+- **protected** : élément accessible dans le même package et les classes héritant de cette classe
+- *sans mot clé* : élément accessible dans le même package
+- **private** : élément visible uniquement dans la classe
+
+La **signature d'une méthode** :
+- nom de la méthode + bloc de paramètres
+- il est possible d'avoir des méthodes avec le même nom tant que la signature est différente
+- la visibilité et le type de retour ne font pas partie de la signature
+- si 2 méthodes ont le même nom, on parle de **surcharge**, ou **overload**, alors que la surcharge dans le cadre de l'héritage, on parle d'**override**
+
+La notion de **package** :
+- comme il y a souvent beaucoup de classes, organisation des classes dans une hiérarchie de répertoires
+- ce chemin de répertoires va devenir le package de la classe
+- convention de nommage des packages :
+	- garantir l'unicité du nom de complet des classes avec le nom de package dans le monde entier, si on utilise des bibliothèques externes
+	- utilisation des noms de domaine lus à l'envers pour préfixer les packages
+
+```java
+// chemin : a/b/c/User.java
+package a.b.c;
+public class User {}
+```
+
+Classes **wrapper** et **auto-boxing** :
+- pour les types primitifs, il existe des classes associées (`byte -> Byte`...) appelées classes **Wrapper**
+- possibilité via le mécanisme **auto-boxing** de créer des objets à partir des types primitifs
+- accès à des méthodes comme `int nb = Integer.parseInt("5");`
+
+```java
+Long l1 = new Long(2); // création d'un Long
+Long l2 = 3; // écriture d'un int qui est converti en long puis création du Long via l'auto-boxing
+```
+
+Le mot clé **static**
+- lors de l'instanciation d'un objet, stockage dans le pointeur de la zone mémoire où est stocké l'objet instancié
+- il y a une autre zone mémoire qui contient un objet de type `Class` qui représente la classe instanciée, en un seul exemplaire : on parle de **singleton** : l'utilisation de la méthode `getClass()` pointe donc vers le même espace mémoire peut importe dans quelle instance d'un même objet on est
+- les informations **static** sont indépendants des instances et sont donc enregistrées dans cet espace mémoire et non pas dans l'espace mémoire de chaque instance
+- il n'y a donc pas besoin d'instance de la classe pour accéder à un élément static
+- les champs et les méthodes peuvent être static
+- les méthodes utilitaires sont généralement static
+- on parle de **méthodes statiques** ou **méthodes de classe** (par opposition aux méthodes d'instance)
+- les méthodes d'instance voit les éléments statiques, en revanche les méthodes statiques ne voient pas les éléments d'instance
+
+```java
+public class User{
+	public static n = 0;
+	public User(){ n++; }
+}
+// accès à un champ static sans instancier la classe
+User.n;
+```
+
+Le mot clé **final**
+- peut-être utilisé sur la classe, `public final class User`, empêchant l'héritage de cette classe
+- peut-être utilisé sur des méthodes, empêchant la surcharge de la méthode
+- peut-être sur la déclaration champ , `final String name`, la valeur de ce champ ne peut pas être modifié, il devient immutable. Il faut alors obligatoirement donner une valeur aux champs *final* dans le constructeur
+- peut-être utilisé sur des variables locales, elles ne peuvent plus être modifiées
+- la classe String et les classes Wrapper sont des classes finales
+
+# Construction d'objets
+
+# Java Beans, énumérations et records
+
+# Classes, classes abstraites et interfaces
+
+# Programmatiob Objet : ecapsulation, héritage et polymorphisme
