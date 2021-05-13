@@ -469,4 +469,72 @@ public class User implements Comparable<User> {
 
 # Programmatiob Objet : encapsulation, héritage et polymorphisme
 
-## Encapsulation, Héritage et Polymorphisme en programmation objet
+## Encapsulation de l'état d'un objet
+
+- la notion d'**état d'un objet**, c'est la valeur que l'on donne à ses champs
+- la notion d'**encapsulation** cache l'état d'un objet, c'est-à-dire qu'il n'est pas directement accessible de l'extérieur de l'objet
+	- il faut pour cela ajouter le mot clé **private** devant les champs
+	- il faut ajouter des getters pour accéder au contenu des champs
+
+```java
+public class User {
+	private String name;
+	private int age;
+	public String getName() { this.name; }
+}
+```
+
+## Héritage de type entre classes et interfaces
+
+- lors de création d'un objet (`X x = new Y()`), l'implémentation Y doit étendre ou implémenter le type X
+- on parle d'**héritage de type**
+
+```java
+public class User implements Comparable<User> {
+	public String getName(){...}
+	public int compareTo(User other){...}
+}
+public class Employee extends User {
+	public int getSalary(){...}
+}
+
+User u = new User(); // ok
+User u = new Employee(); // ok car l'implémentation Employee étend la classe User
+Comparable<User> u = new User(); // ok aussi car l'implémentation User implémente l'interface Comparable
+Comparable<User> u = new Employee(); // ok
+
+User u = new Comparable<User>(); // KO car interdit d'instancier une interface
+Employee e = new User(); // KO car User n'étend pas Employee
+```
+
+## Héritage de comportement : utilisation des méthodes d'une super-classe
+
+- quand un type étend un autre type, l'intégralité de ce que sait faire ce deuxième type est disponible dans ce premier type
+- on parle d'**héritage de comportement**
+
+```java
+User u = new new User();
+u.toString(); // utilisation d'une méthode de la classe Object car User hérite de la classe Object
+Employee e = new Employee();
+e.getName(); // utilisation d'une méthode de User
+```
+
+## Résolution d'un appel de méthode polymorphique
+
+- le polymorphisme, notion fondamentale en programmation objet, est relatif aux méthodes des objets. Il permet de redéfinir une méthode dans des classes héritant d'une autre classe
+- le choix de la méthode est décidé à l'exécution en fonction de l'implémentation, on parle de **LATE BINDING**
+
+```java
+public class User {
+	public String toString(){}
+}
+public class Employee extends User {
+	public String toString(){}
+}
+// utilisation
+User u = new Employee();
+void display(User u){
+	System.out.println(u.toString());
+}
+display(u); // exécution de la méthode toString d'Employee
+```
