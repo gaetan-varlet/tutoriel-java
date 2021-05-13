@@ -309,8 +309,164 @@ Le mot clé **final**
 
 # Construction d'objets
 
+## Création d'une méthode Factory
+
+- déclaration du constructeur d'une classe en privée pour ne plus pouvoir l'instancier
+- il n'est alors possible d'appeler que les éléments statiques de la classe
+- création d'une méthode statique pour instancier des objets, on parle de **méthode factory**
+- l'intérêt principal est de faire de la vérification dans la méthode factory avant d'appeler le constructeur
+
+```java
+public class User {
+	private User(){} // déclaration du constructeur en privé
+	// création d'une méthode Factory
+	public static User newInstance(){
+		return new User();
+	}
+
+}
+// autre classe
+public static void main(String... args){
+	User u = User.newInstance();
+}
+```
+
+## Constructeur qui appelle un autre construceur de la même classe
+
+```java
+public class User {
+	public User(String name){
+		this(name, 0); // appel du constructeur défini en dessous avec this si c'est la première ligne de code dans le constructeur
+	}
+	public User(String name, int age){}
+}
+```
+
+## Construction d'objet qui héritent d'autres objets, constructeur vide par défaut
+
+- par défaut, sans déclarer de constructeur, un constructeur vide (constructeur par défaut) est généré à la compilation
+- si on ajoute un autre constructeur, le constructeur par défaut n'est alors plus généré
+- un constructeur doit toujours pouvoir appeler le constructeur de la classe qu'il étend
+	- la suppression du constructeur vide d'une classe *User* va donc générer une erreur de compilation dans la classe *Employee* pour la génération de son constructeur vide s'il existe
+	- par défaut, appel de la classe qu'on étend avec le mot clé **super**
+	- laisser un constructeur vide dans une classe est une bonne pratique, car ça permet d'instancier les classes par réflexion
+
+```java
+public class User {
+	String name;
+}
+public class Employee extends User {
+	int salary;
+	public Employee(){
+		super();
+	}
+}
+```
+
 # Java Beans, énumérations et records
+
+## Java Bean
+
+Notion utilisé par tous les frameworks Java
+- c'est une classe Java
+- qui possède un constructeur vide (explicite ou par défaut)
+- possède des propriétés (repose sur la notion de getter, correspond souvent à la notion de champ récupéré via un getter)
+- il faut qu'il soit **Serializable**
+
+```java
+public class User {
+	private String name; // champ de la classe
+	public getName(){ return this.name; } // getter
+	public setName(String name){ this.name = name; } // setter qui rend la propriété mutable
+}
+```
+
+## Création d'énumérations
+
+- c'est une classe, où l'on peut contrôler les instances de cette énumération (le constructeur est privé)
+- possibilité d'ajouter des méthodes et des champs
+
+```java
+// exemple simple
+public enum PointCardinal {
+	NORTH, SOUTH, EAST, WEST;
+}
+// exemple avec l'ajout d'un champ label
+public enum PointCardinal {
+	NORTH("N"), SOUTH("S"), EAST("E"), WEST("W");
+
+	String label;
+
+	private PointCardinal(String label) {
+		this.label = label;
+	}
+	public String getLabel(){
+		return this.label;
+	}
+}
+// exemple d'appel
+System.out.println(PointCardinal.NORTH); // NORTH
+System.out.println(PointCardinal.NORTH.getLabel()); // N
+```
+
+## Création de records
+
+- disponible depuis le JDK 16
+- analogue aux Java Beans
+- les **composants** du record sont des champs
+- le compilateur créé des champs, et des méthodes d'accès `int x()` et `int y()`, un constructeur, et des méthodes `toString()`, `equals()` et `hashCode()`
+- possibilité d'ajouter des méthodes dans le record, ou des constructeurs
+- les records sont des objets immutables
+
+```java
+public record Point(int x, int y) {}
+```
 
 # Classes, classes abstraites et interfaces
 
-# Programmatiob Objet : ecapsulation, héritage et polymorphisme
+##  Ecriture et utilisation d'une classe abstraite
+
+- il est possible d'imposer d'étendre une classe pour pouvoir l'instancier avec le mot clé **abstract**
+- possibilité d'écrire comme une classe normale d'écrire des champs, des constructeurs et des méthodes
+- possibilité également d'écrire des méthodes abstraites qui n'ont pas de corps de méthodes
+
+```java
+// création d'une classe abstraite
+public abstract class Operation {
+	abstract int calculate(int a, int b);
+}
+// création d'une implémentation de la méthode calculate
+public class Addition extends Operation {
+	public int calculate(int a, int b){
+		return a+b;
+	}
+}
+// appel de la méthode
+Operation op = new Addition();
+int result = op.calculate(1,2);
+```
+
+## Interface, exemple de Comparable de User
+
+- notion au coeur du design de tous les frameworks et applications Java
+- à l'intérieur d'une interface, il peut y avoir 3 types d'éléments :
+	- méthodes abstraites
+	- méthodes concrètes avec le mot clé **default**
+	- méthodes statiques
+- lors de l'implémentation d'une interface par une classe, obligation de surcharger les méthodes abstraites
+
+```java
+public interface Comparable<T> {
+	int compareTo(T t);
+}
+public class User implements Comparable<User> {
+	private String name;
+	public int compareTo(User other){
+		// t1.compareTo(t2), renvoie i<0 si t1<t2, i=0 si t1=t2, i>0 si t1>t2
+	}
+}
+```
+
+# Programmatiob Objet : encapsulation, héritage et polymorphisme
+
+## Encapsulation, Héritage et Polymorphisme en programmation objet
