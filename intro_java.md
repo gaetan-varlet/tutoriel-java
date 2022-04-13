@@ -467,7 +467,7 @@ public class User implements Comparable<User> {
 }
 ```
 
-# Programmatiob Objet : encapsulation, héritage et polymorphisme
+# Programmation Objet : encapsulation, héritage et polymorphisme
 
 ## Encapsulation de l'état d'un objet
 
@@ -507,7 +507,7 @@ User u = new Comparable<User>(); // KO car interdit d'instancier une interface
 Employee e = new User(); // KO car User n'étend pas Employee
 ```
 
-## Héritage de comportement : utilisation des méthodes d'une super-classe
+## Héritage de comportement : utilisation des méthodes d'une super-classe
 
 - quand un type étend un autre type, l'intégralité de ce que sait faire ce deuxième type est disponible dans ce premier type
 - on parle d'**héritage de comportement**
