@@ -5,9 +5,9 @@
 - en programmation orientée objet, **SOLID** est un acronyme mnémonique qui regroupe cinq principes de conception destinés à produire des architectures logicielles plus compréhensibles, flexibles et maintenables.
 - **design pattern** : ensemble de modèles de code, qui vont permettre de respecter les principes SOLID
 - les qualités d'une architecture logicielle
-	- elle doit permettre de tester l'application de manière automatique
-	- elle doit permettre à l'application d'évoluer
-	- les choix techniques peuvent être revus en les isolant pour pouvoir les revoir avec le temps
+	- permettre de tester l'application de manière automatique
+	- permettre à l'application d'évoluer
+	- les choix techniques peuvent être revus en les isolant
 
 ## Single Responsability Principle
 
