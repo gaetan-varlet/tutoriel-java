@@ -14,9 +14,15 @@
 - le premier principe SOLID est le **Single Responsability Principle** ou **Principe de responsabilité unique**
 - il dit qu'il ne doit y avoir qu'une raison de changer un bloc de code, autrement dit qu'une classe ou méthode ne doit avoir qu'une seule responsabilité
 - il faut pour cela faire de la **delégation**, en faisant porter une tâche particulière à un objet tiers, au lieu de la faire directement dans la classe ou la méthode
-- faire de la delégation permet de diminuer le nombre de responsabilités
+- faire de la delégation permet de **diminuer le nombre de responsabilités**
 
-Exemple où l'on retire la responsabilité de la sauvegarde en base de données de l'objet à la classe `Employee` pour la donner à la classe `DBService`. Cependant création d'une dépendance de la classe `Employee` vers `DBService`
+Exemple où l'on retire la responsabilité de la sauvegarde en base de données de l'objet à la classe `Employee` pour la donner à la classe `DBService`. 
+
+```java
+public class Employee {
+	saveToDB()
+}
+```
 
 ```java
 public class Employee {
@@ -32,10 +38,13 @@ public class DBService {
 }
 ```
 
+Cependant, création d'une dépendance de la classe `Employee` vers `DBService` à la compilation : une modification de `DBService` va donc nécessiter une recompilation et une relivraison de `Employee`.
+
 ## Dependency Inversion Principle
 
 - le cinquième principe de SOLID est **Dependency Inversion Principle**, ou **Principe d'inversion des dépendances**
 - il dit qu'il faut dépendre des abstractions et pas des implémentations
+- ce sont les détails d'implémentation (BDD MySQL ou Postgre) qui doivent dépendre des notions de haut niveau (enregistrer les employés dans une BDD)
 - lorsqu'un détail d'implémentation change, cela n'a alors aucun impact sur aucune des parties de l'application
 - création d'une **interface** à la place d'une classe pour inverser la dépendance
 	- on a alors un premier module avec `Employee` qui dépend de l'interface `DBService`, et un second module avec `DBServiceImpl` qui dépend du premier module
@@ -57,7 +66,7 @@ public class DBServiceImpl implements DBService {
 }
 ```
 
-Pour que ça fonctionne, il faut donner une implémentation de l'interface `DBService`. Il est possible d'utiliser une méthode factory
+Pour que ça fonctionne, il faut donner une implémentation de l'interface `DBService`. Il est possible d'utiliser une méthode factory (mauvaise façon) :
 - cela permet d'appliquer le **pattern Singleton** pour qui permet de n'avoir qu'une instance d'une classe à l'échelle de l'application
 - cette méthode fait que l'on doit avoir le nom de l'implémentation dans la méthode `getInstance()` et va créer une dépendance circulaire entre l'interface et la classe d'implémentation. Ce n'est donc pas la bonne façon de faire
 
