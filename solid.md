@@ -111,7 +111,14 @@ Exemple
 - modélidation de la gestion d'employées en CDI et en CDD
 - création d'une interface `Employee` et de 2 classes `CDI` et `CDD` qui implémentent cette interface
 - l'application consomme cette interface pour appeler les différents processus métiers
-- création d'une interface factory pour créer des employés : cela permet de créer une couche d'isolation entre les notions de haut niveau qui sont gégrés par l'application, et les détails d'implémentation qui sont en détails de ces règles de haut niveau. L'application ne manipule pas directement des objets `CDD` et `CDI` mais des `Employee`. Le module *main* est le seul qui a l'intégralité des modules de l'application en dépendance
+
+```java
+public interface Employee {}
+public class CDI implements Employee {}
+```
+
+- création d'une interface factory pour créer des employés : cela permet de créer une couche d'isolation entre les notions de haut niveau qui sont gérés par l'application, et les détails d'implémentation qui sont en détails de ces règles de haut niveau. L'application ne manipule pas directement des objets `CDD` et `CDI` mais des `Employee`
+- le module *main* est le seul qui a l'intégralité des modules de l'application en dépendance. Le principe d'injecter les dépendances par le constructeur est une façon d'appliquer le principe d'**inversion de dépendance**, à ne confondre avec l'**injection de dépendance** qui se passe à l'exécution de l'application (injection des implémentations que l'on a créer en faisant des news ou avec des frameworks comme Spring)
 
 ```java
 public interface EmployeeFactory {
@@ -121,8 +128,8 @@ public interface EmployeeFactory {
 ```
 
 Le fait d'avoir mis une méthode de création pour chaque implémentation d'Employee crée une dépendance car cela nécessite de modifier l'interface en cas d'ajout d'une noubelle classe d'implémentation
-- il faut modifier l'inteface pour qu'il n'y ait plus qu'une seule méthode qui prend un paramètre supplémentaire (par exemple un label) pour reconnaître la classe à implémenter
-- cette façon de faire une factory en passant par une interface s'appelle le pattern **Abstract Factory**
+- il faut modifier l'interface pour qu'il n'y ait plus qu'une seule méthode qui prend un paramètre supplémentaire (par exemple un label) pour reconnaître la classe à implémenter
+- cette façon de faire une factory en passant par une interface s'appelle le **Pattern Abstract Factory**
 
 ```java
 public interface EmployeeFactory {
@@ -139,24 +146,30 @@ public class EmployeeFactoryImpl implements EmployeeFactory {
 }
 ```
 
-- le problème avec la gestion des différentes implémentations avec des switchs ou des if/else est dangereux car il y a un risque d'oublier d'en mettre un à jour lorsque les implémentations changent
-- pour contourner ce problème, il faut utiliser le **Pattern Strategy**, permet de fournir une solution pour implémenter l'**Open Closed principle**
+- le problème avec la gestion des différentes implémentations avec des switchs ou des if/else est qu'on va la retrouver dans différentes méthodes, et c'est dangereux car il y a un risque d'oublier d'en mettre un à jour lorsque les implémentations changent
+- pour contourner ce problème, il faut utiliser le **Pattern Strategy**, qui permet de fournir une solution pour implémenter l'**Open Closed principle** 
+- les paramètres pour créer les différentes implémentations d'`Employee` doivent être commun
 
 ```java
 public abstract class EmployeeType {
 	abstract Employee create(...);
 }
 public class CDDType extends EmployeeType {
-	public Employee create(...){ return new CDD(...); }
+	public Employee create(...){
+		return new CDD(...);
+	}
 }
 public class CDIType extends EmployeeType {
-	public Employee create(...){ return new CDI(...); }
+	public Employee create(...){
+		return new CDI(...);
+	}
 }
 // code client qui va remplacer la méthode create de EmployeeFactoryImpl pour ne plus dépendre des différentes implémentations existantes
 EmployeeType type = EmployeeType.of(label);
 Employee employee = type.create(...);
 ```
 
+- à l'intérieur de la méthode `of()`, il y a encore un switch ou if/else, mais il n'applique pas la stratégie, il fait juste la choisir
 - on dit que le code client est fermé à la modification : il n'est pas nécessaire de modifier le code client s'il y a des nouvelles implémentations
 - on dit que le code est ouvert à l'extension de nouvelles classes d'implémentations
 - cela correspond au deuxième principe SOLID **Open Closed principle** ou **principe ouvert fermé**, qui dit qu'une application doit êter fermée à la modification mais ouverte à l'extension
@@ -165,16 +178,19 @@ Employee employee = type.create(...);
 
 ## Autre implémentation de ce pattern par composition
 
-- utilisation d'une classe unique en utilisant des lambdas expressions
+- pour éviter d'avoir à utiliser une classe abstraire, et autant de classes abstraire qu'on a de stratégies dans le switch originel
+- il est possible d'implémenter ce pattern différemment, en utilisant la **composition** à la place de l'héritage
+- on aura alors une classe unique en utilisant des lambdas expressions
 
 ```java
 public class EmployeeType {
 	private String label;
-	Function<String, Employee> create;
+	private Function<String, Employee> create;
 	public EmployeeType(String label, Function<String, Employee> create){
-		...
+		this.label = label;
+		this.create = create;
 	}
-	public Strung type(){
+	public String type(){
 		return label;
 	}
 	public Employee create(String name){
@@ -182,7 +198,8 @@ public class EmployeeType {
 	}
 }
 
-EmployeeType cdd = new EmployeeType("CDD", name -> new CDD(name));
-EmployeeType cdd = new EmployeeType("CDI", name -> new CDI(name));
+EmployeeType cddType = new EmployeeType("CDD", name -> new CDD(name));
+EmployeeType cdiType = new EmployeeType("CDI", name -> new CDI(name));
 List<EmployeeType> types = List.of(cdd, cdi);
+Employee cdd = cddType.create("toto");
 ```
