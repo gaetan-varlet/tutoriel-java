@@ -222,3 +222,97 @@ Employee create(String label, String name){
 	- patterns de **Construction** (5) : Factory, AbstractFactory, Singleton, Builder, Prototype
 	- patterns **Structurels** (7)
 	- patterns **Behavioral** (11) : TemplateMethod, Strategy, State, Chain of Command, Iterator, Visitor
+
+
+ ## Pattern Singleton
+
+- une classe qui suit le pattern singleton ne peut avoir qu'une seule instance
+- l'intérêt est d'économiser de la mémoire et également du CPU (à cause du garbage collector)
+- souvent utilisé pour les classes de service
+- créaton d'un constructeur privé pour ne pas que l'on puisse instancier la classe
+
+Une première façon simple d'implémenter le pattern Singleton est de passer par un attribut et un accesseur `static`.
+
+```java
+public class MyService {
+
+	private MyService(){}
+
+	private static MyService service = new MyService();
+
+	public static MyService getInstance(){
+		return service;
+	}
+}
+```
+
+L'instantiation n'est pas contrôlée, on souhaiterait qu'elle soit contrôlé, en mode **LAZY**, c'est-à-dire qu'au moment où on en a besoin, pour éviter de créer l'objet si jamais on ne s'en sert jamais.
+
+L'alternative recommandée est de passer par une énumération, qui permet d'avoir une instanciation thread-safe
+
+```java
+public enum MyService {
+	INSTANCE;
+}
+```
+
+## Pattern Builder
+
+- sert à construire des objets complexes
+	- nombre de champs important : règles de validité complexes, problèmes de complétude (une bonne partie des champs restent souvent vide)
+	- écrire un constructeur avec beaucoup de paramètres est une source d'erreur importante
+	- si la validation est en erreur, obligation de jeter une exception dans le constructeur, ce qui n'est pas une bonne pratique
+- en passant par une factory, il est possible d'appliquer la validation avant d'appeler le constructeur mais ça ne règle pas le problème du constructeur avec beaucoup de paramètres
+
+
+Utilisation d'un objet intermédiaire (une classe interne statique), qui expose autant de méthode qu'il y a de champs
+- la gestion de la validation se fait dans la méthode `build`
+
+```java
+public class Contrat {
+	private final String champ1;
+	private final String champ2;
+
+	private Contrat(ContratBuilder builder){
+		this.champ1 = builder.champ1;
+		this.champ2 = builder.champ2;
+	}
+
+	// tous les getters et pas de setters pour garantir l'immutabilité
+	public String getChamp1(){
+		return champ1;
+	}
+	public String getChamp2(){
+		return champ2;
+	}
+
+	public static class ContratBuilder {
+		private final String champ1;
+		private final String champ2;
+		
+		public ContratBuilder champ1(String s){
+			this.champ1 = s;
+			return this;
+		}
+		public ContratBuilder champ2(String s){
+			this.champ2 = s;
+			return this;
+		}
+		public build(){
+			Contrat c = new Contrat(this);
+			validateObject(c)
+			return c;
+		}
+		private void validateObject(Contrat c){
+			// ...
+		}
+	}
+}
+
+Contrat builder = new Contrat.ContratBuilder()
+	.champ1(...)
+	.champ2(...)
+	.build();
+```
+
+## Interface Segregation Principle
