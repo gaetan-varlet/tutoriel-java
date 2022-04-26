@@ -316,3 +316,47 @@ Contrat builder = new Contrat.ContratBuilder()
 ```
 
 ## Interface Segregation Principle
+
+- ce principe dit qu'il ne faut pas dépendre d'une interface qui possède des méthodes que l'on n'utilise pas
+- une interface doit avoir le nombre minimum de méthodes pour fonctionner
+
+```java
+public interface ServiceTVA {
+	int getTVA(String countryCode);
+
+	int getTVA(CountryCode code);
+	CountryCode getCountryCode(String countryCode);
+}
+
+public class InvoiceProcess {
+	private ServiceTVA service;
+
+	public InvoiceProcess(ServiceTVA s){
+		this.service = s;
+	}
+
+	public int computeTVA(int amount){
+		return service.getTVA("FR") * amount;
+	}
+}
+```
+
+- exemple de refactor de l'interface, ce qui oblige à recompiler le code client alors que ces méthodes ne sont pas utilisées dans le code client
+
+```java
+public interface ServiceTVA {
+	int getTVA(String countryCode);
+	int getTVA(CountryCode code);
+	CountryCode getCountryCode(String countryCode);
+}
+```
+
+## Bilan sur les principes SOLID
+
+- Single Responsibility Principle : on ne doit avoir qu'une seule raison de modifier une méthode ou une classe
+- Open-Closed Principle : s'il y a besoin de faire évoluer les fonctionnalités de l'application, il suffit d'étendre certaines classes
+- Liskov Substitution Principle : concerne la relation d'héritage
+- Interface Segregation Principle : quand une classe définit une dépendance vis à vis d'une interface, il faut que les méthodes de cette interface soient minimales par rapport aux méthodes dont le client a besoin
+- Dependency Inversion Principle : pour inverser la dépendance entre 2 modules applicatifs, il faut insérer une interface entre les 2, et les dépendances à la compilation vont toutes les 2 pointer vers cette interface, ce qui protège le code client contre les modifications des implémentations
+
+Cet acronyme **SOLID** a été créé par *Bob Martin*, alias *Uncle Bob*.
