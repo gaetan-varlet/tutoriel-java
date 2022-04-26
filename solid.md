@@ -3,7 +3,7 @@
 ## Introduction
 
 - en programmation orientée objet, **SOLID** est un acronyme mnémonique qui regroupe cinq principes de conception destinés à produire des architectures logicielles plus compréhensibles, flexibles et maintenables.
-- **design pattern** : ensemble de modèles de code, qui vont permettre de respecter les principes SOLID
+- **design pattern** : ensemble de modèles de code, pour organiser correctement son code, qui vont permettre de respecter les principes SOLID
 - les qualités d'une architecture logicielle
 	- permettre de tester l'application de manière automatique
 	- permettre à l'application d'évoluer
@@ -200,6 +200,25 @@ public class EmployeeType {
 
 EmployeeType cddType = new EmployeeType("CDD", name -> new CDD(name));
 EmployeeType cdiType = new EmployeeType("CDI", name -> new CDI(name));
-List<EmployeeType> types = List.of(cdd, cdi);
+List<EmployeeType> types = List.of(cddType, cdiType);
+// création d'un employée à partir d'un EmployeeType
 Employee cdd = cddType.create("toto");
+// création d'une méthode pour créer un employé à partir de la liste d'EmployeeType
+Employee create(String label, String name){
+	return types.stream()
+		.filter(t -> t.getType().equals(label))
+		.findAny()
+		.map(t -> t.create(name))
+		.orElseThrow();
+}
 ```
+
+## Design Patterns et GoF (Gang of Four)
+
+- Livre de 1994 sur les Design Patterns, *Elements of Reusable Object-Oriented Software*, écrit par 4 auteurs, surnommés **Gang of Four**
+- écrit avec le langage C++, mais s'adapte très bien aux autres langages objets, notamment `Java` et `C#`
+- 23 patterns y sont décrits, qui permettent de résoudre quasiment tous les problèmes de la programmtion objet
+- ils se regroupent dans 3 catégoris
+	- patterns de **Construction** (5) : Factory, AbstractFactory, Singleton, Builder, Prototype
+	- patterns **Structurels** (7)
+	- patterns **Behavioral** (11) : TemplateMethod, Strategy, State, Chain of Command, Iterator, Visitor
