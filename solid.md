@@ -360,3 +360,11 @@ public interface ServiceTVA {
 - Dependency Inversion Principle : pour inverser la dépendance entre 2 modules applicatifs, il faut insérer une interface entre les 2, et les dépendances à la compilation vont toutes les 2 pointer vers cette interface, ce qui protège le code client contre les modifications des implémentations
 
 Cet acronyme **SOLID** a été créé par *Bob Martin*, alias *Uncle Bob*.
+
+## Pattern Visitor
+
+
+## Architecture d'une application
+
+
+## Bilan sur les Design Patterns et les Principes SOLID
