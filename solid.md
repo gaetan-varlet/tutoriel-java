@@ -363,6 +363,73 @@ Cet acronyme **SOLID** a été créé par *Bob Martin*, alias *Uncle Bob*.
 
 ## Pattern Visitor
 
+- c'est le pattern le plus compliqué à comprendre et à mettre en oeuvre, il traite des **hiérarchies d'objets**
+- l'objectif est de **séparer les traitements du modèle objet**
+
+Exemple :
+- un objet `Company` référence une liste de `Department`, qui référence eux-mêmes des `Project`, référençant eux-mêmes des `Employee`
+- cette hiérarchie est modélisée par des interfaces (les 4 objets ci-dessus), avec des implémentations qui peuvent être multiples
+- le pattern Visitor permet d'ajouter des fonctionnalités sur la hiérarchie d'objet, comme par exemple compter le nombre de salariés, ou ceux d'un certain type. Il va donc falloir **visiter** tous les objets de la hiérarchie
+
+Création d'un visiteur, modélisé par une interface, capable de visiter l'intégralité des objets de la hiérarchie. Il faut donc autant de méthodes que d'interface dans la hiérarchie
+- ajout d'une méthode `accept(Visitor v)` dans les interfaces de nos objets, ce qui crée une dépendance pour nos objets vers l'interface Visitor, il va donc falloir la mettre dans le module avec les objets
+
+```java
+public interface Visitor {
+	void visitCompany(Company c);
+	void visitDepartment(Department d);
+	void visitProject(Project c);
+	void visitEmployee(Employee e);
+}
+
+public interface Company {
+	void accept(Visitor v);
+}
+public interface Project {
+	void accept(Visitor v);
+}
+...
+
+public class HRDepartment implements Department {
+	public void accept(Visitor v){
+		// transmettre le visitor au noeuds enfants
+		this.projects.forEach(p -> p.accept(v));
+		// le visitor visite l'objet dans lequel il est (this) par callback
+		v.visitDepartment(this);
+	}
+}
+```
+
+Implémentation du Visitor en fonction des traitements qu'on veut faire. Exemple qui compte le nombre d'employés
+
+```java
+public class CountingVisitor implements Visitor {
+	private long count = 0L;
+	void visitCompany(Company c){} // méthode ne faisant rien
+	void visitDepartment(Department d){} // méthode ne faisant rien
+	void visitProject(Project c){} // méthode ne faisant rien
+	void visitEmployee(Employee e){
+		count++;
+	}
+	public getCount(){
+		return count;
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		Visitor countingVisitor = new CountingVisitor();
+		Company company = ...;
+		company.accept(countingVisitor);
+		countingVisitor.getCount(); // nombre d'employés
+	}
+}
+```
+
+Bilan sur le pattern Visitor :
+- utile quand il y a des hiérarchies d'objets, modélisés par des interfaces et des implémentations
+- utile quand il y a des traitements à faire sur les objets
+
 
 ## Architecture d'une application
 
