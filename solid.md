@@ -366,5 +366,24 @@ Cet acronyme **SOLID** a été créé par *Bob Martin*, alias *Uncle Bob*.
 
 ## Architecture d'une application
 
+l'application va fonctioner en cercles concentriques, ou les cercles supérieurs dépendent des cercles inférieurs, mais les cercles inférieurs ne dépendent pas des cercles supérieurs
+
+- il faut mettre au centre l'application ce qui bouge le moins souvent, en l'occurence le module objet
+- le deuxième couche va contenir les traitements métier qui agissent sur les objets
+- la couche suivante va concerner les liens avec l'extérieur : IHM (Controller), bases de données et services d'autres applications (Gateaway)
+- à l'extérieur, il y a des IHM comme React qui vont appeler le Controller, et des services REST ou des bases de données qui vont être appelés dans les gateways
+
+### Mise en place de la partie IHM
+
+- utilisation de DTO (Data Transfert Object) pour communiquer avec l'extérieur
+
+### Mise en place de l'accès à la BDD
+
+- utilisation d'une interface DataAccess qui va être appelée par les traitements métiers
+- création d'une implémentation, généralement en utilisant un framework qui implémente JPA
+- cela crée une dépendance entre notre modèle objet et notre framework => il faut donc créer des objets spécifiques qui portent les annotations JPA
 
 ## Bilan sur les Design Patterns et les Principes SOLID
+
+- ces principes sont indépendants des langages qu'on utilise et peuvent à chaque fois être appliqués
+- l'objectif est de minimiser les coûts d'entretien et de livraison d'une application
