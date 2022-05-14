@@ -146,7 +146,7 @@ em.getTransaction().commit();
 - on peut confier la génération des clés primaires à la base
 - on peut aussi confier la génération à Hibernate
 - utilisation de l'annotation **@GeneratedValue** sur la clé primaire pour dire que ce n'est pas nous qui gérons la valeur de la clé primaire
-- l'annotation prend un attribut**strategy** qui peut prendre comme valeur 
+- l'annotation prend un attribut **strategy** qui peut prendre comme valeur 
     - **GenerationType.AUTO** : Hibernate choisit la meilleure stratégie pour gérer les clés primaires
     - **GenerationType.IDENTITY**
     - **GenerationType.TABLE**

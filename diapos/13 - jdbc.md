@@ -21,7 +21,7 @@
 
 ## Connexion à une base de données
 
-- pour se connecter à une BDD, on a besoin d'une **chaîne de connexion** qui est propre à chaque éditeur. On y retrouve le mot *jdbc* suivi deu nom de l'éditeur, puis l'adresse IP/nom de domaine de la machine, le port d'écoute, puis le nom de la base de données
+- pour se connecter à une BDD, on a besoin d'une **chaîne de connexion** qui est propre à chaque éditeur. On y retrouve le mot *jdbc* suivi du nom de l'éditeur, puis l'adresse IP/nom de domaine de la machine, le port d'écoute, puis le nom de la base de données
 - **DriverManager** (classe fournie par JDBC) va regarder si l'application possède le pilote JDBC correspondant à la BDD dans son classpath, et interroger ce pilote et lui demander de construire une instance de l'interface **Connection**
 - le code peut compiler même si on a omis le driver JDBC. A l'exécution, on aura alors une erreur
 
