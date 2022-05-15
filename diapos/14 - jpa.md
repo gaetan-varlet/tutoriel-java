@@ -283,8 +283,7 @@ class User {
 }
 @Embeddable
 class PrimaryKey {
-    Integer id1;
-    Integer id2;
+    Integer id1; Integer id2;
 }
 ```
 
@@ -554,21 +553,40 @@ public class Address {
 
 ## Mapper les structures de l'API Collection en base avec JPA
 
+API Collection propose des `List`, des `Set` et des `Map`
+
 ----
 
 ## Associer une relation one to many à un Set ou à une List
 
-----
+- par défaut, lorsqu'on crée des relations `1:p` en JPA, il faut utiliser un Set, car la base de données garantie qu'il n'y ait pas de doublons et ne garantie pas l'ordre des données renvoyées
 
 ## Créer une structure de liste à l'aide d'une colonne portant un index
+
+- pour possibilité d'ajouter une colonne `index` pour conserver l'ordre d'enregistrement en base, et récupération dans la liste en triant sur cette variable
+- lors d'un `remove`, il faut faire plein d'updates pour mettre à jour les autres index, ce qui est très coûteux
+
+```java
+@OrderColumn("index")
+@OneToMany
+List<Commune> communes;
+
+@OneToMany
+Set<Commune> communes;
+```
 
 ----
 
 ## Créer une liste en garantissant l'ordre des éléments
 
-----
+- si on souhaite juste avoir une garantie sur l'ordre renvoyée, il est possible d'ordonner les objets selon l'un de ses champs, ce qui est un compromis intéressant
+- il faut utiliser l'annotation `@OrderBy` pour fixer le comportement du mapping et avoir un comportement de *SortedSet*
 
-## Annoter une relation one to many pour fixer le comportement du mapping
+```java
+@OrderBy("name")
+@OneToMany
+List<Commune> communes;
+```
 
 ----
 
