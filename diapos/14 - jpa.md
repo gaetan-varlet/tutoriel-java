@@ -566,69 +566,137 @@ public class Address {
 
 ## Créer une liste en garantissant l'ordre des éléments
 
+----
+
 ## Annoter une relation one to many pour fixer le comportement du mapping
+
+----
 
 ## Mapper une table de hachage dont les clés sont des types primitifs
 
+----
+
 ## Mapper une table de hachage dont les clés sont des entités JPA
+
+----
 
 ## Mapper des collections d'objet qui ne sont pas des entités JPA
 
+----
+
 ## Bilan sur le mapping des structures de l'API Collection
+
+----
 
 ## Introduction au mapping de l'héritage
 
+----
+
 ## Introduction au trois stratégies de mapping de l'héritage
 
+----
+
 ## Mapper une hiérarchie de classes en mode TABLE_PER_CLASS
+
+----
+
 ## Mapper une hiérarchie de classes en mode SINGLE_TABLE
+
+----
 
 ## Mapper une hiérarchie de classes en mode JOINED
 
+----
+
 ## Configurer le type de mapping pour une hiérarchie de classes
+
+----
 
 ## Mapperdes champs factorisés dans une classe abstraite avec MappedSuperClass
 
+----
+
 ## Bilan sur le mapping de l'héritage en JPA
+
+----
 
 ## Introduction aux requêtes SQL et JPQL supportées en JPA
 
+----
+
 ## Exécuter et analyser le résultat d'une première requête native
+
+----
 
 ## Analyser le résultat d'une requête native qui retourne une ligne de plusieurs résultats
 
+----
+
 ## Analyser le résultat d'une requête native qui retourne plusieurs lignes
+
+----
 
 ## Ecrire et utiliser des requêtes natives paramétrées
 
+----
+
 ## Mapper le résultat d'une requête native dans une entité JPA
+
+----
 
 ## Ecrire et utiliser des requêtes nommées natives
 
+----
+
 ## Mapper le résultat d'une requête primitive nommée dans une entité JPA
+
+----
 
 ## Mapper le résultat dans un objet quelconque à l'aide d'un ResulSetMapping
 
+----
+
 ## Compléments et bilan sur le RésultSetMapping
+
+----
 
 ## Ecrire et exécuter une première requête JPQL
 
+----
 ## Paramètrer des requêtes JPQL en nommant les paramètres
+
+----
 
 ## Exemples de requêtes JPQL simples
 
+----
+
 ## Exemple d'une requête JPQL avec une jointure implicite
+
+----
 
 ## Déclarer des jointures explicites pour en faire des jointures externes
 
+----
+
 ## Charger des entités en relation à l'aide d'un JOIN FETCH
+
+----
 
 ## Mapper le résultat d'une requête JPQL dans un objet quelconque
 
+----
+
 ## Ecrire et utiliser des requêtes JPQL nommés
+
+----
 
 ## Paginer les résultats d'une requête native ou JPQL
 
+----
+
 ## Utiliser les requêtes JPQL DELETE et UPDATE pour des mises à jour massives
+
+----
 
 ## Bilan sur JPA
