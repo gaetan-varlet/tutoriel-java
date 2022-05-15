@@ -302,9 +302,9 @@ class PrimaryKey {
 
 ----
 
-## Relation unidirectionnelle et bidirectionnelle entre 2 entités JPA
+## Relation unidirect. et bidirect. entre 2 entités JPA
 
-- Gestion des relations entre objets, exemple d'une relation **unidirectionnelle** de type `1:1`
+- exemple d'une relation **unidirectionnelle** de type `1:1`
 
 ```sql
 Maire : id / name
