@@ -592,9 +592,20 @@ List<Commune> communes;
 
 ## Mapper une table de hachage dont les clés sont des types primitifs
 
-- 
+- possibilité de stdocker une relation `1:p` dans une map
+- utilisation de l'annotation `@MapKeyColumn` avec l'attribut `name` dans lequel on précise le nom d'une colonne en base qui n'est pas mappé dans l'objet Java
 
 ```java
+@OneToMany
+@MapKeyColumn(name = "key")
+Map<Integer, Commune> communes;
+```
+
+- autre possibilité est d'utiliser un champ de l'entité avec l'annotation `@MapKey` (fonctionne sur les classes wrapper des types primitifs et les chaînes de caractères)
+
+```java
+@OneToMany
+@MapKey(name = "codePostal")
 Map<Integer, Commune> communes;
 ```
 
@@ -602,13 +613,44 @@ Map<Integer, Commune> communes;
 
 ## Mapper une table de hachage dont les clés sont des entités JPA
 
+- si la clé est une entité JPA, il faut référencer cette table en base dans la table de l'objet principal
+
+```sql
+Code Postal : id / nom
+Commune : id / nom / id_code_poste
+```
+
+```java
+@OneToMany
+Map<CodePostal, Commune> communes;
+```
+
 ----
 
 ## Mapper des collections d'objet qui ne sont pas des entités JPA
 
+- il est aussi possible de mapper des listes qui ne sont pas des entités, comme une liste de chaîne de caractères
+
+```sql
+user : id / name
+user_friends : id / user_id / friends
+```
+
+```java
+@Entity
+class User {
+    @ElementCollection
+    List<String> friends;
+}
+```
+
 ----
 
 ## Bilan sur le mapping des structures de l'API Collection
+
+- la meilleure structure adaptée à JPA est le `Set`
+- pour exploiter les `List`, il est préférable de les ordonner par un champ de l'entité, ou les ordonner par un index
+- pour exploiter les `Map`, il est possible d'avoir une clé de type primitif ou d'avoir une clé qui est une entité
 
 ----
 
