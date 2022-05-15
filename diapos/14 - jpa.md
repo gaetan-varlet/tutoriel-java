@@ -674,22 +674,25 @@ public class Employee extends User {
 
 ## Introduction au trois stratégies de mapping de l'héritage
 
-Il existe 3 solutions qui se modélisent différemment en base :
+Il existe 3 solutions qui se modélisent différemment en base, aucune n'est meilleure
 
 ```sql
 -- mode TABLE_PER_CLASS
+-- si les requêtes JPQL ne sont pas importantes
 User : id / name 
 Employee : id / name / salary
 ```
 
 ```sql
 -- mode SINGLE_TABLE
-User : id / name / salary
+-- si priorité aux requêtes JPQL et que les contraintes d'intégrité ne sont pas importantes
+User : id / name / salary / dtype
 ```
 
 ```sql
 -- mode JOINED
-User : id / name 
+-- si priorité aux requêtes JPQL et contraintes d'intégrité
+User : id / name / dtype
 Employee : id / salary
 ```
 
@@ -697,29 +700,80 @@ Employee : id / salary
 
 ## Mapper une hiérarchie de classes en mode TABLE_PER_CLASS
 
+- une entité JPA correspond à une table dans la BDD
+- les différentes opérations CRUD (création, lecture, mise à jour, delete) se font dans l'une ou l'autre table en fonction de l'objet qu'on manipule, sansa soucis
+- concernant les requêtes JPQL, étant donné qu'elles sont polymorphiques, si je demande tous les utiliteurs, j'aurais aussi les employés (car la classe étend la classe User). Il y aura une requête par table, ce qui peut être coûteux s'il y a beaucoup de tables
+
 ----
 
 ## Mapper une hiérarchie de classes en mode SINGLE_TABLE
+
+- le fait d'avoir une seule table pose des problèmes, comme par exemple le fait de mettre une contraite de non nullité sur une variable d'une classe héritant de la classe User. Ce n'est pas possible dans le mode SINGLE_TABLE
+- la création, mise à jour et suppression se passe normalement
+- en recherche, on ne peut pas savoir de quel type est l'objet recherché, pour résoudre le problème, il faut ajouter une colonne technique en base qui s'appelle **dtype** qui aura comme valeur `User` ou `Employee`
+- concernant les requêtes JPQL, possibilité de récupérer tous les objets en une seule requête
 
 ----
 
 ## Mapper une hiérarchie de classes en mode JOINED
 
+- dans cette méthode, les champs des objets sont enregistrés dans plusieurs tables
+- en mode création, il y a 2 insertions à faire dans notre exemple
+- en lecture, il faut faire une jointure
+- en mise à jour, il y a qu'un update à faire dans une table, en fonction du champ
+- en delete, il y a 2 suppression à faire
+- dans ce mode, il est possible d'avoir une contrainte sur le salaire contraitement à au mode SINGLE_TABLE
+- les requêtes polymorphiques vont très bien se passer (grâce à la présence de la variable dtype)
+
 ----
 
 ## Configurer le type de mapping pour une hiérarchie de classes
 
+- utilisation de l'annotation `@Inheritance` avec l'attribut pour spécifier la stratégie
+- il existe aussi les annotations `@DiscriminatorColumn` et `@DiscriminatorValue` pour la colonne appelée par défaut `dtype`
+
+```java
+@Inheritance(strategy = InheritanceType.JOINED)
+@Entity
+public class User {
+    @Id Integer id;
+    String name;
+}
+@Entity
+public class Employee extends User {
+    Integer salary;
+}
+```
+
 ----
 
-## Mapperdes champs factorisés dans une classe abstraite avec MappedSuperClass
+## Mapper des champs factorisés dans une classe abstraite avec MappedSuperClass
 
-----
+- il est possible de factoriser des champs persitants pour plusieurs classes héritant d'une classe annotée `@MappedSuperClass`
+- il peut être posé sur une classe abstraite ou classique
 
-## Bilan sur le mapping de l'héritage en JPA
+```java
+@MappedSuperClass
+class AbstractPersistent {
+    @Id Integer id;
+    @Temporal(...) Date creationDate;
+}
+@Entity
+class User extends AbstractPersistent {
+}
+@Entity
+class Product  extends AbstractPersistent {
+}
+```
 
 ----
 
 ## Introduction aux requêtes SQL et JPQL supportées en JPA
+
+- JPA est une solution qui permet d'associer un modèle objet Java à un shcéma de base de données relationnel
+- JPA permet aussi de faire des requêtes pour obtenir des informations particulières : **l'API Query**
+- le langague SQL est propre au SGBD auquel on s'adresse
+- JPA propose un autre langage, le **JPQL** (Java Persistence Query Language) qui permet de faire la même chose, mais de manière indépendante du SGBD auquel on s'adresse. Les requêtes dependent des **entités** définies dans l'application
 
 ----
 
