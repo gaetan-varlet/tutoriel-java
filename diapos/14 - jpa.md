@@ -296,8 +296,7 @@ class User {
 }
 @Embeddable
 class PrimaryKey {
-    Integer id1;
-    Integer id2;
+    Integer id1; Integer id2;
 }
 ```
 
