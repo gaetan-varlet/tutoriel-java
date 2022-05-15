@@ -270,6 +270,37 @@ em.refresh(user); // MANAGED -> MANAGED
 
 ## Les clés primaires composites
 
+- il s'agit d'une clé primaire définit sur plusieurs champs
+- il existe 2 façons de gérer les clés primaires composites en JPA
+
+Solution 1
+```java
+@IdClass(PrimaryKey.class)
+@Entity
+class User {
+    @Id Integer id1;
+    @Id Integer id2;
+}
+@Embeddable
+class PrimaryKey {
+    Integer id1;
+    Integer id2;
+}
+```
+
+Solution 2
+```java
+@Entity
+class User {
+    @EmbeddedId PrimaryKey primaryKey;
+}
+@Embeddable
+class PrimaryKey {
+    Integer id1;
+    Integer id2;
+}
+```
+
 ## Relation unidirectionnelle et bidirectionnelle entre 2 entités JPA
 
 ## Le comportement Cascade d'une relation pour persister
