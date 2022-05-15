@@ -523,7 +523,7 @@ public class User {
 }
 public class Address {
     String address;
-    @OneToMany
+    @ManyToOne
     Commune commune;
 }
 ```
@@ -545,7 +545,7 @@ public class User {
 @Embeddable
 public class Address {
     String address;
-    @OneToMany
+    @ManyToOne
     Commune commune;
 }
 ```
