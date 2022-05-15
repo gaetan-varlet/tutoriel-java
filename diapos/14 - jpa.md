@@ -317,8 +317,7 @@ public class Maire {
 }
 public class Commune {
     String name;
-    @OneToOne
-    Maire maire;
+    @OneToOne Maire maire;
 }
 ```
 
@@ -512,7 +511,7 @@ public class Instrument {
 
 ----
 
-## Relation de composition avec des objets inclus
+## Relation de composition avec des objets inclus (1)
 
 - cas d'une relation `1:1` qui avec un sous-objet qui n'a plus lieu d'exister si l'objet maître est supprimé, on parle de **relation de composition**
 
@@ -528,6 +527,10 @@ public class Address {
     Commune commune;
 }
 ```
+
+----
+
+## Relation de composition avec des objets inclus (2)
 
 - pour éviter, d'avoir à gérer les insertions dans 2 tables, de faire une jointure pour la récupération de données, on peut stocker le sous-objet dans la même table que l'objet principal
 - les 2 objets doivent avoir le même cycle de vie, ils vont alors partager la même clé primaire
