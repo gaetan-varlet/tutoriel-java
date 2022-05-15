@@ -557,11 +557,11 @@ API Collection propose des `List`, des `Set` et des `Map`
 
 ----
 
-## Associer une relation one to many à un Set ou à une List
+## Associer une relation one to many à un Set/List
 
 - par défaut, lorsqu'on crée des relations `1:p` en JPA, il faut utiliser un Set, car la base de données garantie qu'il n'y ait pas de doublons et ne garantie pas l'ordre des données renvoyées
 
-## Créer une structure de liste à l'aide d'une colonne portant un index
+## Créer une liste à l'aide d'une colonne index
 
 - pour possibilité d'ajouter une colonne `index` pour conserver l'ordre d'enregistrement en base, et récupération dans la liste en triant sur cette variable
 - lors d'un `remove`, il faut faire plein d'updates pour mettre à jour les autres index, ce qui est très coûteux
@@ -591,6 +591,12 @@ List<Commune> communes;
 ----
 
 ## Mapper une table de hachage dont les clés sont des types primitifs
+
+- 
+
+```java
+Map<Integer, Commune> communes;
+```
 
 ----
 
