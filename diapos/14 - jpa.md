@@ -301,33 +301,266 @@ class PrimaryKey {
 }
 ```
 
+----
+
 ## Relation unidirectionnelle et bidirectionnelle entre 2 entités JPA
+
+Gestion des relations entre objets, exemple d'une relation **unidirectionnelle** de type `1:1` :
+
+```sql
+Maire : id / name
+Commune : id / name / id_maire (avec une clé étrangère vers id de la table Maire)
+```
+
+```java
+public class Maire {
+    String name;
+}
+public class Commune {
+    String name;
+    @OneToOne
+    Maire maire;
+}
+```
+
+Si on veut une relation **bidirectionnelle** (avec l'objet `Maire` dans l'objet `Commune`), sans créer une deuxième relation unidirectionnelle (qui créerait une une nouvelle clé étrangère `id_commune` dans la tabla `Maire`), il faut utiliser l'annotation `@OneToOne(mappedBy="maire")`
+
+```java
+public class Maire {
+    String name;
+    @OneToOne(mappedBy="maire")
+    Commune commune;
+}
+```
+
+----
 
 ## Le comportement Cascade d'une relation pour persister
 
+- par défaut, pour enregistrer un objet commune qui possède un objet maire, il faut les persister tous les 2 si on ne veut pas avoir d'erreur
+
+```java
+Commune c = ...
+Maire m = ...
+EntityManager em = ...
+c.setMaire(m);
+em.persist(c);
+em.persist(m);
+```
+
+- pour persister automatiquement les sous-objets, il faut utiliser l'attribut **cascade** 
+
+```java
+public class Commune {
+    String name;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    Maire maire;
+}
+```
+
+----
+
 ## Charger une relation en mode LAZY ou EAGER
+
+```java
+EntityManager em = ...
+Commune c = em.find(Commune.class, 12);
+Maire m = c.getMaire();
+```
+
+Il y a la même problématique pour charger des objets, il existe 2 comportements
+- **EAGER** : m a déjà été chargé via une jointure
+- **LAZY** : une requête `SELECT` est faite à la demande sur un objet pour récupérer l'objet Maire
+
+Il est possible de configurer cela avec l'attribut **fetch**
+```java
+public class Commune {
+    String name;
+    @OneToOne(fetch = FetchType.EAGER)
+    Maire maire;
+}
+```
+
+----
 
 ## Gestion du caractère bidirectionnel d'une relation en création et en lecture
 
-## Bilan sur la festion des relations one to one
+- le caractère bidirectionnel d'une relation doit être géré par le code applicatif en création
+- il est géré automatiquement par JPA en lecture
+
+----
+
+## Bilan sur la gestion des relations one to one
+
+- colonne de jointure créée dans la table maître (qui porte la colonne de jointure)
+- **Cascade** pour enregistrer les infos en base automatiquement
+- **Fetch** pour configurer la façon de récupérer les informations
+- relation bidirectionnelle
+    - attribut `mappedBy` dans l'objet esclave
+    - gestion manuelle de la relation dans le code
+
+----
 
 ## Relation one to many unidirectionnelle et bidirectionnelle
 
+- relation `p:1` avec `ManyToOne`
+
+```sql
+Commune : id / nom / id_dept
+Departement : id / nom
+```
+
+```java
+public class Commune {
+    Integer id;
+    String nom;
+    @ManyToOne(...)
+    Departement departement;
+}
+public class Departement{
+    Integer id;
+    String nom;
+}
+```
+
+- gestion de la relation bidirectionnelle :
+
+```java
+public class Departement{
+    ...
+    @OneToMany(mappedBy = "departement")
+    List<Commune> communes;
+}
+```
+
+----
+
 ## Cas des relations one to many unidirectionnelles
+
+Dans le cas d'une relation `1:p` unidirectionnelle, la logique voiudrait qu'il y ait une clé de jointure dans la table Commune. Cependant, le choix en JPA est de créer une table de jointure
+- cela permet d'aligner le modèle objet sur le modèle de tables. Une suppression de la classe département n'entraine alors pas de modification sur la classe Commune ni sur la table Commune
+
+```sql
+Commune : id / nom
+Departement : id / nom
+Departement_commune : id_departement / id_commune
+```
+
+```java
+public class Departement {
+    @OneToMany
+    List<Commune> communes;
+}
+```
+
+----
 
 ## Protéger le contenu d'une relation multivaluée par copie défensive
 
+- pour éviter de modifier par erreur, toutes les modifications d'une liste persistante doivent avoir lieu à l'intérieure de la classe
+- il faut donc retourner une copie de la liste dans le getter, on parle de **copie défensive**
+
+```java
+List<Commune> getCommunes(){
+    return new ArrayList<>(this.communes);
+}
+```
+
+----
+
 ## Gérer manuellement le caractère bidirectionnel d'une relation multivaluée
+
+- la copie défensive va avoir un impact sur les relations bidirectionnelles
+
+```java
+Commune c = ...;
+d.getCommunes().add(c);
+// l'ajout ne va pas fonctionner car il s'agit d'une copie de liste
+```
+
+- il faut avoir une méthode `addCommune(Commune c)` dans `Departement`
+
+----
 
 ## Bilan sur les relations one to many et many to one en JPA
 
+- géré par les annotations `@OneToMany` et `@ManyToOne`, et seul `@OneToMany` peut porter l'attribut `mappedBy`
+- structure à 2 tables, ou 3 tables (1:p unidirectionnel)
+- copie défensive des champs multivalués
+
+----
+
+## Créer une relation many to many en JPA
+
+- relation `n:p`
+
+```sql
+Musicien : id / nom
+Instrument : id / nom
+musicien_instrument : id_musicien / id_instrument
+```
+
+```java
+public class Musicien{
+    @ManyToMany
+    List<Instrument> instruments;
+}
+public class Instrument {
+    @ManyToMany(mappedBy = "...")
+    List<Musicien> musiciens;
+}
+```
+
+----
+
 ## Créer une relation de composition avec des objets inclus
+
+- cas d'une relation `1:1` qui avec un sous-objet qui n'a plus lieu d'exister si l'objet maître est supprimé, on parle de **relation de composition**
+
+```java
+public class User {
+    String name;
+    @OneToOne
+    Address address;
+}
+public class Address {
+    String address;
+    @OneToMany
+    Commune commune;
+}
+```
+
+- pour éviter, d'avoir à gérer les insertions dans 2 tables, de faire une jointure pour la récupération de données, on peut stocker le sous-objet dans la même table que l'objet principal
+- les 2 objets doivent avoir le même cycle de vie, ils vont alors partager la même clé primaire
+
+```java
+@Entity
+public class User {
+    String name;
+    @Embedded
+    Address address;
+}
+@Embeddable
+public class Address {
+    String address;
+    @OneToMany
+    Commune commune;
+}
+```
+
+----
 
 ## Mapper les structures de l'API Collection en base avec JPA
 
+----
+
 ## Associer une relation one to many à un Set ou à une List
 
+----
+
 ## Créer une structure de liste à l'aide d'une colonne portant un index
+
+----
 
 ## Créer une liste en garantissant l'ordre des éléments
 
