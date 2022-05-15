@@ -853,3 +853,12 @@ class Product  extends AbstractPersistent {
 ----
 
 ## Bilan sur JPA
+
+- création d'une entité JPA
+- mapping des champs et mapping des relations et de l'héritage
+- notion de cascade et fetch
+- gestion des entités JPA au travers l'**Entity Manager** qui gère les transactions
+- requêtage d'une base avec des requêtes SQL ou JPQL
+- gestion de la configuration dans le fichier **persistance.xml**
+
+A creuser : **API Criteria**
