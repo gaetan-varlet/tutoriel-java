@@ -273,8 +273,8 @@ em.refresh(user); // MANAGED -> MANAGED
 - il s'agit d'une clé primaire définit sur plusieurs champs
 - il existe 2 façons de gérer les clés primaires composites en JPA
 
-Solution 1
 ```java
+// Solution 1
 @IdClass(PrimaryKey.class)
 @Entity
 class User {
@@ -288,8 +288,8 @@ class PrimaryKey {
 }
 ```
 
-Solution 2
 ```java
+// Solution 2
 @Entity
 class User {
     @EmbeddedId PrimaryKey primaryKey;
@@ -305,7 +305,7 @@ class PrimaryKey {
 
 ## Relation unidirectionnelle et bidirectionnelle entre 2 entités JPA
 
-Gestion des relations entre objets, exemple d'une relation **unidirectionnelle** de type `1:1` :
+- Gestion des relations entre objets, exemple d'une relation **unidirectionnelle** de type `1:1`
 
 ```sql
 Maire : id / name
@@ -323,7 +323,7 @@ public class Commune {
 }
 ```
 
-Si on veut une relation **bidirectionnelle** (avec l'objet `Maire` dans l'objet `Commune`), sans créer une deuxième relation unidirectionnelle (qui créerait une une nouvelle clé étrangère `id_commune` dans la tabla `Maire`), il faut utiliser l'annotation `@OneToOne(mappedBy="maire")`
+- Si on veut une relation **bidirectionnelle** (avec l'objet `Maire` dans l'objet `Commune`), sans créer une deuxième relation unidirectionnelle (qui créerait une une nouvelle clé étrangère `id_commune` dans la tabla `Maire`), il faut utiliser l'annotation `@OneToOne(mappedBy="maire")`
 
 ```java
 public class Maire {
@@ -401,7 +401,7 @@ public class Commune {
 
 ----
 
-## Relation one to many unidirectionnelle et bidirectionnelle
+## Relation one to many unidirect. et bidirect.
 
 - relation `p:1` avec `ManyToOne`
 
@@ -437,7 +437,7 @@ public class Departement{
 
 ## Cas des relations one to many unidirectionnelles
 
-Dans le cas d'une relation `1:p` unidirectionnelle, la logique voiudrait qu'il y ait une clé de jointure dans la table Commune. Cependant, le choix en JPA est de créer une table de jointure
+- dans le cas d'une relation `1:p` unidirectionnelle, la logique voiudrait qu'il y ait une clé de jointure dans la table Commune. Cependant, le choix en JPA est de créer une table de jointure
 - cela permet d'aligner le modèle objet sur le modèle de tables. Une suppression de la classe département n'entraine alors pas de modification sur la classe Commune ni sur la table Commune
 
 ```sql
@@ -513,7 +513,7 @@ public class Instrument {
 
 ----
 
-## Créer une relation de composition avec des objets inclus
+## Relation de composition avec des objets inclus
 
 - cas d'une relation `1:1` qui avec un sous-objet qui n'a plus lieu d'exister si l'objet maître est supprimé, on parle de **relation de composition**
 
