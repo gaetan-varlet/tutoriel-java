@@ -770,30 +770,50 @@ class Product  extends AbstractPersistent {
 
 ## Introduction aux requêtes SQL et JPQL supportées en JPA
 
-- JPA est une solution qui permet d'associer un modèle objet Java à un shcéma de base de données relationnel
-- JPA permet aussi de faire des requêtes pour obtenir des informations particulières : **l'API Query**
-- le langague SQL est propre au SGBD auquel on s'adresse
-- JPA propose un autre langage, le **JPQL** (Java Persistence Query Language) qui permet de faire la même chose, mais de manière indépendante du SGBD auquel on s'adresse. Les requêtes dependent des **entités** définies dans l'application
+- JPA est une solution qui permet d'associer un modèle objet Java à un schéma de base de données relationnel
+- JPA permet aussi de faire des requêtes pour obtenir des informations particulières avec **l'API Query**. 2 langages possibles :
+    - le langague **SQL**, qui est propre au SGBD auquel on s'adresse0
+    - JPA propose un autre langage, le **JPQL** (Java Persistence Query Language) qui permet de faire la même chose, mais de manière indépendante du SGBD auquel on s'adresse. Les requêtes dependent des **entités** définies dans l'application
 
 ----
 
-## Exécuter et analyser le résultat d'une première requête native
+## Exécuter et analyser le résultat d'une requête native
 
-----
+```java
+String sql = "SELECT COUNT(*) FROM maire";
+Query query = em.createNativeQuery(sql); // construction de l'objet Query
+Object result = query.getSingleResult(); // exécution de la requête
 
-## Analyser le résultat d'une requête native qui retourne une ligne de plusieurs résultats
+String sql = "SELECT name, age FROM maire WHERE id = 12";
+Query query = em.createNativeQuery(sql);
+Object[] result = query.getSingleResult(); // resultat contient 2 éléments
 
-----
-
-## Analyser le résultat d'une requête native qui retourne plusieurs lignes
+String sql = "SELECT name, age FROM maire";
+Query query = em.createNativeQuery(sql);
+List<Object[]> result = query.getSingleResult(); // resultat sous forme de liste
+```
 
 ----
 
 ## Ecrire et utiliser des requêtes natives paramétrées
 
+```java
+String sql = "SELECT name FROM maire WHERE id = ?1";
+Query query = em.createNativeQuery(sql);
+query.setParameter(1, 12);
+String result = query.getSingleResult();
+```
+
 ----
 
 ## Mapper le résultat d'une requête native dans une entité JPA
+
+```java
+String sql = "SELECT * FROM commune WHERE code_postal = ?1";
+Query query = em.createNativeQuery(sql, Commune.class); // la classe doit être une entité JPA
+query.setParameter(1, 92120);
+Object result = query.getSingleResult(); // résultat à caster
+```
 
 ----
 
