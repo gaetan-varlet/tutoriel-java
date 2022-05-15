@@ -656,9 +656,42 @@ class User {
 
 ## Introduction au mapping de l'héritage
 
+- il est difficile de mapper en base des classes qui étendent d'autres classes
+
+```java
+@Entity
+public class User {
+    @Id Integer id;
+    String name;
+}
+@Entity
+public class Employee extends User {
+    Integer salary;
+}
+```
+
 ----
 
 ## Introduction au trois stratégies de mapping de l'héritage
+
+Il existe 3 solutions qui se modélisent différemment en base :
+
+```sql
+-- mode TABLE_PER_CLASS
+User : id / name 
+Employee : id / name / salary
+```
+
+```sql
+-- mode SINGLE_TABLE
+User : id / name / salary
+```
+
+```sql
+-- mode JOINED
+User : id / name 
+Employee : id / salary
+```
 
 ----
 
