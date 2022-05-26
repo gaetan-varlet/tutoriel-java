@@ -772,7 +772,7 @@ class Product  extends AbstractPersistent {
 
 - JPA est une solution qui permet d'associer un modèle objet Java à un schéma de base de données relationnel
 - JPA permet aussi de faire des requêtes pour obtenir des informations particulières avec **l'API Query**. 2 langages possibles :
-    - le langague **SQL**, qui est propre au SGBD auquel on s'adresse0
+    - le langague **SQL**, qui est propre au SGBD auquel on s'adresse
     - JPA propose un autre langage, le **JPQL** (Java Persistence Query Language) qui permet de faire la même chose, mais de manière indépendante du SGBD auquel on s'adresse. Les requêtes dependent des **entités** définies dans l'application
 
 ----
@@ -819,13 +819,90 @@ Object result = query.getSingleResult(); // résultat à caster
 
 ## Ecrire et utiliser des requêtes nommées natives
 
+- une `NamedNativeQuery` fonctione comme une `NativeQuery` sauf qu'elle est déclarée dans l'entité  au lieu d'être déclarée dans l'objet `Query`
+
+```java
+@NamedNativesQueries({
+    @NamedNativeQuery(
+        name="Commune.byName",
+        query="SELECT * FROM commune WHERE name = ?1"
+    )
+})
+@Entity
+public class Commune {
+    @Id
+    Integer id;
+}
+```
+
+```java
+Query query = em.createNamedQuery("Commune.byName");
+query.setParameter(1, "Paris");
+Object[] result = q.getSingleResult();
+```
+
 ----
 
 ## Mapper le résultat d'une requête primitive nommée dans une entité JPA
 
+- possibilité d'ajouter un attribut dans l'annotation `@NamedNativesQueries`
+
+```java
+@NamedNativesQueries({
+    @NamedNativeQuery(
+        name="Commune.byName",
+        query="SELECT * FROM commune WHERE name = ?1",
+        resultClass=Commune.class
+
+    )
+})
+```
+
+- utilisation de la méthode `createNamedQuery` avec un paramètre supplémentaire, qui renvoie un `TypedQuery` qui porte l'information que le résultat est de type *Commune*
+
+```java
+TypedQuery<Commune> tq = em.createNamedQuery("Commune.byName", Commune.class);
+// cast automatique en objet ou liste selon la méthode utilisée
+Commune c = tq.getSingleResult();
+List<Commune> list = tq.getResultList();
+```
+
 ----
 
 ## Mapper le résultat dans un objet quelconque à l'aide d'un ResulSetMapping
+
+- enregistrement d'une requête native nommée dans un objet Java qui n'est pas une entité
+- utilisation d'un `ResultSetMapping` sur l'entité
+
+```java
+public class Statistics {
+    private Long count; private Double average
+    public Statistics(Long count, Double average){...}
+}
+
+@NamedNativesQueries({
+    @NamedNativeQuery(
+        name = "Communes.stats",
+        query = "SELECT count(*) as count, avg(population) as avg FROM commune",
+        resultSetMapping = "stats"
+    )
+})
+@ResultSetMappings({
+    @ResultSetMapping(
+        name = "stats",
+        classes = @ConstructorResult(target = Statistics.class, colums = {
+            @ColumResult(name = "count", type = Long.class),
+            @ColumResult(name = "average", type = Double.class)
+        })
+    )
+})
+@Entity
+public class Commune { ... }
+
+// utilisation
+Query q = em.createNamedQuery("Communes.stats");
+Statistics s = q.getSingleResult(); // après avoir casté
+```
 
 ----
 
