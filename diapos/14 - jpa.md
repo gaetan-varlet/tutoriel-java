@@ -969,7 +969,7 @@ Commune
 
 // jointure interne (INNER JOIN)
 String jpql = "SELECT c.nom, c.departement.nom FROM Commune c";
-// jointure externe explicite (LEFT JOIN) pour conserver les communes qui ne sont pas associés à un département
+// jointure externe explicite (LEFT JOIN) pour conserver les communes qui ne sont pas associées à un département
 String jpql = "SELECT c.nom, d.nom FROM Commune c LEFT JOIN c.departement d";
 ```
 
@@ -995,7 +995,7 @@ public class Statistics {
     public Statistics(Long count, Long sum){...}
 }
 
-String jpql = "SELECT new nom.package.Statistics(count(c), sum(c.population)) FROM Commune c"
+String jpql = "SELECT new nom.package.Statistics(count(c), sum(c.population)) FROM Commune c";
 TypedQuery<Statistics> query = em.createQuery(jpql, Statistics.class);
 Statistics s = query.getSingleResult();
 ```
@@ -1017,6 +1017,7 @@ public class Commune {...}
 // utilisation
 TypedQuery<Commune> query = em.createNamedQuery("Commune.byName", Commune.class);
 ```
+
 ----
 
 ## Paginer les résultats d'une requête native ou JPQL
