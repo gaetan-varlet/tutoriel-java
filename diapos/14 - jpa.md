@@ -903,40 +903,136 @@ Statistics s = q.getSingleResult(); // après avoir casté
 
 ## Ecrire et exécuter une première requête JPQL
 
+- langage de requête qui porte sur le modèle objet (entité JPA), indépendant du SGBD auquel on s'adresse
+- JPA va convertir la requête JPQL en SQL
+
+```java
+String jpql = "SELECT c FROM Commune c WHERE c.nom = 'Paris'";
+Query q = em.createQuery(jpql);
+Commune c = (Commune) q.getSingleResult();
+```
+
 ----
-## Paramètrer des requêtes JPQL en nommant les paramètres
+
+## Paramétrer des requêtes JPQL en nommant les paramètres
+
+ ```java
+ // utilisation d'un paramètre indexés
+String jpql = "FROM Commune c WHERE c.nom = ?1";
+Query q = em.createQuery(jpql);
+q.setParameter(1, "Paris");
+
+ // utilisation d'un paramètre nommé
+String jpql = "FROM Commune c WHERE c.nom = :nom";
+Query q = em.createQuery(jpql);
+q.setParameter("nom", "Paris");
+ ```
 
 ----
 
 ## Exemples de requêtes JPQL simples
 
+```sql
+-- sélection des communes de plus de 100 000 habitants
+SELECT c FROM Commune c WHERE c.population > 100_000;
+-- calcul de la somme des populations pour les communes de moins de 1000 habitants
+SELECT SUM(c.population) FROM Commune c WHERE c.population < 1000;
+-- sélectionner la commune qui a le plus d'habitants
+SELECT c FROM Commune c WHERE c.population = (SELECT max(c2.population) FROM Commune c2);
+```
+
 ----
 
 ## Exemple d'une requête JPQL avec une jointure implicite
+
+```java
+Departement
+    List<Commune> communes;
+Commune
+    Integer population;
+
+String jpql = "SELECT departement.nom, SUM(commune.population)
+    FROM Departement departement, IN(departement.communes) commune
+    WHERE departement.nom=:nom";
+```
 
 ----
 
 ## Déclarer des jointures explicites pour en faire des jointures externes
 
+```java
+Departement
+    List<Commune> communes;
+Commune
+    Integer population;
+    Departement departement;
+
+// jointure interne (INNER JOIN)
+String jpql = "SELECT c.nom, c.departement.nom FROM Commune c";
+// jointure externe explicite (LEFT JOIN) pour conserver les communes qui ne sont pas associés à un département
+String jpql = "SELECT c.nom, d.nom FROM Commune c LEFT JOIN c.departement d";
+```
+
 ----
 
 ## Charger des entités en relation à l'aide d'un JOIN FETCH
+
+- de base, lors de la récupération des communes, les départements ne sont pas peuplés, ils vont l'être un par un quand on va vouloir récupérer des informations dessus
+- `JOIN FETCH` va permettre de récupérer le contenu des départements de le départ en ne faisant qu'une seule requête
+
+```java
+String jpql1 = "SELECT c FROM Commune c";
+String jpql2 = "SELECT c FROM Commune c JOIN FETCH c.departement d";
+Query q = ...
+```
 
 ----
 
 ## Mapper le résultat d'une requête JPQL dans un objet quelconque
 
+```java
+public class Statistics {
+    public Statistics(Long count, Long sum){...}
+}
+
+String jpql = "SELECT new nom.package.Statistics(count(c), sum(c.population)) FROM Commune c"
+TypedQuery<Statistics> query = em.createQuery(jpql, Statistics.class);
+Statistics s = query.getSingleResult();
+```
+
 ----
 
 ## Ecrire et utiliser des requêtes JPQL nommés
 
+```java
+@NamedQueries({
+    @NamedQuery(
+        name = "Commune.byName",
+        query = "SELECT c FROM Commune c WHERE c.nom = :name"
+    )
+})
+@Entity
+public class Commune {...}
+
+// utilisation
+TypedQuery<Commune> query = em.createNamedQuery("Commune.byName", Commune.class);
+```
 ----
 
 ## Paginer les résultats d'une requête native ou JPQL
 
+```java
+query.setFirstResult(index);
+query.setMaxResult(nombre);
+query.getResultList();
+```
+
 ----
 
 ## Utiliser les requêtes JPQL DELETE et UPDATE pour des mises à jour massives
+
+- l'entityManager fourni des méthodes `remove` et `save` mais pas très efficace pour travailler avec des données massives
+- JPQL supporte les requêtes DELETE et UPDATE mais elles doivent être les dernières opérations d'une transaction (lié à des questions de cache)
 
 ----
 
@@ -948,5 +1044,4 @@ Statistics s = q.getSingleResult(); // après avoir casté
 - gestion des entités JPA au travers l'**Entity Manager** qui gère les transactions
 - requêtage d'une base avec des requêtes SQL ou JPQL
 - gestion de la configuration dans le fichier **persistance.xml**
-
-A creuser : **API Criteria**
+- à creuser : **API Criteria**
