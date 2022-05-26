@@ -880,15 +880,12 @@ public class Statistics {
     public Statistics(Long count, Double average){...}
 }
 
-@NamedNativesQueries({
-    @NamedNativeQuery(
+@NamedNativesQueries({@NamedNativeQuery(
         name = "Communes.stats",
         query = "SELECT count(*) as count, avg(population) as avg FROM commune",
         resultSetMapping = "stats"
-    )
-})
-@ResultSetMappings({
-    @ResultSetMapping(
+)})
+@ResultSetMappings({@ResultSetMapping(
         name = "stats",
         classes = @ConstructorResult(target = Statistics.class, colums = {
             @ColumResult(name = "count", type = Long.class),
