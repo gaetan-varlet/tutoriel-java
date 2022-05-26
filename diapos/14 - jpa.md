@@ -869,9 +869,9 @@ List<Commune> list = tq.getResultList();
 
 ----
 
-## Mapper le résultat dans un objet quelconque à l'aide d'un ResulSetMapping
+## Mapper le résultat dans un objet avec ResulSetMapping
 
-- enregistrement d'une requête native nommée dans un objet Java qui n'est pas une entité
+- enregistrement d'une `NamedNativeQuery` dans un objet Java qui n'est pas une entité
 - utilisation d'un `ResultSetMapping` sur l'entité
 
 ```java
@@ -903,10 +903,6 @@ public class Commune { ... }
 Query q = em.createNamedQuery("Communes.stats");
 Statistics s = q.getSingleResult(); // après avoir casté
 ```
-
-----
-
-## Compléments et bilan sur le RésultSetMapping
 
 ----
 
