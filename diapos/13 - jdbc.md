@@ -268,3 +268,25 @@ il existe différents niveaux d'isolation des transactions :
 - tous les drivers JDBC ne gèrent pas tous les niveaux
 - il existe un niveau par défaut pour chaque driver
 - plus le niveau d'isolation est élevé, plus il y a de risques de performance sur la BDD
+
+
+----
+
+## DataSource
+
+- alternative au `DriverManager` pour créer des connexions à une BDD
+
+```java
+public DataSource getDataSource(){
+    HikariDataSource ds = new HikariDataSource();
+    ds.setJdbcUrl("jdbc:mysql://localhost:3306/simpsons");
+    ds.setUsername("bart");
+    ds.setPassword("51mp50n");
+    return ds;
+}
+
+DataSource ds = getDataSource();
+Connection connection = ds.getConnection();
+...
+connection.close();
+```
