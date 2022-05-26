@@ -891,11 +891,9 @@ public class Statistics {
             @ColumResult(name = "count", type = Long.class),
             @ColumResult(name = "average", type = Double.class)
         })
-    )
-})
+)})
 @Entity
 public class Commune { ... }
-
 // utilisation
 Query q = em.createNamedQuery("Communes.stats");
 Statistics s = q.getSingleResult(); // après avoir casté
