@@ -275,6 +275,7 @@ il existe différents niveaux d'isolation des transactions :
 ## DataSource
 
 - alternative au `DriverManager` pour créer des connexions à une BDD
+- utilisation de la bibliothèque **HikariCP**
 
 ```java
 public DataSource getDataSource(){
