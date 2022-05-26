@@ -822,7 +822,7 @@ Object result = query.getSingleResult(); // résultat à caster
 - une `NamedNativeQuery` fonctione comme une `NativeQuery` sauf qu'elle est déclarée dans l'entité  au lieu d'être déclarée dans l'objet `Query`
 
 ```java
-@NamedNativesQueries({
+@NamedNativeQueries({
     @NamedNativeQuery(
         name="Commune.byName",
         query="SELECT * FROM commune WHERE name = ?1"
@@ -845,10 +845,10 @@ Object[] result = q.getSingleResult();
 
 ## Mapper le résultat d'une requête primitive nommée dans une entité JPA
 
-- possibilité d'ajouter un attribut dans l'annotation `@NamedNativesQueries`
+- possibilité d'ajouter un attribut dans l'annotation `@NamedNativeQueries`
 
 ```java
-@NamedNativesQueries({
+@NamedNativeQueries({
     @NamedNativeQuery(
         name="Commune.byName",
         query="SELECT * FROM commune WHERE name = ?1",
@@ -880,7 +880,7 @@ public class Statistics {
     public Statistics(Long count, Double average){...}
 }
 
-@NamedNativesQueries({@NamedNativeQuery(
+@NamedNativeQueries({@NamedNativeQuery(
         name = "Communes.stats",
         query = "SELECT count(*) as count, avg(population) as avg FROM commune",
         resultSetMapping = "stats"
