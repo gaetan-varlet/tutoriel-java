@@ -191,7 +191,8 @@ int k = (int) 3.14 // compilation OK, le nombre va être tronqué
 float f = 3; // compilation OK car pas de perte de précision
 ```
 
-## Les types primitifs
+
+## Les types primitifs
 
 - il n'est pas possible de définir de pointer sur des types primitfs, on manipule directement la valeur, il n'est pas possible de manipuler l'adresse à laquelle la valeur est stockée
 - les différents types de primitifs
@@ -200,7 +201,7 @@ float f = 3; // compilation OK car pas de perte de précision
 	- boolean : true ou false (1 bit)
 	- char : permet d'encoder un caractère (2 octets)
 
-## Types référence vers des objets, héritage de type
+## Types référence vers des objets, héritage de type
 
 - lors de l'instanciation d'un objet, récupération d'une **référence** (**pointeur**) vers une zone mémoire qui peut contenir un objet
 - la différence entre les types primitifs et les références et qu'on peut appeler des méthodes
